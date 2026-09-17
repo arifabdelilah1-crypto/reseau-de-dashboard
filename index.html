@@ -393,7 +393,7 @@ const PINS_TAB = 'Pins';</pre>
 // ════════════════════════════════════════════════════
 // CONFIG — REMPLACE CES VALEURS AVEC TES VRAIES DONNÉES
 // ════════════════════════════════════════════════════
-const SHEET_ID = 'REMPLACE_PAR_TON_SHEET_ID';
+const SHEET_ID = '1v-qgZk5TaB4WAzgDNzlTV7nn4diboxO5A_P0jYiNSSQ';
 const MASTER_TAB = 'Master';
 const PINS_TAB = 'Pins';
 const SITES_TAB = 'Sites';
@@ -527,7 +527,7 @@ async function loadAllData() {
   let usedLive = false;
 
   // Try live sheet first (public CSV)
-  if (SHEET_ID !== 'REMPLACE_PAR_TON_SHEET_ID') {
+  if (SHEET_ID !== '1v-qgZk5TaB4WAzgDNzlTV7nn4diboxO5A_P0jYiNSSQ') {
     const master = await fetchSheetViaGSheetsPublic(SHEET_ID, MASTER_TAB);
     const pins   = await fetchSheetViaGSheetsPublic(SHEET_ID, PINS_TAB);
     const sites  = await fetchSheetViaGSheetsPublic(SHEET_ID, SITES_TAB);
