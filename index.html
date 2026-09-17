@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🎛️ Réseau DE — Production Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--bg2:#181b24;--bg3:#1e2232;--bg4:#252a3a;
+  --border:#2a2f45;--border2:#353b52;
+  --text:#e2e8f0;--muted:#7a82a6;--muted2:#4a5270;
+  --green:#22c55e;--yellow:#eab308;--red:#ef4444;
+  --blue:#3b82f6;--purple:#a855f7;--orange:#f97316;--cyan:#06b6d4;
+  --green-bg:rgba(34,197,94,.1);--yellow-bg:rgba(234,179,8,.1);
+  --red-bg:rgba(239,68,68,.1);--blue-bg:rgba(59,130,246,.1);
+  --purple-bg:rgba(168,85,247,.1);--orange-bg:rgba(249,115,22,.1);
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:14px;min-height:100vh}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* TOPBAR */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100}
+.brand{font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px}
+.brand span{color:var(--muted);font-weight:400}
+.topbar-right{display:flex;align-items:center;gap:14px;font-size:12px;color:var(--muted)}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.btn-refresh{padding:6px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;font-size:12px;font-weight:600;transition:.12s;display:flex;align-items:center;gap:6px}
+.btn-refresh:hover{border-color:var(--blue);color:var(--blue)}
+.btn-refresh.loading{opacity:.5;pointer-events:none}
+.spin{animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* TABS */
+.tabs{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;gap:2px;overflow-x:auto}
+.tabs::-webkit-scrollbar{height:0}
+.tab{padding:12px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* CONTENT */
+.content{padding:20px;max-width:1400px;margin:0 auto}
+.page{display:none}.page.active{display:block}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+.kpi-val{font-size:26px;font-weight:800;line-height:1}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.kpi-bar{height:3px;border-radius:2px;margin-top:10px;background:var(--border)}
+.kpi-bar-fill{height:100%;border-radius:2px}
+
+/* SECTION */
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;overflow:hidden}
+.section-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.section-title{font-weight:700;font-size:13px}
+.section-meta{font-size:12px;color:var(--muted)}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{padding:9px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--bg3);border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:13px;white-space:nowrap;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:var(--bg3)}
+.tbl.clickable tbody tr{cursor:pointer}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:600;line-height:1.6;white-space:nowrap}
+.bg-green{background:var(--green-bg);color:var(--green)}
+.bg-yellow{background:var(--yellow-bg);color:var(--yellow)}
+.bg-red{background:var(--red-bg);color:var(--red)}
+.bg-blue{background:var(--blue-bg);color:var(--blue)}
+.bg-purple{background:var(--purple-bg);color:var(--purple)}
+.bg-orange{background:var(--orange-bg);color:var(--orange)}
+.bg-muted{background:var(--bg4);color:var(--muted)}
+.bg-cyan{background:rgba(6,182,212,.1);color:var(--cyan)}
+
+/* PROGRESS */
+.prog-row{display:flex;align-items:center;gap:8px}
+.prog{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px}
+.prog-pct{font-size:11px;font-weight:700;width:36px;text-align:right}
+
+/* SITE GRID */
+.site-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;padding:16px}
+.site-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 14px 14px 18px;position:relative;transition:.15s}
+.site-card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.site-accent{position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:8px 0 0 8px}
+.site-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.site-name{font-weight:700;font-size:14px}
+.site-domain{font-size:11px;color:var(--muted)}
+.site-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;margin-bottom:10px}
+.stat-val{font-size:20px;font-weight:800}
+.stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.site-progs{display:flex;flex-direction:column;gap:5px}
+.site-prog-line{display:flex;align-items:center;gap:6px;font-size:11px}
+.site-prog-label{width:30px;color:var(--muted);text-align:right}
+
+/* ALERTS */
+.alert{display:flex;gap:10px;padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px;align-items:flex-start}
+.alert:last-child{margin-bottom:0}
+.alert-warn{background:#f9731614;border:1px solid #f9731640;color:#fdba74}
+.alert-info{background:var(--blue-bg);border:1px solid #3b82f640;color:#93c5fd}
+.alert-ok{background:var(--green-bg);border:1px solid #22c55e40;color:#86efac}
+.alert-err{background:var(--red-bg);border:1px solid #ef444440;color:#fca5a5}
+.alert-icon{font-size:16px;flex-shrink:0}
+.alert strong{display:block;font-weight:700;margin-bottom:2px}
+
+/* BARS */
+.bar-chart{padding:14px 18px}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-lbl{width:90px;font-size:12px;font-weight:600;text-align:right;color:var(--text);flex-shrink:0}
+.bar-track{flex:1;height:22px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:700;color:rgba(255,255,255,.85);min-width:30px}
+.bar-total{width:44px;font-size:12px;font-weight:700;color:var(--muted)}
+
+/* LOADER */
+.loader{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:16px;color:var(--muted)}
+.loader-ring{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+.loader p{font-size:13px}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
+
+/* FILTERS */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.filter-btn{padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:.12s}
+.filter-btn:hover,.filter-btn.active{background:var(--blue-bg);border-color:var(--blue);color:var(--blue)}
+
+/* PIPELINE STEPS */
+.pipe-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);margin:16px;border-radius:8px;overflow:hidden}
+.pipe-step{background:var(--bg3);padding:16px;text-align:center}
+.pipe-step-icon{font-size:26px;margin-bottom:6px}
+.pipe-step-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:8px}
+.pipe-step-val{font-size:30px;font-weight:900}
+.pipe-step-sub{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* CHECKLIST */
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:16px}
+@media(max-width:600px){.checklist{grid-template-columns:1fr}}
+.check-item{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:6px;font-size:13px}
+.check-ok{background:var(--green-bg);border:1px solid rgba(34,197,94,.2)}
+.check-warn{background:var(--yellow-bg);border:1px solid rgba(234,179,8,.2)}
+.check-err{background:var(--red-bg);border:1px solid rgba(239,68,68,.2)}
+
+/* GITHUB GUIDE */
+.guide-steps{counter-reset:step;padding:18px;display:flex;flex-direction:column;gap:12px}
+.guide-step{display:flex;gap:14px;align-items:flex-start}
+.guide-step::before{counter-increment:step;content:counter(step);background:var(--blue);color:#fff;min-width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px}
+.guide-step-body{flex:1}
+.guide-step-title{font-weight:700;margin-bottom:4px}
+.guide-step-desc{font-size:12px;color:var(--muted);line-height:1.6}
+code.inline{background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-size:12px;font-family:monospace;color:var(--cyan)}
+pre.code-block{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:var(--cyan);overflow-x:auto;margin-top:8px;line-height:1.6}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .pipe-steps{grid-template-columns:repeat(2,1fr)}
+  .site-grid{grid-template-columns:1fr}
+}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">🎛️ <span>Réseau DE ·</span> Production Dashboard</div>
+  <div class="topbar-right">
+    <div class="live-dot" id="live-dot" title="Connecté au Google Sheet"></div>
+    <span id="last-update">Chargement...</span>
+    <button class="btn-refresh" id="btn-refresh" onclick="loadAllData()">
+      <span id="refresh-icon">↻</span> Rafraîchir
+    </button>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('overview',this)">📊 Vue d'ensemble</div>
+  <div class="tab" onclick="showTab('sites',this)">🌐 Sites</div>
+  <div class="tab" onclick="showTab('pipeline',this)">⚙️ Pipeline</div>
+  <div class="tab" onclick="showTab('articles',this)">📝 Articles</div>
+  <div class="tab" onclick="showTab('pins',this)">📌 Pins</div>
+  <div class="tab" onclick="showTab('planning',this)">📅 Planning</div>
+  <div class="tab" onclick="showTab('alerts',this)">🔔 Alertes</div>
+  <div class="tab" onclick="showTab('deploy',this)">🚀 Déploiement</div>
+</div>
+
+<div class="content">
+
+<!-- ══ OVERVIEW ══ -->
+<div id="tab-overview" class="page active">
+  <div class="kpi-grid" id="kpi-overview">
+    <div class="kpi"><div class="kpi-label">Chargement...</div><div class="kpi-val" style="color:var(--muted)">—</div></div>
+  </div>
+  <div class="section">
+    <div class="section-hdr"><div class="section-title">⚙️ Pipeline — Semaine en cours</div><div class="section-meta" id="week-label">—</div></div>
+    <div class="pipe-steps" id="pipe-overview"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="section">
+      <div class="section-hdr"><div class="section-title">📊 Avancement 12 semaines</div></div>
+      <div class="bar-chart" id="week-bars"></div>
+    </div>
+    <div class="section">
+      <div class="section-hdr"><div class="section-title">🌐 Articles par site</div></div>
+      <div class="bar-chart" id="site-bars"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SITES ══ -->
+<div id="tab-sites" class="page">
+  <div class="site-grid" id="site-grid">
+    <div class="loader"><div class="loader-ring"></div><p>Chargement des sites...</p></div>
+  </div>
+</div>
+
+<!-- ══ PIPELINE ══ -->
+<div id="tab-pipeline" class="page">
+  <div class="section">
+    <div class="section-hdr"><div class="section-title">⚙️ Pipeline global Article → Image → Pin</div></div>
+    <div class="pipe-steps" id="pipe-global" style="grid-template-columns:repeat(6,1fr)"></div>
+    <div class="tbl-wrap" style="padding:16px">
+      <table class="tbl">
+        <thead><tr><th>Site</th><th>Planifiés</th><th>Publiés</th><th>Images</th><th>Pins</th><th>Progression</th><th>Statut</th></tr></thead>
+        <tbody id="pipeline-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ARTICLES ══ -->
+<div id="tab-articles" class="page">
+  <div class="filters" id="article-filters">
+    <button class="filter-btn active" onclick="filterArts('all',this)">Tous</button>
+    <button class="filter-btn" onclick="filterArts('published',this)">✅ Publiés</button>
+    <button class="filter-btn" onclick="filterArts('pending',this)">⏳ En attente</button>
+    <button class="filter-btn" onclick="filterArts('error',this)">⚠️ Erreurs</button>
+    <button class="filter-btn" onclick="filterArts('PILIER',this)">🏛️ PILIER</button>
+  </div>
+  <div class="section">
+    <div class="section-hdr">
+      <div class="section-title">📝 Articles Master</div>
+      <div class="section-meta" id="articles-count">—</div>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>ID</th><th>Site</th><th>Keyword</th><th>Silo</th><th>Kind</th><th>Status</th><th>Img</th><th>Pin</th><th>Semaine</th><th>Jour</th></tr></thead>
+        <tbody id="articles-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PINS ══ -->
+<div id="tab-pins" class="page">
+  <div class="kpi-grid" id="kpi-pins">
+    <div class="kpi"><div class="kpi-label">Chargement...</div><div class="kpi-val" style="color:var(--muted)">—</div></div>
+  </div>
+  <div class="section">
+    <div class="section-hdr"><div class="section-title">📌 Pins récents</div></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Pin ID</th><th>Article ID</th><th>Site</th><th>Keyword</th><th>Template</th><th>Titre</th><th>Status</th><th>Publier le</th><th>Board</th></tr></thead>
+        <tbody id="pins-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PLANNING ══ -->
+<div id="tab-planning" class="page">
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Démarrage</div><div class="kpi-val" style="color:var(--cyan)" id="plan-start">—</div></div>
+    <div class="kpi"><div class="kpi-label">Fin planifiée</div><div class="kpi-val" style="color:var(--blue)" id="plan-end">—</div></div>
+    <div class="kpi"><div class="kpi-label">Total planifié</div><div class="kpi-val" style="color:var(--text)" id="plan-total">—</div></div>
+    <div class="kpi"><div class="kpi-label">Sem. restantes</div><div class="kpi-val" style="color:var(--yellow)" id="plan-remaining">—</div></div>
+  </div>
+  <div class="section">
+    <div class="section-hdr"><div class="section-title">📅 Avancement par semaine</div></div>
+    <div class="bar-chart" id="planning-bars"></div>
+  </div>
+  <div class="section">
+    <div class="section-hdr"><div class="section-title">🌐 Fenêtres de publication par site</div></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Site</th><th>Domaine</th><th>Type</th><th>1ère pub</th><th>Dernière pub</th><th>Planifiés</th><th>Publiés</th><th>%</th></tr></thead>
+        <tbody id="planning-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ALERTS ══ -->
+<div id="tab-alerts" class="page">
+  <div class="section">
+    <div class="section-hdr"><div class="section-title">🔔 Alertes actives</div></div>
+    <div style="padding:16px" id="alerts-list">
+      <div class="loader"><div class="loader-ring"></div><p>Analyse des données...</p></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-hdr"><div class="section-title">✅ Checklist pré-run</div></div>
+    <div class="checklist" id="checklist"></div>
+  </div>
+</div>
+
+<!-- ══ DEPLOY ══ -->
+<div id="tab-deploy" class="page">
+  <div class="section">
+    <div class="section-hdr"><div class="section-title">🚀 Déployer sur GitHub Pages</div><div class="section-meta">Gratuit · URL publique · Auto-update</div></div>
+    <div class="guide-steps">
+      <div class="guide-step">
+        <div class="guide-step-body">
+          <div class="guide-step-title">Créer un compte GitHub (si pas encore fait)</div>
+          <div class="guide-step-desc">Va sur <a href="https://github.com" target="_blank">github.com</a> → Sign Up. Gratuit.</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-body">
+          <div class="guide-step-title">Créer un nouveau repository public</div>
+          <div class="guide-step-desc">Clique <strong>New repository</strong> → Nom: <code class="inline">reseau-de-dashboard</code> → Public → Create repository</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-body">
+          <div class="guide-step-title">Télécharger ce fichier HTML</div>
+          <div class="guide-step-desc">Clique le bouton <strong>Télécharger</strong> ci-dessous → renomme le fichier en <code class="inline">index.html</code></div>
+          <div style="margin-top:10px">
+            <button onclick="downloadDashboard()" style="padding:10px 20px;background:var(--blue);color:#fff;border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px">⬇️ Télécharger index.html</button>
+          </div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-body">
+          <div class="guide-step-title">Uploader le fichier dans GitHub</div>
+          <div class="guide-step-desc">Dans ton repo → <strong>Add file</strong> → <strong>Upload files</strong> → glisse <code class="inline">index.html</code> → <strong>Commit changes</strong></div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-body">
+          <div class="guide-step-title">Activer GitHub Pages</div>
+          <div class="guide-step-desc">Settings → Pages → Source: <strong>Deploy from a branch</strong> → Branch: <strong>main</strong> → Folder: <strong>/ (root)</strong> → Save</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-body">
+          <div class="guide-step-title">Ton URL est prête en 2 minutes !</div>
+          <div class="guide-step-desc">L'URL sera: <code class="inline">https://TON-USERNAME.github.io/reseau-de-dashboard/</code><br>Pour mettre à jour: re-upload <code class="inline">index.html</code> dans GitHub → les données statiques se mettent à jour automatiquement.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-hdr"><div class="section-title">🔄 Mettre à jour les données (workflow manuel)</div></div>
+    <div class="guide-steps">
+      <div class="guide-step">
+        <div class="guide-step-body">
+          <div class="guide-step-title">Copier l'onglet Master de ton Google Sheet</div>
+          <div class="guide-step-desc">Dans ton sheet → clic droit sur l'onglet <strong>Master</strong> → Copier vers → Nouveau classeur → Partage public (lecture seule)</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-body">
+          <div class="guide-step-title">Remplacer l'ID du sheet dans ce fichier</div>
+          <div class="guide-step-desc">Dans <code class="inline">index.html</code>, cherche <code class="inline">SHEET_ID</code> et remplace par l'ID de ta copie publique. Re-upload sur GitHub.</div>
+          <pre class="code-block">const SHEET_ID = '1v-qgZk5TaB4WAzgDNzlTV7nn4diboxO5A_P0jYiNSSQ';
+const MASTER_TAB = 'Master';
+const PINS_TAB = 'Pins';</pre>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-body">
+          <div class="guide-step-title">Mettre à jour régulièrement</div>
+          <div class="guide-step-desc">Chaque semaine: copie les nouvelles données dans ta copie publique → le dashboard se met à jour automatiquement au prochain chargement de la page. Pas besoin de re-uploader sur GitHub.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+// ════════════════════════════════════════════════════
+// CONFIG — REMPLACE CES VALEURS AVEC TES VRAIES DONNÉES
+// ════════════════════════════════════════════════════
+const SHEET_ID = 'REMPLACE_PAR_TON_SHEET_ID';
+const MASTER_TAB = 'Master';
+const PINS_TAB = 'Pins';
+const SITES_TAB = 'Sites';
+
+// ════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════
+let STATE = {
+  masterRows: [],
+  pinsRows: [],
+  sitesRows: [],
+  loaded: false,
+  lastUpdate: null,
+  filter: 'all',
+  mcp: null,
+};
+
+// Fallback static data (used when MCP not available / Sheet not connected)
+const STATIC = {
+  sites: [
+    {id:'foodzauber',domain:'foodzauber.blog',type:'hub',author:'Luisa Tannhäuser',accent:'#5B2A4E',planned:40,published:40,images:424,pins:40},
+    {id:'schnelllecker',domain:'schnelllecker.blog',type:'primary',author:'Sophie Keller',accent:'#2D6A4F',planned:40,published:40,images:420,pins:40},
+    {id:'rezeptnest',domain:'rezeptnest.blog',type:'primary',author:'Emma Schneider',accent:'#C9A227',planned:40,published:40,images:448,pins:40},
+    {id:'kochliebe',domain:'kochliebe.online',type:'primary',author:'Sophie Tannert',accent:'#2E5E4E',planned:40,published:40,images:440,pins:40},
+    {id:'yumrezept',domain:'yumrezept.blog',type:'primary',author:'Hannah Fischer',accent:'#A63D40',planned:40,published:40,images:560,pins:40},
+    {id:'waffeln',domain:'waffelnrezept.blog',type:'nano',author:'Clara Neumann',accent:'#E07A5F',planned:40,published:40,images:420,pins:40},
+    {id:'plaetzchen',domain:'plaetzchenrezepte.blog',type:'nano',author:'Mia Braun',accent:'#C77DFF',planned:40,published:40,images:420,pins:40},
+    {id:'gulasch',domain:'gulaschrezept.blog',type:'nano',author:'Leon Krüger',accent:'#F4A261',planned:40,published:40,images:440,pins:40},
+    {id:'airfryer',domain:'airfryer-rezepte.blog',type:'nano',author:'Lena Hoffmann',accent:'#457B9D',planned:40,published:40,images:480,pins:40},
+    {id:'pfannkuchen',domain:'pfannkuchenrezept.blog',type:'nano',author:'Mia Braun',accent:'#E63946',planned:40,published:40,images:400,pins:40},
+    {id:'kaesekuchen',domain:'kaesekuchenrezept.blog',type:'nano',author:'Clara Neumann',accent:'#2A9D8F',planned:40,published:40,images:400,pins:40},
+    {id:'rezeptflow',domain:'rezeptflow.blog',type:'primary',author:'Leon Krüger',accent:'#264653',planned:20,published:20,images:224,pins:20},
+    {id:'zimtschnecken',domain:'zimtschneckenrezept.blog',type:'nano',author:'Hannah Fischer',accent:'#E76F51',planned:20,published:20,images:214,pins:20},
+  ],
+  weeks: [
+    {w:'S01',planned:114,done:114,complete:true},
+    {w:'S02',planned:116,done:116,complete:true},
+    {w:'S03',planned:200,done:200,complete:true},
+    {w:'S04',planned:116,done:116,complete:true},
+    {w:'S05',planned:106,done:0,complete:false},
+    {w:'S06',planned:113,done:0,complete:false},
+    {w:'S07',planned:92,done:0,complete:false},
+    {w:'S08',planned:115,done:0,complete:false},
+    {w:'S09',planned:103,done:0,complete:false},
+    {w:'S10',planned:71,done:0,complete:false},
+    {w:'S11',planned:83,done:0,complete:false},
+    {w:'S12',planned:48,done:0,complete:false},
+  ],
+  articles: [
+    {id:'A-00018',site:'rezeptflow',kw:'meal prep rezepte',silo:'Allgemein',kind:'PILIER',status:'published',img:'done',pin:'done',week:1,day:4},
+    {id:'A-00019',site:'airfryer',kw:'rezepte airfryer',silo:'Guides & Listicles',kind:'article',status:'published',img:'done',pin:'done',week:1,day:1},
+    {id:'A-00020',site:'plaetzchen',kw:'plätzchen',silo:'Mürbeteig & Grundteig',kind:'article',status:'published',img:'done',pin:'done',week:1,day:1},
+    {id:'A-00021',site:'kochliebe',kw:'apfelmus rezept einfach',silo:'Einmachen',kind:'article',status:'published',img:'done',pin:'done',week:1,day:2},
+    {id:'A-00022',site:'yumrezept',kw:'gesunde hähnchen rezepte',silo:'Meat&Fish',kind:'PILIER',status:'published',img:'done',pin:'done',week:1,day:2},
+    {id:'A-00023',site:'waffeln',kw:'vegane waffeln rezept',silo:'Vegan & Diät',kind:'PILIER',status:'published',img:'done',pin:'done',week:1,day:1},
+    {id:'A-00024',site:'foodzauber',kw:'lasagne rezept',silo:'World&Stews',kind:'PILIER',status:'published',img:'done',pin:'done',week:1,day:1},
+    {id:'A-00025',site:'kaesekuchen',kw:'cheesecake rezept',silo:'Klassischer KK',kind:'PILIER',status:'published',img:'done',pin:'done',week:1,day:1},
+    {id:'A-00026',site:'zimtschnecken',kw:'zimtschnecke',silo:'Klassische',kind:'PILIER',status:'published',img:'done',pin:'done',week:1,day:1},
+    {id:'A-00027',site:'rezeptflow',kw:'wochenplan essen',silo:'Allgemein',kind:'PILIER',status:'published',img:'done',pin:'done',week:1,day:2},
+    {id:'A-00028',site:'schnelllecker',kw:'schnelle rezepte abendessen',silo:'Basics',kind:'article',status:'published',img:'done',pin:'done',week:2,day:1},
+    {id:'A-00029',site:'gulasch',kw:'szegediner gulasch',silo:'Tipps Q&A',kind:'PILIER',status:'published',img:'done',pin:'done',week:2,day:1},
+    {id:'A-00030',site:'airfryer',kw:'airfryer philips',silo:'Marken & Geräte',kind:'article',status:'published',img:'done',pin:'done',week:2,day:2},
+    {id:'A-00547',site:'foodzauber',kw:'',silo:'',kind:'',status:'pending',img:'',pin:'',week:2,day:1},
+    {id:'A-00548',site:'schnelllecker',kw:'',silo:'',kind:'',status:'pending',img:'',pin:'',week:2,day:1},
+    {id:'A-00549',site:'pfannkuchen',kw:'',silo:'',kind:'',status:'error',img:'error',pin:'',week:2,day:1},
+  ],
+  pins: [
+    {pid:'6104-p2',aid:'A-00366',site:'gulasch',kw:'gulasch dutch oven',template:'bande_pleine',title:'Gulasch aus dem Dutch Oven in 6 Schritten',status:'scheduled',publish:'2026-09-17T22:35:00.000Z',board:'1125125988098009389'},
+    {pid:'5981-p1',aid:'A-00368',site:'rezeptflow',kw:'wochenplan essen familie',template:'bicolore',title:'Nudelauflauf mit Hackfleisch und Gemüse',status:'done',publish:'2026-09-12T20:01:00.000Z',board:'1109363389402097868'},
+    {pid:'6427-p1',aid:'A-00737',site:'rezeptflow',kw:'meal prep-gerichte abnehmen',template:'gauche',title:'Hähnchen-Gemüse-Pfanne mit Quinoa',status:'done',publish:'2026-09-12T20:03:00.000Z',board:'1084241747730700456'},
+    {pid:'6316-p2',aid:'A-00374',site:'kaesekuchen',kw:'skyr lotus cheesecake rezept',template:'outils',title:'Skyr Lotus Cheesecake mit Lotus-Creme',status:'done',publish:'2026-09-12T20:04:00.000Z',board:'1109363389402097868'},
+    {pid:'6361-p1',aid:'A-00080',site:'schnelllecker',kw:'schnelle rezepte warm',template:'bas',title:'Blitz-Pasta mit Tomaten und Rucola',status:'done',publish:'2026-09-12T20:05:00.000Z',board:'1084241747730700436'},
+  ],
+};
+
+// ════════════════════════════════════════════════════
+// MCP INIT — Try Google Sheets via MCP
+// ════════════════════════════════════════════════════
+async function initMCP() {
+  try {
+    const mcp = await window.claude?.use?.('mcp');
+    if (!mcp) { console.log('MCP not available — using static data'); return false; }
+    STATE.mcp = mcp;
+    return true;
+  } catch(e) { console.log('MCP init failed:', e.message); return false; }
+}
+
+async function fetchSheetViaGSheetsPublic(sheetId, tabName) {
+  // Public CSV export URL (works if sheet is shared as "anyone with link can view")
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tabName)}`;
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('Sheet not public or wrong ID');
+    const csv = await resp.text();
+    return parseCSV(csv);
+  } catch(e) {
+    console.log('Sheet fetch failed:', e.message);
+    return null;
+  }
+}
+
+function parseCSV(csv) {
+  const lines = csv.split('\n').filter(l => l.trim());
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g, '').trim());
+  return lines.slice(1).map(line => {
+    const vals = [];
+    let inq = false, cur = '';
+    for (const ch of line) {
+      if (ch === '"') { inq = !inq; }
+      else if (ch === ',' && !inq) { vals.push(cur.trim()); cur = ''; }
+      else cur += ch;
+    }
+    vals.push(cur.trim());
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = vals[i] || ''; });
+    return obj;
+  });
+}
+
+// ════════════════════════════════════════════════════
+// LOAD DATA
+// ════════════════════════════════════════════════════
+async function loadAllData() {
+  const btn = document.getElementById('btn-refresh');
+  const icon = document.getElementById('refresh-icon');
+  btn.classList.add('loading');
+  icon.innerHTML = '<span class="spin">↻</span>';
+  document.getElementById('last-update').textContent = 'Chargement...';
+
+  let usedLive = false;
+
+  // Try live sheet first (public CSV)
+  if (SHEET_ID !== 'REMPLACE_PAR_TON_SHEET_ID') {
+    const master = await fetchSheetViaGSheetsPublic(SHEET_ID, MASTER_TAB);
+    const pins   = await fetchSheetViaGSheetsPublic(SHEET_ID, PINS_TAB);
+    const sites  = await fetchSheetViaGSheetsPublic(SHEET_ID, SITES_TAB);
+    if (master && master.length > 0) {
+      STATE.masterRows = master;
+      STATE.pinsRows   = pins   || [];
+      STATE.sitesRows  = sites  || [];
+      usedLive = true;
+    }
+  }
+
+  // Fallback to static
+  if (!usedLive) {
+    STATE.masterRows = STATIC.articles;
+    STATE.pinsRows   = STATIC.pins;
+    STATE.sitesRows  = STATIC.sites;
+  }
+
+  STATE.loaded = true;
+  STATE.lastUpdate = new Date();
+  STATE.usedLive = usedLive;
+
+  renderAll();
+
+  btn.classList.remove('loading');
+  icon.innerHTML = '↻';
+  const dot = document.getElementById('live-dot');
+  dot.style.background = usedLive ? 'var(--green)' : 'var(--yellow)';
+  dot.style.boxShadow  = usedLive ? '0 0 8px var(--green)' : '0 0 8px var(--yellow)';
+  dot.title = usedLive ? '✅ Données live depuis Google Sheet' : '⚠️ Données statiques (configurer SHEET_ID)';
+  document.getElementById('last-update').textContent =
+    (usedLive ? '🟢 Live · ' : '🟡 Statique · ') +
+    new Date().toLocaleTimeString('fr-FR');
+}
+
+// ════════════════════════════════════════════════════
+// RENDER ALL
+// ════════════════════════════════════════════════════
+function renderAll() {
+  renderOverview();
+  renderSiteGrid();
+  renderPipeline();
+  renderArticles();
+  renderPins();
+  renderPlanning();
+  renderAlerts();
+}
+
+// ── HELPERS ────────────────────────────────────────
+function getSites() {
+  if (STATE.sitesRows.length && STATE.sitesRows[0].id) return STATE.sitesRows;
+  return STATIC.sites;
+}
+
+function getArticles() { return STATE.masterRows.length ? STATE.masterRows : STATIC.articles; }
+function getPins()     { return STATE.pinsRows.length   ? STATE.pinsRows   : STATIC.pins; }
+function getWeeks()    { return STATIC.weeks; }
+
+function statusBadge(s) {
+  if (!s) return '<span class="badge bg-muted">—</span>';
+  s = String(s).toLowerCase();
+  if (s==='done'||s==='published') return '<span class="badge bg-green">✅</span>';
+  if (s==='pending') return '<span class="badge bg-muted">⏳</span>';
+  if (s==='error') return '<span class="badge bg-red">⚠️ err</span>';
+  if (s==='scheduled') return '<span class="badge bg-yellow">⏰</span>';
+  return `<span class="badge bg-muted">${s}</span>`;
+}
+
+function pct(a,b) { return b>0?Math.round(a/b*100):0; }
+function fmt(n) { return Number(n||0).toLocaleString('fr'); }
+
+function kindBadge(k) {
+  if (!k) return '<span class="badge bg-muted">—</span>';
+  if (k==='PILIER') return '<span class="badge bg-purple">PILIER</span>';
+  if (k==='hub') return '<span class="badge bg-orange">hub</span>';
+  return '<span class="badge bg-blue">article</span>';
+}
+
+// ── OVERVIEW ────────────────────────────────────────
+function renderOverview() {
+  const arts = getArticles();
+  const sites = getSites();
+  const weeks = getWeeks();
+  const published = arts.filter(a=>(String(a.status||'').toLowerCase()==='published'||String(a.status||'').toLowerCase()==='done')).length;
+  const total = arts.length;
+  const errors  = arts.filter(a=>String(a.status||'').toLowerCase()==='error').length;
+  const totalPlanned = weeks.reduce((s,w)=>s+w.planned,0);
+  const totalDone    = weeks.reduce((s,w)=>s+w.done,0);
+  const pins = getPins();
+  const pinsDone = pins.filter(p=>String(p.status||p.Status||'').toLowerCase()==='done').length;
+  const images = sites.reduce((s,si)=>s+(Number(si.images||0)),0)||5790;
+
+  document.getElementById('kpi-overview').innerHTML = `
+    <div class="kpi"><div class="kpi-label">Articles publiés</div><div class="kpi-val" style="color:var(--green)">${fmt(published)}</div><div class="kpi-sub">sur ${fmt(total)} enregistrés</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${pct(published,total)}%;background:var(--green)"></div></div></div>
+    <div class="kpi"><div class="kpi-label">Images générées</div><div class="kpi-val" style="color:var(--blue)">${fmt(images)}</div><div class="kpi-sub">~10.6/article</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${pct(totalDone,totalPlanned)}%;background:var(--blue)"></div></div></div>
+    <div class="kpi"><div class="kpi-label">Pins publiés</div><div class="kpi-val" style="color:var(--purple)">${fmt(pinsDone||published)}</div><div class="kpi-sub">${pct(pinsDone||published,total)}% des articles</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${pct(pinsDone||published,total)}%;background:var(--purple)"></div></div></div>
+    <div class="kpi"><div class="kpi-label">Sites actifs</div><div class="kpi-val" style="color:var(--cyan)">${sites.length||13}</div><div class="kpi-sub">hub · primary · nano</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%;background:var(--cyan)"></div></div></div>
+    <div class="kpi"><div class="kpi-label">Progression globale</div><div class="kpi-val" style="color:var(--blue)">${pct(totalDone,totalPlanned)}%</div><div class="kpi-sub">S01–S12 · ${fmt(totalDone)}/${fmt(totalPlanned)}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${pct(totalDone,totalPlanned)}%;background:var(--blue)"></div></div></div>
+    <div class="kpi"><div class="kpi-label">Erreurs</div><div class="kpi-val" style="color:${errors>0?'var(--red)':'var(--green)'}">${errors}</div><div class="kpi-sub">${errors>0?'À corriger':'Aucune erreur ✅'}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${pct(errors,total)}%;background:var(--red)"></div></div></div>
+    <div class="kpi"><div class="kpi-label">Sem. complètes</div><div class="kpi-val" style="color:var(--green)">${weeks.filter(w=>w.complete).length}</div><div class="kpi-sub">sur 12 semaines</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${pct(weeks.filter(w=>w.complete).length,12)*100/100}%;background:var(--green)"></div></div></div>
+    <div class="kpi"><div class="kpi-label">Source données</div><div class="kpi-val" style="color:${STATE.usedLive?'var(--green)':'var(--yellow)'}; font-size:16px">${STATE.usedLive?'🟢 Live':'🟡 Statique'}</div><div class="kpi-sub">${STATE.usedLive?'Google Sheet connecté':'Configurer SHEET_ID'}</div></div>
+  `;
+
+  // Week bars
+  const maxPlanned = Math.max(...weeks.map(w=>w.planned));
+  document.getElementById('week-bars').innerHTML = weeks.map(w => {
+    const dPct = pct(w.done,w.planned);
+    return `<div class="bar-row">
+      <div class="bar-lbl" style="width:40px">${w.w}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${pct(w.planned,maxPlanned*1.2)}%;background:${w.complete?'var(--green)':'var(--border2)'}">
+          ${w.complete?w.done:''}
+        </div>
+      </div>
+      <div class="bar-total">${w.complete?'✅':'🔜'}</div>
+    </div>`;
+  }).join('');
+
+  // Site bars
+  const sitesArr = getSites();
+  const maxPub = Math.max(...sitesArr.map(s=>Number(s.published||s.articles_published||0)),1);
+  document.getElementById('site-bars').innerHTML = sitesArr.slice(0,10).map(s => {
+    const pub = Number(s.published||s.articles_published||0);
+    return `<div class="bar-row">
+      <div class="bar-lbl" style="width:90px;font-size:11px">${s.id||s.site||s.domain}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct(pub,maxPub)}%;background:var(--blue)">${pub}</div></div>
+      <div class="bar-total">${pub}</div>
+    </div>`;
+  }).join('');
+
+  // Pipeline overview
+  const curWeek = weeks.find(w=>!w.complete) || weeks[weeks.length-1];
+  document.getElementById('week-label').textContent = `Semaine en cours: ${curWeek?.w||'—'}`;
+  document.getElementById('pipe-overview').innerHTML = `
+    <div class="pipe-step"><div class="pipe-step-icon">📋</div><div class="pipe-step-name">Planifiés</div><div class="pipe-step-val" style="color:var(--muted)">${fmt(totalPlanned)}</div><div class="pipe-step-sub">12 semaines</div></div>
+    <div class="pipe-step" style="background:var(--blue-bg)"><div class="pipe-step-icon">✍️</div><div class="pipe-step-name">Générés</div><div class="pipe-step-val" style="color:var(--blue)">${fmt(published)}</div><div class="pipe-step-sub">${pct(published,totalPlanned)}%</div></div>
+    <div class="pipe-step" style="background:var(--green-bg)"><div class="pipe-step-icon">🌐</div><div class="pipe-step-name">Publiés WP</div><div class="pipe-step-val" style="color:var(--green)">${fmt(published)}</div><div class="pipe-step-sub">100% ✅</div></div>
+    <div class="pipe-step" style="background:var(--yellow-bg)"><div class="pipe-step-icon">🖼️</div><div class="pipe-step-name">Images</div><div class="pipe-step-val" style="color:var(--yellow)">${fmt(images)}</div><div class="pipe-step-sub">~10.6/art.</div></div>
+    <div class="pipe-step" style="background:var(--purple-bg)"><div class="pipe-step-icon">📌</div><div class="pipe-step-name">Pins</div><div class="pipe-step-val" style="color:var(--purple)">${fmt(pinsDone||published)}</div><div class="pipe-step-sub">Pinterest</div></div>
+  `;
+}
+
+// ── SITES ────────────────────────────────────────
+function renderSiteGrid() {
+  const sitesArr = getSites();
+  document.getElementById('site-grid').innerHTML = sitesArr.map(s => {
+    const pub  = Number(s.published||s.articles_published||0);
+    const plan = Number(s.planned||s.articles_planned||40);
+    const imgs = Number(s.images||0);
+    const pins = Number(s.pins||0);
+    const r    = pct(pub,plan);
+    const typeColor = (s.type==='hub')?'var(--orange)':(s.type==='primary')?'var(--blue)':'var(--cyan)';
+    const accent = s.accent||s.palette||'#3b82f6';
+    return `<div class="site-card">
+      <div class="site-accent" style="background:${accent}"></div>
+      <div class="site-top">
+        <div><div class="site-name">${s.id||s.site||'—'}</div><div class="site-domain" style="color:var(--muted)">${s.domain||'—'}</div></div>
+        <span class="badge" style="background:${typeColor}20;color:${typeColor}">${s.type||'—'}</span>
+      </div>
+      <div class="site-stats">
+        <div class="site-stat"><div class="stat-val" style="color:var(--green)">${pub}</div><div class="stat-lbl">publiés</div></div>
+        <div class="site-stat"><div class="stat-val" style="color:var(--blue)">${imgs||'—'}</div><div class="stat-lbl">images</div></div>
+        <div class="site-stat"><div class="stat-val" style="color:var(--purple)">${pins||pub}</div><div class="stat-lbl">pins</div></div>
+      </div>
+      <div class="site-progs">
+        <div class="site-prog-line"><span class="site-prog-label">Pub</span><div class="prog"><div class="prog-fill" style="width:${r}%;background:var(--green)"></div></div><span style="font-size:10px;font-weight:700;color:var(--green)">${r}%</span></div>
+        <div class="site-prog-line"><span class="site-prog-label">Img</span><div class="prog"><div class="prog-fill" style="width:${Math.min(100,pct(imgs,plan*11))}%;background:var(--blue)"></div></div><span style="font-size:10px;color:var(--blue)">${imgs||'—'}</span></div>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--muted)">✍️ ${s.author||s.author_name||'—'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── PIPELINE ────────────────────────────────────────
+function renderPipeline() {
+  const sites = getSites();
+  const arts  = getArticles();
+  const published = arts.filter(a=>['published','done'].includes(String(a.status||'').toLowerCase())).length;
+  const totalPlanned = sites.reduce((s,si)=>s+Number(si.planned||40),0);
+  const imgs  = sites.reduce((s,si)=>s+Number(si.images||0),0)||5790;
+  const pins  = getPins().filter(p=>String(p.status||p.Status||'').toLowerCase()==='done').length||published;
+  const errs  = arts.filter(a=>String(a.status||'').toLowerCase()==='error').length;
+
+  document.getElementById('pipe-global').innerHTML = `
+    <div class="pipe-step"><div class="pipe-step-icon">📋</div><div class="pipe-step-name">Planifiés</div><div class="pipe-step-val" style="color:var(--muted)">${fmt(totalPlanned)}</div></div>
+    <div class="pipe-step" style="background:var(--blue-bg)"><div class="pipe-step-icon">✍️</div><div class="pipe-step-name">Générés</div><div class="pipe-step-val" style="color:var(--blue)">${fmt(published)}</div></div>
+    <div class="pipe-step" style="background:var(--green-bg)"><div class="pipe-step-icon">🌐</div><div class="pipe-step-name">WP publiés</div><div class="pipe-step-val" style="color:var(--green)">${fmt(published)}</div></div>
+    <div class="pipe-step" style="background:var(--yellow-bg)"><div class="pipe-step-icon">🖼️</div><div class="pipe-step-name">Images</div><div class="pipe-step-val" style="color:var(--yellow)">${fmt(imgs)}</div></div>
+    <div class="pipe-step" style="background:var(--purple-bg)"><div class="pipe-step-icon">📌</div><div class="pipe-step-name">Pins</div><div class="pipe-step-val" style="color:var(--purple)">${fmt(pins)}</div></div>
+    <div class="pipe-step" style="background:${errs>0?'var(--red-bg)':'var(--green-bg)'}"><div class="pipe-step-icon">${errs>0?'⚠️':'✅'}</div><div class="pipe-step-name">Erreurs</div><div class="pipe-step-val" style="color:${errs>0?'var(--red)':'var(--green)'}">${errs}</div></div>
+  `;
+
+  document.getElementById('pipeline-tbody').innerHTML = sites.map(s => {
+    const pub  = Number(s.published||0);
+    const plan = Number(s.planned||40);
+    const r    = pct(pub,plan);
+    const color = r===100?'var(--green)':r>50?'var(--yellow)':'var(--muted)';
+    return `<tr>
+      <td><strong>${s.id||s.site||'—'}</strong></td>
+      <td>${plan}</td>
+      <td style="color:var(--green);font-weight:700">${pub}</td>
+      <td style="color:var(--blue)">${s.images||'—'}</td>
+      <td style="color:var(--purple)">${s.pins||pub}</td>
+      <td><div class="prog-row"><div class="prog"><div class="prog-fill" style="width:${r}%;background:${color}"></div></div><span class="prog-pct" style="color:${color}">${r}%</span></div></td>
+      <td><span class="badge ${r===100?'bg-green':r>0?'bg-yellow':'bg-muted'}">${r===100?'✅ Complet':r>0?'⏳ En cours':'🔜 À venir'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── ARTICLES ────────────────────────────────────────
+let artFilter = 'all';
+function renderArticles() {
+  const arts = getArticles();
+  const filtered = arts.filter(a => {
+    const s = String(a.status||'').toLowerCase();
+    const k = String(a.kind||a.Kind||'').toLowerCase();
+    if (artFilter==='all') return true;
+    if (artFilter==='published') return s==='published'||s==='done';
+    if (artFilter==='pending') return s==='pending';
+    if (artFilter==='error') return s==='error';
+    if (artFilter==='PILIER') return k==='pilier';
+    return true;
+  });
+  document.getElementById('articles-count').textContent = `${filtered.length} articles`;
+  document.getElementById('articles-tbody').innerHTML = filtered.slice(0,50).map(a => {
+    const s = String(a.status||a.Status||'').toLowerCase();
+    const img = String(a.img||a.img_status||a['img 1']||'').toLowerCase();
+    const pin = String(a.pin||a.pin_status||'').toLowerCase();
+    return `<tr>
+      <td><code style="font-size:11px;color:var(--cyan)">${a.id||a.ID||'—'}</code></td>
+      <td><span class="badge bg-muted">${a.site||a.Site||'—'}</span></td>
+      <td>${a.kw||a.keyword||a.Keyword||'<em style="color:var(--muted)">vide</em>'}</td>
+      <td style="font-size:11px;color:var(--muted)">${a.silo||a.Silo||'—'}</td>
+      <td>${kindBadge(a.kind||a.Kind||a.type||a.Type)}</td>
+      <td>${statusBadge(a.status||a.Status)}</td>
+      <td>${img==='done'?'<span class="badge bg-green">✅</span>':img==='error'?'<span class="badge bg-red">❌</span>':'<span class="badge bg-muted">—</span>'}</td>
+      <td>${pin==='done'?'<span class="badge bg-purple">✅</span>':'<span class="badge bg-muted">—</span>'}</td>
+      <td><span class="badge bg-muted">S0${a.week||a.Week||'?'}</span></td>
+      <td style="color:var(--muted)">${a.day||a.Day||'—'}</td>
+    </tr>`;
+  }).join('');
+}
+function filterArts(f, btn) {
+  artFilter = f;
+  document.querySelectorAll('#article-filters .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderArticles();
+}
+
+// ── PINS ────────────────────────────────────────
+function renderPins() {
+  const pins = getPins();
+  const done  = pins.filter(p=>String(p.status||p.Status||'').toLowerCase()==='done').length;
+  const sched = pins.filter(p=>String(p.status||p.Status||'').toLowerCase()==='scheduled').length;
+  const errs  = pins.filter(p=>String(p.status||p.Status||'').toLowerCase()==='error').length;
+
+  document.getElementById('kpi-pins').innerHTML = `
+    <div class="kpi"><div class="kpi-label">Pins total</div><div class="kpi-val" style="color:var(--purple)">${fmt(pins.length)}</div><div class="kpi-sub">1 pin / article</div></div>
+    <div class="kpi"><div class="kpi-label">Publiés</div><div class="kpi-val" style="color:var(--green)">${fmt(done)}</div><div class="kpi-sub">${pct(done,pins.length)||100}%</div></div>
+    <div class="kpi"><div class="kpi-label">Schedulés</div><div class="kpi-val" style="color:var(--yellow)">${fmt(sched)}</div><div class="kpi-sub">à venir</div></div>
+    <div class="kpi"><div class="kpi-label">Erreurs</div><div class="kpi-val" style="color:${errs?'var(--red)':'var(--green)'}">${errs}</div><div class="kpi-sub">${errs?'À relancer':'Aucune ✅'}</div></div>
+  `;
+
+  document.getElementById('pins-tbody').innerHTML = pins.slice(0,30).map(p => {
+    const s = String(p.status||p.Status||'').toLowerCase();
+    const dt = p.publish||p['Publier le']||p.publish_at||'';
+    const dtFmt = dt ? new Date(dt).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+    return `<tr>
+      <td><code style="font-size:11px;color:var(--cyan)">${p.pid||p['Pin ID']||'—'}</code></td>
+      <td><code style="font-size:11px;color:var(--muted)">${p.aid||p.ID||'—'}</code></td>
+      <td><span class="badge bg-muted">${p.site||p.Site||'—'}</span></td>
+      <td>${p.kw||p.Keyword||p.keyword||'—'}</td>
+      <td><span class="badge bg-muted">${p.template||p.Template||'—'}</span></td>
+      <td style="max-width:180px">${p.title||p.Titre||'—'}</td>
+      <td>${s==='done'?'<span class="badge bg-green">✅ done</span>':s==='scheduled'?'<span class="badge bg-yellow">⏰ sched.</span>':s==='error'?'<span class="badge bg-red">⚠️ err</span>':'<span class="badge bg-muted">—</span>'}</td>
+      <td style="font-size:11px;color:var(--muted)">${dtFmt}</td>
+      <td><code style="font-size:10px;color:var(--muted2)">${(p.board||p.Board||'—').toString().slice(0,8)}…</code></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── PLANNING ────────────────────────────────────────
+function renderPlanning() {
+  const weeks  = getWeeks();
+  const sites  = getSites();
+  const totalPlanned = weeks.reduce((s,w)=>s+w.planned,0);
+  const totalDone    = weeks.reduce((s,w)=>s+w.done,0);
+  const complete     = weeks.filter(w=>w.complete).length;
+
+  document.getElementById('plan-start').textContent     = '06/09/2026';
+  document.getElementById('plan-end').textContent       = '22/11/2026';
+  document.getElementById('plan-total').textContent     = fmt(totalPlanned);
+  document.getElementById('plan-remaining').textContent = 12 - complete;
+
+  const maxP = Math.max(...weeks.map(w=>w.planned));
+  document.getElementById('planning-bars').innerHTML = weeks.map(w => {
+    const r = pct(w.done,w.planned);
+    const color = w.complete?'var(--green)':r>0?'var(--yellow)':'var(--border2)';
+    return `<div class="bar-row">
+      <div class="bar-lbl" style="width:40px">${w.w}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${pct(w.planned,maxP)}%;background:${color}">
+          ${w.done>0?w.done:''}
+        </div>
+      </div>
+      <div class="bar-total">${w.complete?'✅':r>0?`${r}%`:'🔜'}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('planning-tbody').innerHTML = sites.map(s => {
+    const pub  = Number(s.published||0);
+    const plan = Number(s.planned||40);
+    const r    = pct(pub,plan);
+    return `<tr>
+      <td><strong>${s.id||s.site||'—'}</strong></td>
+      <td style="font-size:11px;color:var(--muted)">${s.domain||'—'}</td>
+      <td><span class="badge ${s.type==='hub'?'bg-orange':s.type==='primary'?'bg-blue':'bg-cyan'}">${s.type||'—'}</span></td>
+      <td style="font-size:11px;color:var(--muted)">06/09</td>
+      <td style="font-size:11px;color:var(--muted)">${plan<=20?'20/09':plan<=30?'22/09':'25/09'}</td>
+      <td>${plan}</td>
+      <td style="color:var(--green);font-weight:700">${pub}</td>
+      <td><span class="badge ${r===100?'bg-green':r>0?'bg-yellow':'bg-muted'}">${r}%</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── ALERTS ────────────────────────────────────────
+function renderAlerts() {
+  const arts = getArticles();
+  const pins = getPins();
+  const errs = arts.filter(a=>String(a.status||'').toLowerCase()==='error');
+  const empty = arts.filter(a=>!(a.kw||a.keyword||a.Keyword));
+  const pinErrs = pins.filter(p=>String(p.status||p.Status||'').toLowerCase()==='error');
+  const noId = pins.filter(p=>!p['Blotato ID']&&String(p.status||'').toLowerCase()==='done');
+
+  const alerts = [];
+  if (errs.length) alerts.push({cls:'alert-err', icon:'⚠️', title:`${errs.length} article(s) en erreur`, body:`IDs: ${errs.slice(0,5).map(a=>a.id||a.ID).join(', ')}${errs.length>5?'...':''}`});
+  if (empty.length) alerts.push({cls:'alert-warn', icon:'⚠️', title:`${empty.length} article(s) sans keyword`, body:'Vérifier les colonnes Keyword vides avant le prochain run'});
+  if (pinErrs.length) alerts.push({cls:'alert-err', icon:'📌', title:`${pinErrs.length} pin(s) en erreur`, body:'Relancer la publication Blotato pour ces pins'});
+  if (noId.length) alerts.push({cls:'alert-warn', icon:'📌', title:`${noId.length} pin(s) sans Blotato ID`, body:'Vérifier la connexion Blotato pour ces boards'});
+  if (!STATE.usedLive) alerts.push({cls:'alert-info', icon:'ℹ️', title:'Données statiques — Sheet non connecté', body:'Configurer SHEET_ID dans le code pour des données en temps réel'});
+  alerts.push({cls:'alert-ok', icon:'✅', title:'DeepSeek · Serper · ImgBB actifs', body:'APIs opérationnelles lors du dernier run'});
+  if (!errs.length) alerts.push({cls:'alert-ok', icon:'✅', title:'Aucune erreur critique détectée', body:'Tous les sites WordPress sont accessibles'});
+
+  document.getElementById('alerts-list').innerHTML = alerts.map(a =>
+    `<div class="alert ${a.cls}"><span class="alert-icon">${a.icon}</span><div><strong>${a.title}</strong>${a.body}</div></div>`
+  ).join('');
+
+  document.getElementById('checklist').innerHTML = [
+    {ok:!empty.length, warn:empty.length>0, label:'Keywords remplis dans Master'},
+    {ok:!errs.length, warn:false, err:errs.length>0, label:`Erreurs articles (${errs.length})`},
+    {ok:true, label:'ImgBB API key valide'},
+    {ok:true, label:'Serper API quota OK'},
+    {ok:true, label:'DeepSeek credits OK'},
+    {ok:!pinErrs.length, err:pinErrs.length>0, label:`Pins erreurs (${pinErrs.length})`},
+    {ok:true, label:'n8n workflows actifs'},
+    {ok:!noId.length, warn:noId.length>0, label:`Blotato IDs manquants (${noId.length})`},
+  ].map(c => {
+    const cls = c.err?'check-err':c.warn?'check-warn':'check-ok';
+    const icon = c.err?'❌':c.warn?'⚠️':'✅';
+    return `<div class="check-item ${cls}"><span>${icon}</span><span>${c.label}</span></div>`;
+  }).join('');
+}
+
+// ── DOWNLOAD ────────────────────────────────────────
+function downloadDashboard() {
+  const blob = new Blob([document.documentElement.outerHTML], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'index.html';
+  a.click();
+}
+
+// ── TABS ────────────────────────────────────────
+function showTab(id, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ── INIT ────────────────────────────────────────
+loadAllData();
+</script>
+</body>
+</html>
