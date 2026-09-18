@@ -17,17 +17,15 @@
   --purple-bg:rgba(168,85,247,.1);--orange-bg:rgba(249,115,22,.1);
 }
 body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:14px}
-a{color:var(--blue)}
 .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100}
 .brand{font-weight:700;font-size:15px}.brand span{color:var(--muted);font-weight:400}
 .topbar-r{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--muted)}
-.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .btn-sm{padding:5px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;font-size:12px;font-weight:600;transition:.12s}
 .btn-sm:hover{border-color:var(--blue);color:var(--blue)}
 .tabs{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;gap:2px;overflow-x:auto}
 .tabs::-webkit-scrollbar{height:0}
-.tab{padding:12px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s;user-select:none}
+.tab{padding:12px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s}
 .tab:hover{color:var(--text)}.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 .badge-tab{background:var(--red-bg);color:var(--red);border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:4px}
 .content{padding:20px;max-width:1400px;margin:0 auto}
@@ -41,8 +39,7 @@ a{color:var(--blue)}
 .kpi-bar-fill{height:100%;border-radius:2px}
 .section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;overflow:hidden}
 .sec-hdr{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.sec-title{font-weight:700;font-size:13px}
-.sec-meta{font-size:12px;color:var(--muted)}
+.sec-title{font-weight:700;font-size:13px}.sec-meta{font-size:12px;color:var(--muted)}
 .tbl-wrap{overflow-x:auto}
 .tbl{width:100%;border-collapse:collapse}
 .tbl th{padding:9px 12px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--bg3);border-bottom:1px solid var(--border);white-space:nowrap}
@@ -50,7 +47,7 @@ a{color:var(--blue)}
 .tbl tr:last-child td{border-bottom:none}
 .tbl tbody tr:hover td{background:var(--bg3)}
 .tbl tfoot td{background:var(--bg3);font-weight:700;border-top:2px solid var(--border2)}
-.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:600;line-height:1.6;white-space:nowrap}
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:600;line-height:1.6}
 .bg-g{background:var(--green-bg);color:var(--green)}.bg-y{background:var(--yellow-bg);color:var(--yellow)}
 .bg-r{background:var(--red-bg);color:var(--red)}.bg-b{background:var(--blue-bg);color:var(--blue)}
 .bg-p{background:var(--purple-bg);color:var(--purple)}.bg-o{background:var(--orange-bg);color:var(--orange)}
@@ -61,7 +58,7 @@ a{color:var(--blue)}
 .prog-pct{font-size:11px;font-weight:700;width:34px;text-align:right}
 .bar-chart{padding:14px 18px}
 .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.bar-lbl{width:110px;font-size:12px;font-weight:600;text-align:right;color:var(--text);flex-shrink:0;overflow:hidden;text-overflow:ellipsis}
+.bar-lbl{width:110px;font-size:12px;font-weight:600;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis}
 .bar-track{flex:1;height:20px;background:var(--bg3);border-radius:4px;overflow:hidden}
 .bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px;font-size:11px;font-weight:700;color:rgba(255,255,255,.85);min-width:2px}
 .bar-stack{height:100%;display:flex;border-radius:4px;overflow:hidden}
@@ -76,10 +73,10 @@ a{color:var(--blue)}
 .sv{font-size:16px;font-weight:800}.sl{font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
 .pipe{display:grid;gap:1px;background:var(--border);border-radius:8px;overflow:hidden;margin:14px}
 .pipe-step{background:var(--bg3);padding:14px;text-align:center}
-.ps-icon{font-size:22px;margin-bottom:3px}.ps-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px}
+.ps-icon{font-size:22px;margin-bottom:3px}
+.ps-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px}
 .ps-val{font-size:26px;font-weight:900}.ps-sub{font-size:11px;color:var(--muted);margin-top:2px}
 .alert{display:flex;gap:10px;padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px;align-items:flex-start;line-height:1.5}
-.alert:last-child{margin-bottom:0}
 .a-err{background:var(--red-bg);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
 .a-warn{background:var(--orange-bg);border:1px solid rgba(249,115,22,.3);color:#fdba74}
 .a-info{background:var(--blue-bg);border:1px solid rgba(59,130,246,.3);color:#93c5fd}
@@ -100,7 +97,6 @@ a{color:var(--blue)}
 .ck-warn{background:var(--yellow-bg);border:1px solid rgba(234,179,8,.2)}
 .ck-err{background:var(--red-bg);border:1px solid rgba(239,68,68,.2)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.src-badge{font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600}
 @media(max-width:800px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.pipe{grid-template-columns:repeat(2,1fr)!important}.site-grid{grid-template-columns:1fr}.checklist{grid-template-columns:1fr}}
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 </style>
@@ -118,7 +114,7 @@ a{color:var(--blue)}
   <div class="tab active" onclick="showTab('overview',this)">📊 Vue d'ensemble</div>
   <div class="tab" onclick="showTab('sites',this)">🌐 Sites</div>
   <div class="tab" onclick="showTab('pipeline',this)">⚙️ Pipeline</div>
-  <div class="tab" onclick="showTab('semaines',this)">📅 Semaines S01–S12</div>
+  <div class="tab" onclick="showTab('semaines',this)">📅 Semaines S01–S11</div>
   <div class="tab" onclick="showTab('alerts',this)">🔔 Alertes <span class="badge-tab" id="alert-count">—</span></div>
 </div>
 <div class="content">
@@ -129,7 +125,9 @@ a{color:var(--blue)}
     <div class="sec-hdr"><div class="sec-title">⚙️ Pipeline global</div><div class="sec-meta" id="pipe-meta"></div></div>
     <div class="pipe" id="pipe-steps" style="grid-template-columns:repeat(7,1fr)"></div>
     <div style="padding:0 16px 16px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px"><span>Progression totale</span><span id="prog-lbl" style="font-weight:700;color:var(--text)"></span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px">
+        <span>Progression totale</span><span id="prog-lbl" style="font-weight:700;color:var(--text)"></span>
+      </div>
       <div style="height:10px;background:var(--border);border-radius:5px;overflow:hidden;display:flex" id="prog-bar"></div>
       <div style="display:flex;gap:14px;margin-top:8px;font-size:11px;flex-wrap:wrap" id="prog-legend"></div>
     </div>
@@ -144,7 +142,7 @@ a{color:var(--blue)}
 
 <div id="tab-pipeline" class="page">
   <div class="section">
-    <div class="sec-hdr"><div class="sec-title">⚙️ Pipeline détaillé par site</div><div class="sec-meta" id="pipe-tbl-meta"></div></div>
+    <div class="sec-hdr"><div class="sec-title">⚙️ Pipeline par site</div><div class="sec-meta" id="pipe-tbl-meta"></div></div>
     <div class="tbl-wrap"><table class="tbl">
       <thead><tr><th>Site</th><th>Total</th><th>✅ Published</th><th>📝 Drafted</th><th>⏰ Scheduled</th><th>⚠️ Failed</th><th>🔒 Quarantine</th><th>⏳ Pending</th><th>🖼️ Images</th><th>📌 Pins</th><th>Taux</th></tr></thead>
       <tbody id="pipe-tbody"></tbody>
@@ -155,36 +153,29 @@ a{color:var(--blue)}
 
 <div id="tab-semaines" class="page">
   <div class="section">
-    <div class="sec-hdr"><div class="sec-title">📅 Détail semaine par semaine</div><div class="sec-meta" id="weeks-meta"></div></div>
+    <div class="sec-hdr"><div class="sec-title">📅 Détail par semaine</div><div class="sec-meta" id="weeks-meta"></div></div>
     <div class="week-tabs" id="week-tabs"></div>
     <div id="week-content"></div>
   </div>
 </div>
 
 <div id="tab-alerts" class="page">
-  <div class="section"><div class="sec-hdr"><div class="sec-title">🔔 Alertes actives</div></div><div style="padding:16px" id="alerts-list"></div></div>
+  <div class="section"><div class="sec-hdr"><div class="sec-title">🔔 Alertes</div></div><div style="padding:16px" id="alerts-list"></div></div>
   <div class="section"><div class="sec-hdr"><div class="sec-title">✅ Checklist</div></div><div class="checklist" id="checklist"></div></div>
 </div>
 
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════════
-// CONFIG — Sheet ID + exact tab names from your sheet
-// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
 const SHEET_ID = '1v-qgZk5TaB4WAzgDNzlTV7nn4diboxO5A_P0jYiNSSQ';
-
-// These are ALL the tab names to try — the dashboard will
-// automatically try every variant and use whichever works
-const TAB_CANDIDATES = [
-  // Your actual tab names — try both with and without leading zero
-  'Master',
-  'S03','S04','S05','S06','S07','S08','S09','S10','S11','S12',
-  // Fallbacks in case naming is different
-  'S3','S4','S5','S6','S7','S8','S9',
-  'Semaine 3','Semaine 4','Semaine 5','Semaine 6',
-  'Week 3','Week 4','Pins','Sites'
-];
+// IMPORTANT: Only read Master — it contains ALL articles already
+// S03-S12 tabs are subsets of Master → reading both = duplicates
+const TABS_TO_READ = ['Master'];
+// Fallback: if Master fails, try these tab names
+const FALLBACK_TABS = ['S01','S02','S03','S04','S05','S06','S07','S08','S09','S10','S11'];
 
 const SITE_META = {
   airfryer:     {accent:'#457B9D',type:'nano'},
@@ -202,80 +193,104 @@ const SITE_META = {
   zimtschnecken:{accent:'#E76F51',type:'nano'},
 };
 
-// ══════════════════════════════════════════════════════════
-// REAL DATA from your CSV (hardcoded as latest known truth)
-// This is what shows when the live sheet can't be read
-// ══════════════════════════════════════════════════════════
-const STATIC_SITES = {
-  airfryer:     {total:1806,published:173,drafted:10,scheduled:4,failed:1,quarantine:0,pending:1618,images:2454,pins:186,avgW:665},
-  foodzauber:   {total:1083,published:158,drafted:14,scheduled:14,failed:6,quarantine:7,pending:884,images:2234,pins:134,avgW:662},
-  plaetzchen:   {total:817, published:178,drafted:4, scheduled:0, failed:0,quarantine:0,pending:635,images:1958,pins:129,avgW:647},
-  kaesekuchen:  {total:814, published:176,drafted:6, scheduled:4, failed:0,quarantine:4,pending:624,images:1540,pins:135,avgW:651},
-  rezeptnest:   {total:661, published:160,drafted:2, scheduled:10,failed:7,quarantine:0,pending:482,images:1295,pins:94, avgW:662},
-  waffeln:      {total:563, published:178,drafted:12,scheduled:4, failed:0,quarantine:1,pending:368,images:1258,pins:85, avgW:653},
-  kochliebe:    {total:499, published:161,drafted:9, scheduled:12,failed:6,quarantine:0,pending:310,images:1089,pins:83, avgW:651},
-  schnelllecker:{total:466, published:164,drafted:16,scheduled:14,failed:0,quarantine:1,pending:271,images:1076,pins:91, avgW:640},
-  rezeptflow:   {total:419, published:154,drafted:6, scheduled:14,failed:8,quarantine:0,pending:237,images:1148,pins:72, avgW:655},
-  yumrezept:    {total:416, published:164,drafted:6, scheduled:10,failed:8,quarantine:0,pending:228,images:1020,pins:71, avgW:670},
-  pfannkuchen:  {total:234, published:178,drafted:8, scheduled:2, failed:0,quarantine:1,pending:45, images:718, pins:63, avgW:656},
-  gulasch:      {total:224, published:178,drafted:12,scheduled:2, failed:1,quarantine:0,pending:31, images:888, pins:62, avgW:664},
-  zimtschnecken:{total:222, published:178,drafted:4, scheduled:5, failed:0,quarantine:6,pending:29, images:782, pins:60, avgW:651},
-};
-const STATIC_WEEKS = {
-  1:{total:537,published:536,drafted:0, scheduled:0, failed:1,quarantine:0,pending:0},
-  2:{total:788,published:566,drafted:56,scheduled:47,failed:17,quarantine:0,pending:101},
-  3:{total:720,published:0,  drafted:0, scheduled:1, failed:0,quarantine:0,pending:719},
-  4:{total:726,published:0,  drafted:0, scheduled:0, failed:0,quarantine:0,pending:726},
-  5:{total:715,published:0,  drafted:0, scheduled:0, failed:0,quarantine:0,pending:715},
-  6:{total:713,published:0,  drafted:0, scheduled:0, failed:0,quarantine:0,pending:713},
-  7:{total:701,published:0,  drafted:0, scheduled:0, failed:0,quarantine:0,pending:701},
-  8:{total:700,published:0,  drafted:0, scheduled:0, failed:0,quarantine:0,pending:700},
-  9:{total:695,published:0,  drafted:0, scheduled:0, failed:0,quarantine:0,pending:695},
-  10:{total:570,published:0, drafted:0, scheduled:0, failed:0,quarantine:0,pending:570},
-  11:{total:90, published:0, drafted:0, scheduled:0, failed:1,quarantine:0,pending:89},
-  12:{total:0,  published:0, drafted:0, scheduled:0, failed:0,quarantine:0,pending:0},
-};
-// Static image/pin totals (computed from CSV)
-const STATIC_IMG_TOTAL = 17460;
-const STATIC_PIN_TOTAL = 1265;
+// STATUS rank for deduplication (keep highest status per ID)
+const STATUS_RANK = {published:6,done:6,scheduled:5,drafted:4,failed:3,quarantine:2,processing:1,pending:0};
 
-// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// STATIC DATA — real numbers from Drive (18/09/2026)
+// ══════════════════════════════════════════════
+const STATIC = {
+  // Real data from data.csv — 8224 articles, 2200 published (18/09/2026)
+  sites: {
+    airfryer:     {total:1806,published:173,drafted:10,scheduled:4, failed:1, quarantine:0, pending:1618,images:2454,pins:186,avgW:665},
+    foodzauber:   {total:1083,published:158,drafted:14,scheduled:14,failed:6, quarantine:7, pending:884, images:2234,pins:134,avgW:662},
+    plaetzchen:   {total:817, published:178,drafted:4, scheduled:0, failed:0, quarantine:0, pending:635, images:1958,pins:129,avgW:647},
+    kaesekuchen:  {total:814, published:176,drafted:6, scheduled:4, failed:0, quarantine:4, pending:624, images:1540,pins:135,avgW:651},
+    rezeptnest:   {total:661, published:160,drafted:2, scheduled:10,failed:7, quarantine:0, pending:482, images:1295,pins:94, avgW:662},
+    waffeln:      {total:563, published:178,drafted:12,scheduled:4, failed:0, quarantine:1, pending:368, images:1258,pins:85, avgW:653},
+    kochliebe:    {total:499, published:161,drafted:9, scheduled:12,failed:6, quarantine:0, pending:310, images:1089,pins:83, avgW:651},
+    schnelllecker:{total:466, published:164,drafted:16,scheduled:14,failed:0, quarantine:1, pending:271, images:1076,pins:91, avgW:640},
+    rezeptflow:   {total:419, published:154,drafted:6, scheduled:14,failed:8, quarantine:0, pending:237, images:1148,pins:72, avgW:655},
+    yumrezept:    {total:416, published:164,drafted:6, scheduled:10,failed:8, quarantine:0, pending:228, images:1020,pins:71, avgW:670},
+    pfannkuchen:  {total:234, published:178,drafted:8, scheduled:2, failed:0, quarantine:1, pending:45,  images:718, pins:63, avgW:656},
+    gulasch:      {total:224, published:178,drafted:12,scheduled:2, failed:1, quarantine:0, pending:31,  images:888, pins:62, avgW:664},
+    zimtschnecken:{total:222, published:178,drafted:4, scheduled:5, failed:0, quarantine:6, pending:29,  images:782, pins:60, avgW:651},
+  },
+  weeks: {
+    1: {total:537,published:536,drafted:0, scheduled:0, failed:1, quarantine:0, pending:0},
+    2: {total:788,published:566,drafted:56,scheduled:47,failed:17,quarantine:1, pending:101},
+    3: {total:720,published:0,  drafted:0, scheduled:1, failed:0, quarantine:5, pending:714},
+    4: {total:726,published:0,  drafted:0, scheduled:0, failed:0, quarantine:12,pending:714},
+    5: {total:715,published:0,  drafted:0, scheduled:0, failed:0, quarantine:1, pending:714},
+    6: {total:713,published:0,  drafted:0, scheduled:0, failed:0, quarantine:0, pending:713},
+    7: {total:701,published:0,  drafted:0, scheduled:0, failed:0, quarantine:0, pending:701},
+    8: {total:700,published:0,  drafted:0, scheduled:0, failed:0, quarantine:0, pending:700},
+    9: {total:695,published:0,  drafted:0, scheduled:0, failed:0, quarantine:0, pending:695},
+    10:{total:570,published:0,  drafted:0, scheduled:0, failed:0, quarantine:0, pending:570},
+    11:{total:90, published:0,  drafted:0, scheduled:0, failed:1, quarantine:0, pending:89},
+  }
+};
+
+// ══════════════════════════════════════════════
 // STATE
-// ══════════════════════════════════════════════════════════
-let D = {sites:{},weeks:{},usedLive:false,liveTabCount:0,lastUpdate:null,activeWeek:1,imgTotal:0,pinTotal:0};
+// ══════════════════════════════════════════════
+let D={sites:{},weeks:{},usedLive:false,liveRows:0,lastUpdate:null,activeWeek:1};
 
-// ══════════════════════════════════════════════════════════
-// CSV FETCH + PARSE
-// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// CSV FETCH + PARSE + DEDUPLICATE
+// ══════════════════════════════════════════════
 function parseLine(line){
   const r=[];let cur='',inq=false;
   for(const ch of line){if(ch==='"')inq=!inq;else if(ch===','&&!inq){r.push(cur.trim());cur='';}else cur+=ch;}
   r.push(cur.trim());return r;
 }
-function parseCSV(text){
+
+function parseAndDedup(text){
   const lines=text.trim().split('\n').filter(l=>l.trim());
   if(lines.length<2) return null;
-  const hdrs=parseLine(lines[0]);
-  // Validate required columns exist
-  const hl=hdrs.map(h=>h.toLowerCase().trim());
-  const si=hl.findIndex(h=>h==='site');
-  const sti=hl.findIndex(h=>h==='status');
-  const wi=hl.findIndex(h=>h==='week');
-  const ii=hl.findIndex(h=>h==='img status'||h==='img_status'||h==='images');
-  const pi=hl.findIndex(h=>h==='pin status'||h==='pin_status'||h==='pins');
-  if(si<0||sti<0) return null; // not a valid data tab
-  return {rows:lines.slice(1).map(l=>{
+  const hdrs=parseLine(lines[0]).map(h=>h.toLowerCase().trim());
+  const idx={
+    id:    hdrs.findIndex(h=>h==='id'),
+    site:  hdrs.findIndex(h=>h==='site'),
+    status:hdrs.findIndex(h=>h==='status'),
+    week:  hdrs.findIndex(h=>h==='week'),
+    img:   hdrs.findIndex(h=>h==='img status'||h==='img_status'),
+    pin:   hdrs.findIndex(h=>h==='pin status'||h==='pin_status'),
+    words: hdrs.findIndex(h=>h==='words'),
+  };
+  if(idx.site<0||idx.status<0) return null;
+
+  // Parse all rows
+  const rawRows = lines.slice(1).map(l=>{
     const v=parseLine(l);
     return {
-      site:(v[si]||'').trim().toLowerCase(),
-      status:(v[sti]||'').trim().toLowerCase(),
-      week:parseInt(v[wi]||'0')||0,
-      imgDone:ii>=0&&(v[ii]||'').trim().toLowerCase()==='done',
-      pinDone:pi>=0&&(v[pi]||'').trim().toLowerCase()==='done',
+      id:     idx.id>=0?(v[idx.id]||'').trim():'',
+      site:   (v[idx.site]||'').trim().toLowerCase(),
+      status: (v[idx.status]||'').trim().toLowerCase(),
+      week:   idx.week>=0?parseInt(v[idx.week]||'0')||0:0,
+      img:    idx.img>=0?(v[idx.img]||'').trim().toLowerCase()==='done':false,
+      pin:    idx.pin>=0?(v[idx.pin]||'').trim().toLowerCase()==='done':false,
+      words:  idx.words>=0?parseInt((v[idx.words]||'').replace(/[\u202f\s,]/g,''))||0:0,
     };
-  }).filter(r=>r.site&&r.status),count:lines.length-1};
+  }).filter(r=>r.site&&r.status);
+
+  // Deduplicate by ID — keep highest status rank
+  const seen={};
+  for(const r of rawRows){
+    if(!r.id){
+      // No ID — just accumulate (shouldn't happen but handle gracefully)
+      continue;
+    }
+    const rank=STATUS_RANK[r.status]??0;
+    if(!seen[r.id]||rank>(STATUS_RANK[seen[r.id].status]??0)){
+      seen[r.id]=r;
+    }
+  }
+  const deduped=Object.values(seen);
+  // Also include rows without IDs
+  const noId=rawRows.filter(r=>!r.id);
+  return [...deduped,...noId];
 }
-function cleanN(s){return parseInt((s||'').replace(/[\u202f\s,]/g,''))||0;}
 
 async function fetchTab(tab){
   const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}&_=${Date.now()}`;
@@ -288,87 +303,107 @@ async function fetchTab(tab){
   }catch(e){return null;}
 }
 
-function accumulate(rows,sites,weeks){
+function buildStats(rows){
+  const sites={},weeks={};
   for(const r of rows){
-    const {site,status,week,imgDone,pinDone}=r;
-    if(!site||!status) continue;
-    if(!sites[site]) sites[site]={total:0,published:0,drafted:0,scheduled:0,failed:0,quarantine:0,pending:0,images:0,pins:0};
-    const s=sites[site];
+    if(!r.site||!r.status) continue;
+    if(!sites[r.site]) sites[r.site]={total:0,published:0,drafted:0,scheduled:0,failed:0,quarantine:0,pending:0,images:0,pins:0,words:[]};
+    const s=sites[r.site];
     s.total++;
-    if(imgDone) s.images++;
-    if(pinDone) s.pins++;
-    if(['published','done'].includes(status)) s.published++;
-    else if(status==='drafted') s.drafted++;
-    else if(status==='scheduled') s.scheduled++;
-    else if(status==='failed') s.failed++;
-    else if(status==='quarantine') s.quarantine++;
-    else s.pending++;
-    if(week>=1&&week<=12){
-      if(!weeks[week]) weeks[week]={total:0,published:0,drafted:0,scheduled:0,failed:0,quarantine:0,pending:0};
-      const w=weeks[week];
+    if(r.img) s.images++;
+    if(r.pin) s.pins++;
+    if(r.words>0) s.words.push(r.words);
+    const st=r.status;
+    if(['published','done'].includes(st)) s.published++;
+    else if(st==='drafted')    s.drafted++;
+    else if(st==='scheduled')  s.scheduled++;
+    else if(st==='failed')     s.failed++;
+    else if(st==='quarantine') s.quarantine++;
+    else                       s.pending++;
+    if(r.week>=1&&r.week<=12){
+      if(!weeks[r.week]) weeks[r.week]={total:0,published:0,drafted:0,scheduled:0,failed:0,quarantine:0,pending:0};
+      const w=weeks[r.week];
       w.total++;
-      if(['published','done'].includes(status)) w.published++;
-      else if(status==='drafted') w.drafted++;
-      else if(status==='scheduled') w.scheduled++;
-      else if(status==='failed') w.failed++;
-      else if(status==='quarantine') w.quarantine++;
-      else w.pending++;
+      if(['published','done'].includes(st)) w.published++;
+      else if(st==='drafted')    w.drafted++;
+      else if(st==='scheduled')  w.scheduled++;
+      else if(st==='failed')     w.failed++;
+      else if(st==='quarantine') w.quarantine++;
+      else                       w.pending++;
     }
   }
+  // Compute avgW
+  Object.values(sites).forEach(s=>{s.avgW=s.words.length?Math.round(s.words.reduce((a,b)=>a+b,0)/s.words.length):0;});
+  return {sites,weeks};
 }
 
 async function loadData(){
   const dot=document.getElementById('dot');
   const stxt=document.getElementById('status-txt');
-  dot.style.background='var(--yellow)';dot.style.boxShadow='0 0 8px var(--yellow)';
+  dot.style.cssText='width:8px;height:8px;border-radius:50%;background:var(--yellow);box-shadow:0 0 8px var(--yellow)';
   stxt.textContent='Chargement...';
 
-  const newSites={},newWeeks={};
-  let totalRows=0,liveTabCount=0,imgTotal=0,pinTotal=0;
+  let allRows=[];
+  let liveRows=0;
 
-  // Fetch all candidate tabs in parallel
-  const fetches=TAB_CANDIDATES.map(t=>fetchTab(t).then(csv=>({tab:t,csv})));
-  const results=await Promise.allSettled(fetches);
-
-  for(const res of results){
-    if(res.status!=='fulfilled'||!res.value.csv) continue;
-    const parsed=parseCSV(res.value.csv);
-    if(!parsed||parsed.rows.length===0) continue;
-    accumulate(parsed.rows,newSites,newWeeks);
-    // Count images and pins from raw rows
-    for(const r of parsed.rows){
-      if(r.imgDone) imgTotal++;
-      if(r.pinDone) pinTotal++;
+  // Try Master first (contains everything)
+  for(const tab of TABS_TO_READ){
+    const csv=await fetchTab(tab);
+    if(csv){
+      const rows=parseAndDedup(csv);
+      if(rows&&rows.length>50){
+        allRows=rows;
+        liveRows=rows.length;
+        break;
+      }
     }
-    totalRows+=parsed.rows.length;
-    liveTabCount++;
-    console.log(`✓ Tab '${res.value.tab}': ${parsed.rows.length} rows`);
   }
 
-  const minThreshold=100; // need at least 100 valid rows to trust live data
-  if(totalRows>=minThreshold){
-    D.sites=newSites;D.weeks=newWeeks;
-    D.usedLive=true;D.liveTabCount=liveTabCount;
-    D.imgTotal=imgTotal;D.pinTotal=pinTotal;
-    dot.style.background='var(--green)';dot.style.boxShadow='0 0 8px var(--green)';
-    stxt.textContent=`🟢 Live · ${liveTabCount} onglets · ${totalRows.toLocaleString('fr')} lignes · ${new Date().toLocaleTimeString('fr-FR')}`;
+  // If Master failed, try fallback tabs (dedup across all)
+  if(liveRows===0){
+    const seen={};
+    for(const tab of FALLBACK_TABS){
+      const csv=await fetchTab(tab);
+      if(!csv) continue;
+      const rows=parseAndDedup(csv);
+      if(!rows||rows.length===0) continue;
+      for(const r of rows){
+        if(r.id){
+          const rank=STATUS_RANK[r.status]??0;
+          if(!seen[r.id]||rank>(STATUS_RANK[seen[r.id].status]??0)) seen[r.id]=r;
+        } else {
+          allRows.push(r);
+        }
+      }
+    }
+    const deduped=Object.values(seen);
+    allRows=[...deduped,...allRows];
+    liveRows=allRows.length;
+  }
+
+  if(liveRows>=100){
+    const stats=buildStats(allRows);
+    D.sites=stats.sites;
+    D.weeks=stats.weeks;
+    D.usedLive=true;
+    D.liveRows=liveRows;
+    dot.style.cssText='width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)';
+    stxt.textContent=`🟢 Live · ${liveRows.toLocaleString('fr')} articles · ${new Date().toLocaleTimeString('fr-FR')}`;
   } else {
-    D.sites=JSON.parse(JSON.stringify(STATIC_SITES));
-    D.weeks=JSON.parse(JSON.stringify(STATIC_WEEKS));
-    D.usedLive=false;D.liveTabCount=0;
-    D.imgTotal=STATIC_IMG_TOTAL;D.pinTotal=STATIC_PIN_TOTAL;
-    dot.style.background='var(--yellow)';dot.style.boxShadow='0 0 8px var(--yellow)';
-    stxt.textContent=`🟡 Données du ${new Date().toLocaleDateString('fr-FR')} (sheet non accessible) · ${new Date().toLocaleTimeString('fr-FR')}`;
-    // Log what failed for debugging
-    console.warn(`Live fetch failed: only ${totalRows} rows from ${liveTabCount} tabs. Using static data.`);
+    D.sites=JSON.parse(JSON.stringify(STATIC.sites));
+    D.weeks=JSON.parse(JSON.stringify(STATIC.weeks));
+    D.usedLive=false;
+    D.liveRows=0;
+    dot.style.cssText='width:8px;height:8px;border-radius:50%;background:var(--yellow);box-shadow:0 0 8px var(--yellow)';
+    stxt.textContent=`🟡 Données du 18/09/2026 · ${new Date().toLocaleTimeString('fr-FR')}`;
   }
   D.lastUpdate=new Date();
   renderAll();
 }
 
-// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 // HELPERS
-// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 const fmt=n=>Number(n||0).toLocaleString('fr');
 const pct=(a,b)=>b>0?Math.round(a/b*100):0;
 const clr=p=>p>=80?'var(--green)':p>=50?'var(--yellow)':p>=20?'var(--orange)':'var(--red)';
@@ -376,15 +411,12 @@ const sBadge=p=>{const c=p>=80?'bg-g':p>=50?'bg-y':p>=20?'bg-o':'bg-r';return`<s
 function totals(){
   const T={total:0,published:0,drafted:0,scheduled:0,failed:0,quarantine:0,pending:0,images:0,pins:0};
   for(const s of Object.values(D.sites)) for(const k of Object.keys(T)) T[k]+=(s[k]||0);
-  // Override images/pins with our more accurate count
-  T.images=D.imgTotal||T.images;
-  T.pins=D.pinTotal||T.pins;
   return T;
 }
 
-// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 // RENDER
-// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function renderAll(){renderOverview();renderSites();renderPipeline();renderWeeks();renderAlerts();}
 
 function renderOverview(){
@@ -402,7 +434,7 @@ function renderOverview(){
     <div class="kpi"><div class="kpi-label">📌 Pins</div><div class="kpi-val" style="color:var(--purple)">${fmt(T.pins)}</div><div class="kpi-sub">${pinP}% des publiés</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${pinP}%;background:var(--purple)"></div></div></div>
     <div class="kpi"><div class="kpi-label">Sites actifs</div><div class="kpi-val" style="color:var(--cyan)">${Object.keys(D.sites).length}</div><div class="kpi-sub">hub · primary · nano</div></div>
     <div class="kpi"><div class="kpi-label">Progression</div><div class="kpi-val" style="color:var(--blue)">${doneP}%</div><div class="kpi-sub">${fmt(done)} / ${fmt(T.total)}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${doneP}%;background:var(--blue)"></div></div></div>`;
-  document.getElementById('pipe-meta').textContent=`${fmt(T.total)} articles · ${D.usedLive?`Live (${D.liveTabCount} onglets)`:'données statiques'}`;
+  document.getElementById('pipe-meta').textContent=`${fmt(T.total)} articles · ${D.usedLive?`Live (${fmt(D.liveRows)} lignes dédupliquées)`:'données statiques 18/09'}`;
   document.getElementById('pipe-steps').innerHTML=`
     <div class="pipe-step"><div class="ps-icon">📋</div><div class="ps-name">Total</div><div class="ps-val" style="color:var(--muted)">${fmt(T.total)}</div></div>
     <div class="pipe-step" style="background:var(--green-bg)"><div class="ps-icon">✅</div><div class="ps-name">Published</div><div class="ps-val" style="color:var(--green)">${fmt(T.published)}</div><div class="ps-sub">${pubP}%</div></div>
@@ -478,7 +510,7 @@ function renderSites(){
 
 function renderPipeline(){
   const T=totals();
-  document.getElementById('pipe-tbl-meta').textContent=`${fmt(T.total)} articles · ${Object.keys(D.sites).length} sites`;
+  document.getElementById('pipe-tbl-meta').textContent=`${fmt(T.total)} articles uniques · ${Object.keys(D.sites).length} sites`;
   const rows=Object.entries(D.sites).sort((a,b)=>b[1].published-a[1].published);
   document.getElementById('pipe-tbody').innerHTML=rows.map(([name,s])=>{
     const p=pct(s.published,s.total);
@@ -509,7 +541,7 @@ function renderWeeks(){
   document.getElementById('weeks-meta').textContent=`${wks.length} semaines · ${fmt(total)} articles`;
   document.getElementById('week-tabs').innerHTML=wks.map(w=>{
     const wd=D.weeks[w],done=wd.published+wd.drafted+wd.scheduled,p=pct(done,wd.total);
-    const cls=p>=90?'done':p>=10?'partial':wd.failed>5?'err':'';
+    const cls=p>=90?'done':p>=10?'partial':(wd.failed+wd.quarantine)>5?'err':'';
     return `<div class="wtab ${cls} ${w===D.activeWeek?'active':''}" onclick="showWeek(${w},this)">S${String(w).padStart(2,'0')} <span style="font-size:10px;opacity:.7">${p}%</span></div>`;
   }).join('');
   showWeekContent(D.activeWeek);
@@ -522,7 +554,8 @@ function showWeek(n,el){
   showWeekContent(n);
 }
 function showWeekContent(n){
-  const w=D.weeks[n];if(!w){document.getElementById('week-content').innerHTML='<div class="week-content"><p style="color:var(--muted);padding:16px">Pas de données.</p></div>';return;}
+  const w=D.weeks[n];
+  if(!w){document.getElementById('week-content').innerHTML='<div class="week-content"><p style="color:var(--muted);padding:16px">Pas de données.</p></div>';return;}
   const done=w.published+w.drafted+w.scheduled,p=pct(done,w.total),c=clr(p);
   document.getElementById('week-content').innerHTML=`<div class="week-content">
     <div class="kpi-grid" style="margin-bottom:12px">
@@ -534,7 +567,9 @@ function showWeekContent(n){
       <div class="kpi"><div class="kpi-label">⏳ Pending</div><div class="kpi-val" style="color:var(--muted)">${fmt(w.pending)}</div></div>
     </div>
     <div style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px"><span>Avancement S${n}</span><span style="font-weight:700;color:${c}">${fmt(done)} / ${fmt(w.total)} (${p}%)</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px">
+        <span>Avancement S${n}</span><span style="font-weight:700;color:${c}">${fmt(done)} / ${fmt(w.total)} (${p}%)</span>
+      </div>
       <div style="height:10px;background:var(--border);border-radius:5px;overflow:hidden;display:flex">
         <div style="width:${pct(w.published,w.total)}%;background:var(--green)"></div>
         <div style="width:${pct(w.drafted,w.total)}%;background:var(--blue)"></div>
@@ -552,23 +587,23 @@ function showWeekContent(n){
 
 function renderAlerts(){
   const T=totals();const alerts=[];
-  if(!D.usedLive) alerts.push({cls:'a-info',icon:'🟡',title:`Données du ${D.lastUpdate?.toLocaleDateString('fr-FR')} — sheet non accessible`,body:'Le dashboard affiche les dernières données connues. Pour les données live: ouvrir la console (F12) pour voir pourquoi les onglets ne se chargent pas.'});
-  if(T.failed>0) alerts.push({cls:'a-err',icon:'⚠️',title:`${T.failed} articles "failed" à relancer`,body:'Sites: '+Object.entries(D.sites).filter(([,s])=>s.failed>0).map(([n,s])=>`${n} (${s.failed})`).join(', ')});
-  if(T.quarantine>0) alerts.push({cls:'a-err',icon:'🔒',title:`${T.quarantine} articles en quarantine`,body:'Sites: '+Object.entries(D.sites).filter(([,s])=>s.quarantine>0).map(([n,s])=>`${n} (${s.quarantine})`).join(', ')});
-  if(T.drafted>0) alerts.push({cls:'a-info',icon:'📝',title:`${T.drafted} articles drafted — prêts à publier`,body:Object.entries(D.sites).filter(([,s])=>s.drafted>0).sort((a,b)=>b[1].drafted-a[1].drafted).slice(0,5).map(([n,s])=>`${n} (${s.drafted})`).join(', ')});
+  if(!D.usedLive) alerts.push({cls:'a-info',icon:'🟡',title:`Données du 18/09/2026 (sheet non accessible depuis GitHub Pages)`,body:'Les données affichées sont les dernières données réelles connues.'});
+  if(T.failed>0) alerts.push({cls:'a-err',icon:'⚠️',title:`${T.failed} articles "failed" à relancer`,body:Object.entries(D.sites).filter(([,s])=>s.failed>0).map(([n,s])=>`${n} (${s.failed})`).join(', ')});
+  if(T.quarantine>0) alerts.push({cls:'a-err',icon:'🔒',title:`${T.quarantine} articles en quarantine`,body:Object.entries(D.sites).filter(([,s])=>s.quarantine>0).map(([n,s])=>`${n} (${s.quarantine})`).join(', ')});
+  if(T.drafted>0) alerts.push({cls:'a-info',icon:'📝',title:`${T.drafted} articles drafted — prêts à publier`,body:Object.entries(D.sites).filter(([,s])=>s.drafted>0).sort((a,b)=>b[1].drafted-a[1].drafted).map(([n,s])=>`${n} (${s.drafted})`).join(', ')});
   const mPin=T.published-T.pins;
-  if(mPin>0) alerts.push({cls:'a-warn',icon:'📌',title:`${fmt(mPin)} articles publiés sans pin Pinterest`,body:`${T.pins} pins pour ${T.published} publiés (${pct(T.pins,T.published)}% couverture)`});
-  const low=Object.entries(D.sites).filter(([,s])=>pct(s.published,s.total)<20&&s.total>200);
-  if(low.length) alerts.push({cls:'a-info',icon:'🐢',title:`${low.length} site(s) avec taux < 20%`,body:low.map(([n,s])=>`${n}: ${pct(s.published,s.total)}%`).join(' · ')});
-  if(T.published>0) alerts.push({cls:'a-ok',icon:'✅',title:`${fmt(T.published)} articles publiés · ${fmt(T.images)} images`,body:`Progression: ${pct(T.published+T.drafted+T.scheduled,T.total)}% du pipeline traité`});
+  if(mPin>0) alerts.push({cls:'a-warn',icon:'📌',title:`${fmt(mPin)} articles publiés sans pin`,body:`${T.pins} pins pour ${T.published} publiés (${pct(T.pins,T.published)}%)`});
+  const low=Object.entries(D.sites).filter(([,s])=>pct(s.published,s.total)<15&&s.total>200);
+  if(low.length) alerts.push({cls:'a-info',icon:'🐢',title:`${low.length} site(s) avec taux < 15%`,body:low.map(([n,s])=>`${n}: ${pct(s.published,s.total)}% (${s.published}/${s.total})`).join(' · ')});
+  if(T.published>0) alerts.push({cls:'a-ok',icon:'✅',title:`${fmt(T.published)} articles publiés · ${fmt(T.images)} images · ${fmt(T.pins)} pins`,body:`Progression: ${pct(T.published+T.drafted+T.scheduled,T.total)}% traité`});
   document.getElementById('alert-count').textContent=alerts.filter(a=>a.cls==='a-err'||a.cls==='a-warn').length;
   document.getElementById('alerts-list').innerHTML=alerts.map(a=>`<div class="alert ${a.cls}"><span class="a-icon">${a.icon}</span><div><strong>${a.title}</strong>${a.body}</div></div>`).join('');
   const checks=[
-    {ok:T.failed===0,warn:T.failed>0&&T.failed<10,err:T.failed>=10,label:`Failed (${T.failed})`},
-    {ok:T.quarantine===0,warn:T.quarantine>0&&T.quarantine<5,err:T.quarantine>=5,label:`Quarantine (${T.quarantine})`},
+    {ok:T.failed===0,warn:T.failed>0&&T.failed<20,err:T.failed>=20,label:`Failed (${T.failed})`},
+    {ok:T.quarantine===0,warn:T.quarantine>0&&T.quarantine<10,err:T.quarantine>=10,label:`Quarantine (${T.quarantine})`},
     {ok:T.drafted===0,warn:T.drafted>0,label:`Drafted à publier (${T.drafted})`},
-    {ok:pct(T.pins,T.published)>=80,warn:pct(T.pins,T.published)<80,label:`Pins (${pct(T.pins,T.published)}% couverture)`},
-    {ok:D.usedLive,warn:!D.usedLive,label:`Source: ${D.usedLive?`Live (${D.liveTabCount} onglets)`:'statique ⚠️'}`},
+    {ok:pct(T.pins,T.published)>=70,warn:pct(T.pins,T.published)<70,label:`Pins (${pct(T.pins,T.published)}% couverture)`},
+    {ok:D.usedLive,warn:!D.usedLive,label:`Source: ${D.usedLive?'Live ✅':'Statique 18/09 ⚠️'}`},
     {ok:true,label:'n8n workflows actifs'},
     {ok:T.published>0,label:`${fmt(T.published)} articles publiés`},
     {ok:T.images>0,label:`${fmt(T.images)} images générées`},
@@ -585,7 +620,6 @@ function showTab(id,el){
   document.getElementById('tab-'+id).classList.add('active');el.classList.add('active');
 }
 
-// Boot + auto-refresh every 5 min
 loadData();
 setInterval(()=>loadData(),5*60*1000);
 </script>
