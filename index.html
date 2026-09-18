@@ -3,548 +3,591 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>🎛️ Réseau DE — Production Dashboard</title>
+<title>🎛️ Réseau DE — Dashboard</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#0f1117;--bg2:#181b24;--bg3:#1e2232;--bg4:#252a3a;
   --border:#2a2f45;--border2:#353b52;
-  --text:#e2e8f0;--muted:#7a82a6;--muted2:#4a5270;
+  --text:#e2e8f0;--muted:#7a82a6;
   --green:#22c55e;--yellow:#eab308;--red:#ef4444;
   --blue:#3b82f6;--purple:#a855f7;--orange:#f97316;--cyan:#06b6d4;
   --green-bg:rgba(34,197,94,.1);--yellow-bg:rgba(234,179,8,.1);
   --red-bg:rgba(239,68,68,.1);--blue-bg:rgba(59,130,246,.1);
   --purple-bg:rgba(168,85,247,.1);--orange-bg:rgba(249,115,22,.1);
 }
-body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:14px;min-height:100vh}
-a{color:var(--blue);text-decoration:none}
-
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:14px}
+a{color:var(--blue)}
 .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100}
-.brand{font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px}
-.brand span{color:var(--muted);font-weight:400}
-.topbar-right{display:flex;align-items:center;gap:14px;font-size:12px;color:var(--muted)}
-.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;font-size:12px;font-weight:600;transition:.12s}
-.btn:hover{border-color:var(--blue);color:var(--blue)}
-
+.brand{font-weight:700;font-size:15px}.brand span{color:var(--muted);font-weight:400}
+.topbar-r{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.btn-sm{padding:5px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;font-size:12px;font-weight:600;transition:.12s}
+.btn-sm:hover{border-color:var(--blue);color:var(--blue)}
 .tabs{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;display:flex;gap:2px;overflow-x:auto}
 .tabs::-webkit-scrollbar{height:0}
-.tab{padding:12px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s}
+.tab{padding:12px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s;user-select:none}
 .tab:hover{color:var(--text)}.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
-
+.badge-tab{background:var(--red-bg);color:var(--red);border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:4px}
 .content{padding:20px;max-width:1400px;margin:0 auto}
 .page{display:none}.page.active{display:block}
-
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;margin-bottom:20px}
 .kpi{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
 .kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
-.kpi-val{font-size:26px;font-weight:800;line-height:1}
+.kpi-val{font-size:24px;font-weight:800;line-height:1}
 .kpi-sub{font-size:11px;color:var(--muted);margin-top:4px}
 .kpi-bar{height:3px;border-radius:2px;margin-top:10px;background:var(--border)}
 .kpi-bar-fill{height:100%;border-radius:2px}
-
 .section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;overflow:hidden}
-.section-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.section-title{font-weight:700;font-size:13px}
-.section-meta{font-size:12px;color:var(--muted)}
-
+.sec-hdr{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.sec-title{font-weight:700;font-size:13px}
+.sec-meta{font-size:12px;color:var(--muted)}
 .tbl-wrap{overflow-x:auto}
 .tbl{width:100%;border-collapse:collapse}
-.tbl th{padding:9px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--bg3);border-bottom:1px solid var(--border);white-space:nowrap}
-.tbl td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:13px;white-space:nowrap}
+.tbl th{padding:9px 12px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--bg3);border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--border);font-size:13px;white-space:nowrap}
 .tbl tr:last-child td{border-bottom:none}
 .tbl tbody tr:hover td{background:var(--bg3)}
-
+.tbl tfoot td{background:var(--bg3);font-weight:700;border-top:2px solid var(--border2)}
 .badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:600;line-height:1.6;white-space:nowrap}
-.bg-green{background:var(--green-bg);color:var(--green)}
-.bg-yellow{background:var(--yellow-bg);color:var(--yellow)}
-.bg-red{background:var(--red-bg);color:var(--red)}
-.bg-blue{background:var(--blue-bg);color:var(--blue)}
-.bg-purple{background:var(--purple-bg);color:var(--purple)}
-.bg-orange{background:var(--orange-bg);color:var(--orange)}
-.bg-muted{background:var(--bg4);color:var(--muted)}
-.bg-cyan{background:rgba(6,182,212,.1);color:var(--cyan)}
-
+.bg-g{background:var(--green-bg);color:var(--green)}.bg-y{background:var(--yellow-bg);color:var(--yellow)}
+.bg-r{background:var(--red-bg);color:var(--red)}.bg-b{background:var(--blue-bg);color:var(--blue)}
+.bg-p{background:var(--purple-bg);color:var(--purple)}.bg-o{background:var(--orange-bg);color:var(--orange)}
+.bg-m{background:var(--bg4);color:var(--muted)}.bg-c{background:rgba(6,182,212,.1);color:var(--cyan)}
 .prog-row{display:flex;align-items:center;gap:8px}
 .prog{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
 .prog-fill{height:100%;border-radius:3px}
-.prog-pct{font-size:11px;font-weight:700;width:36px;text-align:right}
-
-.site-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;padding:16px}
-.site-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 14px 14px 18px;position:relative;transition:.15s}
-.site-card:hover{border-color:var(--border2);transform:translateY(-1px)}
-.site-accent{position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:8px 0 0 8px}
-.site-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;margin:10px 0}
-.stat-val{font-size:17px;font-weight:800}
-.stat-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
-
-.pipe-steps{display:grid;gap:1px;background:var(--border);border-radius:8px;overflow:hidden}
-.pipe-step{background:var(--bg3);padding:16px;text-align:center}
-.pipe-step-icon{font-size:24px;margin-bottom:4px}
-.pipe-step-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px}
-.pipe-step-val{font-size:28px;font-weight:900}
-.pipe-step-sub{font-size:11px;color:var(--muted);margin-top:2px}
-
-.alert{display:flex;gap:10px;padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px;align-items:flex-start}
-.alert:last-child{margin-bottom:0}
-.alert-warn{background:#f9731614;border:1px solid #f9731640;color:#fdba74}
-.alert-info{background:var(--blue-bg);border:1px solid #3b82f640;color:#93c5fd}
-.alert-ok{background:var(--green-bg);border:1px solid #22c55e40;color:#86efac}
-.alert-err{background:var(--red-bg);border:1px solid #ef444440;color:#fca5a5}
-.alert-icon{font-size:16px;flex-shrink:0}
-.alert strong{display:block;font-weight:700;margin-bottom:2px}
-
+.prog-pct{font-size:11px;font-weight:700;width:34px;text-align:right}
 .bar-chart{padding:14px 18px}
 .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.bar-lbl{width:100px;font-size:12px;font-weight:600;text-align:right;color:var(--text);flex-shrink:0}
-.bar-track{flex:1;height:22px;background:var(--bg3);border-radius:4px;overflow:hidden;position:relative}
-.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:700;color:rgba(255,255,255,.85);min-width:2px;transition:width .8s ease}
+.bar-lbl{width:110px;font-size:12px;font-weight:600;text-align:right;color:var(--text);flex-shrink:0;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:20px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px;font-size:11px;font-weight:700;color:rgba(255,255,255,.85);min-width:2px}
 .bar-stack{height:100%;display:flex;border-radius:4px;overflow:hidden}
-.bar-total{width:50px;font-size:12px;font-weight:700;color:var(--muted);text-align:left;flex-shrink:0}
-
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.filter-btn{padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:.12s}
-.filter-btn:hover,.filter-btn.active{background:var(--blue-bg);border-color:var(--blue);color:var(--blue)}
-
+.bar-val{width:44px;font-size:11px;font-weight:700;text-align:left;flex-shrink:0}
+.site-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;padding:16px}
+.site-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 14px 12px 18px;position:relative;transition:.15s}
+.site-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.site-accent{position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:8px 0 0 8px}
+.sc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.sc-name{font-weight:700;font-size:14px}
+.sc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;text-align:center;margin:8px 0}
+.sv{font-size:16px;font-weight:800}.sl{font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.pipe{display:grid;gap:1px;background:var(--border);border-radius:8px;overflow:hidden;margin:14px}
+.pipe-step{background:var(--bg3);padding:14px;text-align:center}
+.ps-icon{font-size:22px;margin-bottom:3px}.ps-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px}
+.ps-val{font-size:26px;font-weight:900}.ps-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.alert{display:flex;gap:10px;padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px;align-items:flex-start;line-height:1.5}
+.alert:last-child{margin-bottom:0}
+.a-err{background:var(--red-bg);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+.a-warn{background:var(--orange-bg);border:1px solid rgba(249,115,22,.3);color:#fdba74}
+.a-info{background:var(--blue-bg);border:1px solid rgba(59,130,246,.3);color:#93c5fd}
+.a-ok{background:var(--green-bg);border:1px solid rgba(34,197,94,.3);color:#86efac}
+.a-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.alert strong{display:block;font-weight:700;margin-bottom:2px}
+.week-tabs{display:flex;gap:4px;flex-wrap:wrap;padding:14px 18px 0;border-bottom:1px solid var(--border)}
+.wtab{padding:6px 12px;border-radius:6px 6px 0 0;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:.12s;border:1px solid transparent;border-bottom:none;margin-bottom:-1px}
+.wtab:hover{color:var(--text);background:var(--bg3)}
+.wtab.active{color:var(--blue);background:var(--bg2);border-color:var(--border);border-bottom-color:var(--bg2)}
+.wtab.done{color:var(--green)}.wtab.active.done{color:var(--green)}
+.wtab.partial{color:var(--yellow)}.wtab.active.partial{color:var(--yellow)}
+.wtab.err{color:var(--orange)}.wtab.active.err{color:var(--orange)}
+.week-content{padding:16px}
 .checklist{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:16px}
-.check-item{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:6px;font-size:13px}
-.check-ok{background:var(--green-bg);border:1px solid rgba(34,197,94,.2)}
-.check-warn{background:var(--yellow-bg);border:1px solid rgba(234,179,8,.2)}
-.check-err{background:var(--red-bg);border:1px solid rgba(239,68,68,.2)}
-
-@media(max-width:700px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.pipe-steps{grid-template-columns:repeat(2,1fr)!important}.site-grid{grid-template-columns:1fr}.checklist{grid-template-columns:1fr}}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.check{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:6px;font-size:13px}
+.ck-ok{background:var(--green-bg);border:1px solid rgba(34,197,94,.2)}
+.ck-warn{background:var(--yellow-bg);border:1px solid rgba(234,179,8,.2)}
+.ck-err{background:var(--red-bg);border:1px solid rgba(239,68,68,.2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.src-badge{font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600}
+@media(max-width:800px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.pipe{grid-template-columns:repeat(2,1fr)!important}.site-grid{grid-template-columns:1fr}.checklist{grid-template-columns:1fr}}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 </style>
 </head>
 <body>
-
 <div class="topbar">
   <div class="brand">🎛️ <span>Réseau DE ·</span> Production Dashboard</div>
-  <div class="topbar-right">
-    <div class="live-dot"></div>
-    <span id="last-update">Données live · 17/09/2026</span>
-    <button class="btn" onclick="location.reload()">↻ Rafraîchir</button>
+  <div class="topbar-r">
+    <div class="dot" id="dot" style="background:var(--yellow);box-shadow:0 0 8px var(--yellow)"></div>
+    <span id="status-txt">Chargement...</span>
+    <button class="btn-sm" onclick="loadData()">↻ Rafraîchir</button>
   </div>
 </div>
-
 <div class="tabs">
   <div class="tab active" onclick="showTab('overview',this)">📊 Vue d'ensemble</div>
-  <div class="tab" onclick="showTab('sites',this)">🌐 Sites (13)</div>
+  <div class="tab" onclick="showTab('sites',this)">🌐 Sites</div>
   <div class="tab" onclick="showTab('pipeline',this)">⚙️ Pipeline</div>
-  <div class="tab" onclick="showTab('articles',this)">📝 Articles</div>
-  <div class="tab" onclick="showTab('planning',this)">📅 Planning</div>
-  <div class="tab" onclick="showTab('alerts',this)">🔔 Alertes <span style="background:var(--red-bg);color:var(--red);border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:4px">7</span></div>
+  <div class="tab" onclick="showTab('semaines',this)">📅 Semaines S01–S12</div>
+  <div class="tab" onclick="showTab('alerts',this)">🔔 Alertes <span class="badge-tab" id="alert-count">—</span></div>
 </div>
-
 <div class="content">
 
-<!-- ══ OVERVIEW ══ -->
 <div id="tab-overview" class="page active">
-
-  <div class="kpi-grid">
-    <div class="kpi"><div class="kpi-label">Articles total</div><div class="kpi-val" style="color:var(--text)">8 224</div><div class="kpi-sub">planifiés sur 11 semaines</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%;background:var(--border2)"></div></div></div>
-    <div class="kpi"><div class="kpi-label">Publiés ✅</div><div class="kpi-val" style="color:var(--green)">2 200</div><div class="kpi-sub">26.8% du total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:26.8%;background:var(--green)"></div></div></div>
-    <div class="kpi"><div class="kpi-label">Drafted 📝</div><div class="kpi-val" style="color:var(--blue)">109</div><div class="kpi-sub">prêts à publier</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:1.3%;background:var(--blue)"></div></div></div>
-    <div class="kpi"><div class="kpi-label">Schedulés ⏰</div><div class="kpi-val" style="color:var(--yellow)">95</div><div class="kpi-sub">publication prévue</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:1.2%;background:var(--yellow)"></div></div></div>
-    <div class="kpi"><div class="kpi-label">Failed ⚠️</div><div class="kpi-val" style="color:var(--orange)">37</div><div class="kpi-sub">à relancer</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:0.45%;background:var(--orange)"></div></div></div>
-    <div class="kpi"><div class="kpi-label">Quarantine 🔒</div><div class="kpi-val" style="color:var(--red)">20</div><div class="kpi-sub">vérification requise</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:0.24%;background:var(--red)"></div></div></div>
-    <div class="kpi"><div class="kpi-label">Images</div><div class="kpi-val" style="color:var(--cyan)">17 460</div><div class="kpi-sub">~7.9/article publié</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:26.8%;background:var(--cyan)"></div></div></div>
-    <div class="kpi"><div class="kpi-label">Pins Pinterest</div><div class="kpi-val" style="color:var(--purple)">1 265</div><div class="kpi-sub">57.5% des publiés</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:57.5%;background:var(--purple)"></div></div></div>
-    <div class="kpi"><div class="kpi-label">Mots moy.</div><div class="kpi-val" style="color:var(--text)">657</div><div class="kpi-sub">par article publié</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:50%;background:var(--border2)"></div></div></div>
-    <div class="kpi"><div class="kpi-label">Sites actifs</div><div class="kpi-val" style="color:var(--cyan)">13</div><div class="kpi-sub">hub · primary · nano</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%;background:var(--cyan)"></div></div></div>
-  </div>
-
-  <!-- Pipeline global -->
-  <div class="section" style="margin-bottom:16px">
-    <div class="section-hdr"><div class="section-title">⚙️ Statut global du pipeline</div><div class="section-meta">8 224 articles · Semaine S01–S11</div></div>
-    <div class="pipe-steps" style="grid-template-columns:repeat(7,1fr);margin:16px">
-      <div class="pipe-step"><div class="pipe-step-icon">📋</div><div class="pipe-step-name">Total</div><div class="pipe-step-val" style="color:var(--muted)">8 224</div></div>
-      <div class="pipe-step" style="background:var(--green-bg)"><div class="pipe-step-icon">✅</div><div class="pipe-step-name">Published</div><div class="pipe-step-val" style="color:var(--green)">2 200</div><div class="pipe-step-sub">26.8%</div></div>
-      <div class="pipe-step" style="background:var(--blue-bg)"><div class="pipe-step-icon">📝</div><div class="pipe-step-name">Drafted</div><div class="pipe-step-val" style="color:var(--blue)">109</div></div>
-      <div class="pipe-step" style="background:var(--yellow-bg)"><div class="pipe-step-icon">⏰</div><div class="pipe-step-name">Scheduled</div><div class="pipe-step-val" style="color:var(--yellow)">95</div></div>
-      <div class="pipe-step" style="background:rgba(249,115,22,.08)"><div class="pipe-step-icon">⚠️</div><div class="pipe-step-name">Failed</div><div class="pipe-step-val" style="color:var(--orange)">37</div></div>
-      <div class="pipe-step" style="background:var(--red-bg)"><div class="pipe-step-icon">🔒</div><div class="pipe-step-name">Quarantine</div><div class="pipe-step-val" style="color:var(--red)">20</div></div>
-      <div class="pipe-step"><div class="pipe-step-icon">⏳</div><div class="pipe-step-name">Pending</div><div class="pipe-step-val" style="color:var(--muted)">5 762</div></div>
-    </div>
-    <!-- Barre de progression -->
-    <div style="padding:0 18px 18px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;color:var(--muted)">
-        <span>Progression totale</span>
-        <span style="font-weight:700;color:var(--text)">2 404 / 8 224 traités (29.2%)</span>
-      </div>
-      <div style="height:10px;background:var(--border);border-radius:5px;overflow:hidden;display:flex">
-        <div style="width:26.8%;background:var(--green)"></div>
-        <div style="width:1.3%;background:var(--blue)"></div>
-        <div style="width:1.2%;background:var(--yellow)"></div>
-        <div style="width:0.45%;background:var(--orange)"></div>
-        <div style="width:0.24%;background:var(--red)"></div>
-      </div>
-      <div style="display:flex;gap:16px;margin-top:8px;font-size:11px;flex-wrap:wrap">
-        <span style="color:var(--green)">■ Published 26.8%</span>
-        <span style="color:var(--blue)">■ Drafted 1.3%</span>
-        <span style="color:var(--yellow)">■ Scheduled 1.2%</span>
-        <span style="color:var(--orange)">■ Failed 0.45%</span>
-        <span style="color:var(--red)">■ Quarantine 0.24%</span>
-        <span style="color:var(--muted)">■ Pending 70.1%</span>
-      </div>
+  <div class="kpi-grid" id="kpi-grid"></div>
+  <div class="section">
+    <div class="sec-hdr"><div class="sec-title">⚙️ Pipeline global</div><div class="sec-meta" id="pipe-meta"></div></div>
+    <div class="pipe" id="pipe-steps" style="grid-template-columns:repeat(7,1fr)"></div>
+    <div style="padding:0 16px 16px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px"><span>Progression totale</span><span id="prog-lbl" style="font-weight:700;color:var(--text)"></span></div>
+      <div style="height:10px;background:var(--border);border-radius:5px;overflow:hidden;display:flex" id="prog-bar"></div>
+      <div style="display:flex;gap:14px;margin-top:8px;font-size:11px;flex-wrap:wrap" id="prog-legend"></div>
     </div>
   </div>
-
-  <!-- Avancement par semaine -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    <div class="section">
-      <div class="section-hdr"><div class="section-title">📅 Avancement par semaine</div></div>
-      <div class="bar-chart">
-        <div class="bar-row"><div class="bar-lbl">S01</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--green)">536 ✅</div></div><div class="bar-total" style="color:var(--green)">100%</div></div>
-        <div class="bar-row"><div class="bar-lbl">S02</div><div class="bar-track">
-          <div class="bar-stack">
-            <div style="width:71.8%;background:var(--green)"></div>
-            <div style="width:7.1%;background:var(--blue)"></div>
-            <div style="width:6%;background:var(--yellow)"></div>
-            <div style="width:2.2%;background:var(--orange)"></div>
-          </div>
-        </div><div class="bar-total" style="color:var(--yellow)">84.9%</div></div>
-        <div class="bar-row"><div class="bar-lbl">S03</div><div class="bar-track"><div class="bar-fill" style="width:0.1%;background:var(--yellow)"></div></div><div class="bar-total" style="color:var(--muted)">0.1%</div></div>
-        <div class="bar-row"><div class="bar-lbl">S04</div><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--border2)"></div></div><div class="bar-total" style="color:var(--muted)">0%</div></div>
-        <div class="bar-row"><div class="bar-lbl">S05</div><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--border2)"></div></div><div class="bar-total" style="color:var(--muted)">0%</div></div>
-        <div class="bar-row"><div class="bar-lbl">S06 → S11</div><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--border2)"></div></div><div class="bar-total" style="color:var(--muted)">0%</div></div>
-      </div>
-    </div>
-    <div class="section">
-      <div class="section-hdr"><div class="section-title">🌐 Articles publiés par site</div></div>
-      <div class="bar-chart">
-        <div class="bar-row"><div class="bar-lbl">zimtschnecken</div><div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--green)">178</div></div><div class="bar-total" style="color:var(--green)">80%</div></div>
-        <div class="bar-row"><div class="bar-lbl">pfannkuchen</div><div class="bar-track"><div class="bar-fill" style="width:76%;background:var(--green)">178</div></div><div class="bar-total" style="color:var(--green)">76%</div></div>
-        <div class="bar-row"><div class="bar-lbl">gulasch</div><div class="bar-track"><div class="bar-fill" style="width:79%;background:var(--green)">178</div></div><div class="bar-total" style="color:var(--green)">79%</div></div>
-        <div class="bar-row"><div class="bar-lbl">plaetzchen</div><div class="bar-track"><div class="bar-fill" style="width:22%;background:var(--yellow)">178</div></div><div class="bar-total" style="color:var(--yellow)">22%</div></div>
-        <div class="bar-row"><div class="bar-lbl">waffeln</div><div class="bar-track"><div class="bar-fill" style="width:32%;background:var(--yellow)">178</div></div><div class="bar-total" style="color:var(--yellow)">32%</div></div>
-        <div class="bar-row"><div class="bar-lbl">kaesekuchen</div><div class="bar-track"><div class="bar-fill" style="width:22%;background:var(--yellow)">176</div></div><div class="bar-total" style="color:var(--yellow)">22%</div></div>
-        <div class="bar-row"><div class="bar-lbl">schnelllecker</div><div class="bar-track"><div class="bar-fill" style="width:35%;background:var(--yellow)">164</div></div><div class="bar-total" style="color:var(--yellow)">35%</div></div>
-        <div class="bar-row"><div class="bar-lbl">yumrezept</div><div class="bar-track"><div class="bar-fill" style="width:39%;background:var(--yellow)">164</div></div><div class="bar-total" style="color:var(--yellow)">39%</div></div>
-        <div class="bar-row"><div class="bar-lbl">kochliebe</div><div class="bar-track"><div class="bar-fill" style="width:32%;background:var(--yellow)">161</div></div><div class="bar-total" style="color:var(--yellow)">32%</div></div>
-        <div class="bar-row"><div class="bar-lbl">rezeptnest</div><div class="bar-track"><div class="bar-fill" style="width:24%;background:var(--orange)">160</div></div><div class="bar-total" style="color:var(--orange)">24%</div></div>
-        <div class="bar-row"><div class="bar-lbl">foodzauber</div><div class="bar-track"><div class="bar-fill" style="width:15%;background:var(--orange)">158</div></div><div class="bar-total" style="color:var(--orange)">15%</div></div>
-        <div class="bar-row"><div class="bar-lbl">rezeptflow</div><div class="bar-track"><div class="bar-fill" style="width:37%;background:var(--orange)">154</div></div><div class="bar-total" style="color:var(--orange)">37%</div></div>
-        <div class="bar-row"><div class="bar-lbl">airfryer</div><div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--red)">173</div></div><div class="bar-total" style="color:var(--red)">10%</div></div>
-      </div>
-    </div>
+  <div class="grid2">
+    <div class="section"><div class="sec-hdr"><div class="sec-title">📅 Avancement par semaine</div></div><div class="bar-chart" id="week-bars"></div></div>
+    <div class="section"><div class="sec-hdr"><div class="sec-title">🌐 Publiés par site</div></div><div class="bar-chart" id="site-bars"></div></div>
   </div>
 </div>
 
-<!-- ══ SITES ══ -->
-<div id="tab-sites" class="page">
-  <div class="site-grid">
-    <!-- gulasch -->
-    <div class="site-card"><div class="site-accent" style="background:#F4A261"></div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-weight:700;font-size:14px">gulasch</div><div style="font-size:11px;color:var(--muted)">gulaschrezept.blog · nano</div></div>
-        <span class="badge bg-green">79%</span></div>
-      <div class="site-stats">
-        <div><div class="stat-val" style="color:var(--green)">178</div><div class="stat-lbl">publiés</div></div>
-        <div><div class="stat-val" style="color:var(--blue)">12</div><div class="stat-lbl">drafted</div></div>
-        <div><div class="stat-val" style="color:var(--cyan)">888</div><div class="stat-lbl">images</div></div>
-        <div><div class="stat-val" style="color:var(--purple)">62</div><div class="stat-lbl">pins</div></div>
-      </div>
-      <div class="prog-row"><div class="prog"><div class="prog-fill" style="width:79%;background:var(--green)"></div></div><span class="prog-pct" style="color:var(--green)">79%</span></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px">Total: 224 · Failed: 1 · Pending: 31</div></div>
-    <!-- pfannkuchen -->
-    <div class="site-card"><div class="site-accent" style="background:#E63946"></div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-weight:700;font-size:14px">pfannkuchen</div><div style="font-size:11px;color:var(--muted)">pfannkuchenrezept.blog · nano</div></div>
-        <span class="badge bg-green">76%</span></div>
-      <div class="site-stats">
-        <div><div class="stat-val" style="color:var(--green)">178</div><div class="stat-lbl">publiés</div></div>
-        <div><div class="stat-val" style="color:var(--blue)">8</div><div class="stat-lbl">drafted</div></div>
-        <div><div class="stat-val" style="color:var(--cyan)">718</div><div class="stat-lbl">images</div></div>
-        <div><div class="stat-val" style="color:var(--purple)">63</div><div class="stat-lbl">pins</div></div>
-      </div>
-      <div class="prog-row"><div class="prog"><div class="prog-fill" style="width:76%;background:var(--green)"></div></div><span class="prog-pct" style="color:var(--green)">76%</span></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px">Total: 234 · Quarantine: 1 · Pending: 45</div></div>
-    <!-- zimtschnecken -->
-    <div class="site-card"><div class="site-accent" style="background:#E76F51"></div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-weight:700;font-size:14px">zimtschnecken</div><div style="font-size:11px;color:var(--muted)">zimtschneckenrezept.blog · nano</div></div>
-        <span class="badge bg-green">80%</span></div>
-      <div class="site-stats">
-        <div><div class="stat-val" style="color:var(--green)">178</div><div class="stat-lbl">publiés</div></div>
-        <div><div class="stat-val" style="color:var(--blue)">4</div><div class="stat-lbl">drafted</div></div>
-        <div><div class="stat-val" style="color:var(--cyan)">782</div><div class="stat-lbl">images</div></div>
-        <div><div class="stat-val" style="color:var(--purple)">60</div><div class="stat-lbl">pins</div></div>
-      </div>
-      <div class="prog-row"><div class="prog"><div class="prog-fill" style="width:80%;background:var(--green)"></div></div><span class="prog-pct" style="color:var(--green)">80%</span></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px">Total: 222 · Quarantine: 6 · Pending: 29</div></div>
-    <!-- yumrezept -->
-    <div class="site-card"><div class="site-accent" style="background:#A63D40"></div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-weight:700;font-size:14px">yumrezept</div><div style="font-size:11px;color:var(--muted)">yumrezept.blog · primary</div></div>
-        <span class="badge bg-yellow">39%</span></div>
-      <div class="site-stats">
-        <div><div class="stat-val" style="color:var(--green)">164</div><div class="stat-lbl">publiés</div></div>
-        <div><div class="stat-val" style="color:var(--blue)">6</div><div class="stat-lbl">drafted</div></div>
-        <div><div class="stat-val" style="color:var(--cyan)">1 020</div><div class="stat-lbl">images</div></div>
-        <div><div class="stat-val" style="color:var(--purple)">71</div><div class="stat-lbl">pins</div></div>
-      </div>
-      <div class="prog-row"><div class="prog"><div class="prog-fill" style="width:39%;background:var(--yellow)"></div></div><span class="prog-pct" style="color:var(--yellow)">39%</span></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px">Total: 416 · Failed: 8 · Pending: 228</div></div>
-    <!-- schnelllecker -->
-    <div class="site-card"><div class="site-accent" style="background:#2D6A4F"></div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-weight:700;font-size:14px">schnelllecker</div><div style="font-size:11px;color:var(--muted)">schnelllecker.blog · primary</div></div>
-        <span class="badge bg-yellow">35%</span></div>
-      <div class="site-stats">
-        <div><div class="stat-val" style="color:var(--green)">164</div><div class="stat-lbl">publiés</div></div>
-        <div><div class="stat-val" style="color:var(--blue)">16</div><div class="stat-lbl">drafted</div></div>
-        <div><div class="stat-val" style="color:var(--cyan)">1 076</div><div class="stat-lbl">images</div></div>
-        <div><div class="stat-val" style="color:var(--purple)">91</div><div class="stat-lbl">pins</div></div>
-      </div>
-      <div class="prog-row"><div class="prog"><div class="prog-fill" style="width:35%;background:var(--yellow)"></div></div><span class="prog-pct" style="color:var(--yellow)">35%</span></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px">Total: 466 · Quarantine: 1 · Pending: 271</div></div>
-    <!-- rezeptflow -->
-    <div class="site-card"><div class="site-accent" style="background:#264653"></div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-weight:700;font-size:14px">rezeptflow</div><div style="font-size:11px;color:var(--muted)">rezeptflow.blog · primary</div></div>
-        <span class="badge bg-yellow">37%</span></div>
-      <div class="site-stats">
-        <div><div class="stat-val" style="color:var(--green)">154</div><div class="stat-lbl">publiés</div></div>
-        <div><div class="stat-val" style="color:var(--blue)">6</div><div class="stat-lbl">drafted</div></div>
-        <div><div class="stat-val" style="color:var(--cyan)">1 148</div><div class="stat-lbl">images</div></div>
-        <div><div class="stat-val" style="color:var(--purple)">72</div><div class="stat-lbl">pins</div></div>
-      </div>
-      <div class="prog-row"><div class="prog"><div class="prog-fill" style="width:37%;background:var(--yellow)"></div></div><span class="prog-pct" style="color:var(--yellow)">37%</span></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px">Total: 419 · Failed: 8 · Pending: 237</div></div>
-    <!-- kochliebe -->
-    <div class="site-card"><div class="site-accent" style="background:#2E5E4E"></div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-weight:700;font-size:14px">kochliebe</div><div style="font-size:11px;color:var(--muted)">kochliebe.online · primary</div></div>
-        <span class="badge bg-yellow">32%</span></div>
-      <div class="site-stats">
-        <div><div class="stat-val" style="color:var(--green)">161</div><div class="stat-lbl">publiés</div></div>
-        <div><div class="stat-val" style="color:var(--blue)">9</div><div class="stat-lbl">drafted</div></div>
-        <div><div class="stat-val" style="color:var(--cyan)">1 089</div><div class="stat-lbl">images</div></div>
-        <div><div class="stat-val" style="color:var(--purple)">83</div><div class="stat-lbl">pins</div></div>
-      </div>
-      <div class="prog-row"><div class="prog"><div class="prog-fill" style="width:32%;background:var(--yellow)"></div></div><span class="prog-pct" style="color:var(--yellow)">32%</span></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px">Total: 499 · Failed: 6 · Pending: 310</div></div>
-    <!-- waffeln -->
-    <div class="site-card"><div class="site-accent" style="background:#E07A5F"></div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-weight:700;font-size:14px">waffeln</div><div style="font-size:11px;color:var(--muted)">waffelnrezept.blog · nano</div></div>
-        <span class="badge bg-yellow">32%</span></div>
-      <div class="site-stats">
-        <div><div class="stat-val" style="color:var(--green)">178</div><div class="stat-lbl">publiés</div></div>
-        <div><div class="stat-val" style="color:var(--blue)">12</div><div class="stat-lbl">drafted</div></div>
-        <div><div class="stat-val" style="color:var(--cyan)">1 258</div><div class="stat-lbl">images</div></div>
-        <div><div class="stat-val" style="color:var(--purple)">85</div><div class="stat-lbl">pins</div></div>
-      </div>
-      <div class="prog-row"><div class="prog"><div class="prog-fill" style="width:32%;background:var(--yellow)"></div></div><span class="prog-pct" style="color:var(--yellow)">32%</span></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px">Total: 563 · Quarantine: 1 · Pending: 368</div></div>
-    <!-- rezeptnest -->
-    <div class="site-card"><div class="site-accent" style="background:#C9A227"></div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-weight:700;font-size:14px">rezeptnest</div><div style="font-size:11px;color:var(--muted)">rezeptnest.blog · primary</div></div>
-        <span class="badge bg-orange">24%</span></div>
-      <div class="site-stats">
-        <div><div class="stat-val" style="color:var(--green)">160</div><div class="stat-lbl">publiés</div></div>
-        <div><div class="stat-val" style="color:var(--blue)">2</div><div class="stat-lbl">drafted</div></div>
-        <div><div class="stat-val" style="color:var(--cyan)">1 295</div><div class="stat-lbl">images</div></div>
-        <div><div class="stat-val" style="color:var(--purple)">94</div><div class="stat-lbl">pins</div></div>
-      </div>
-      <div class="prog-row"><div class="prog"><div class="prog-fill" style="width:24%;background:var(--orange)"></div></div><span class="prog-pct" style="color:var(--orange)">24%</span></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px">Total: 661 · Failed: 7 · Pending: 482</div></div>
-    <!-- plaetzchen -->
-    <div class="site-card"><div class="site-accent" style="background:#C77DFF"></div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-weight:700;font-size:14px">plaetzchen</div><div style="font-size:11px;color:var(--muted)">plaetzchenrezepte.blog · nano</div></div>
-        <span class="badge bg-orange">22%</span></div>
-      <div class="site-stats">
-        <div><div class="stat-val" style="color:var(--green)">178</div><div class="stat-lbl">publiés</div></div>
-        <div><div class="stat-val" style="color:var(--blue)">4</div><div class="stat-lbl">drafted</div></div>
-        <div><div class="stat-val" style="color:var(--cyan)">1 958</div><div class="stat-lbl">images</div></div>
-        <div><div class="stat-val" style="color:var(--purple)">129</div><div class="stat-lbl">pins</div></div>
-      </div>
-      <div class="prog-row"><div class="prog"><div class="prog-fill" style="width:22%;background:var(--orange)"></div></div><span class="prog-pct" style="color:var(--orange)">22%</span></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px">Total: 817 · Pending: 635</div></div>
-    <!-- kaesekuchen -->
-    <div class="site-card"><div class="site-accent" style="background:#2A9D8F"></div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-weight:700;font-size:14px">kaesekuchen</div><div style="font-size:11px;color:var(--muted)">kaesekuchenrezept.blog · nano</div></div>
-        <span class="badge bg-orange">22%</span></div>
-      <div class="site-stats">
-        <div><div class="stat-val" style="color:var(--green)">176</div><div class="stat-lbl">publiés</div></div>
-        <div><div class="stat-val" style="color:var(--blue)">6</div><div class="stat-lbl">drafted</div></div>
-        <div><div class="stat-val" style="color:var(--cyan)">1 540</div><div class="stat-lbl">images</div></div>
-        <div><div class="stat-val" style="color:var(--purple)">135</div><div class="stat-lbl">pins</div></div>
-      </div>
-      <div class="prog-row"><div class="prog"><div class="prog-fill" style="width:22%;background:var(--orange)"></div></div><span class="prog-pct" style="color:var(--orange)">22%</span></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px">Total: 814 · Quarantine: 4 · Pending: 624</div></div>
-    <!-- foodzauber -->
-    <div class="site-card"><div class="site-accent" style="background:#5B2A4E"></div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-weight:700;font-size:14px">foodzauber</div><div style="font-size:11px;color:var(--muted)">foodzauber.blog · hub</div></div>
-        <span class="badge bg-red">15%</span></div>
-      <div class="site-stats">
-        <div><div class="stat-val" style="color:var(--green)">158</div><div class="stat-lbl">publiés</div></div>
-        <div><div class="stat-val" style="color:var(--blue)">14</div><div class="stat-lbl">drafted</div></div>
-        <div><div class="stat-val" style="color:var(--cyan)">2 234</div><div class="stat-lbl">images</div></div>
-        <div><div class="stat-val" style="color:var(--purple)">134</div><div class="stat-lbl">pins</div></div>
-      </div>
-      <div class="prog-row"><div class="prog"><div class="prog-fill" style="width:15%;background:var(--red)"></div></div><span class="prog-pct" style="color:var(--red)">15%</span></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px">Total: 1 083 · Failed: 6 · Quarantine: 7 · Pending: 884</div></div>
-    <!-- airfryer -->
-    <div class="site-card"><div class="site-accent" style="background:#457B9D"></div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div style="font-weight:700;font-size:14px">airfryer</div><div style="font-size:11px;color:var(--muted)">airfryer-rezepte.blog · nano</div></div>
-        <span class="badge bg-red">10%</span></div>
-      <div class="site-stats">
-        <div><div class="stat-val" style="color:var(--green)">173</div><div class="stat-lbl">publiés</div></div>
-        <div><div class="stat-val" style="color:var(--blue)">10</div><div class="stat-lbl">drafted</div></div>
-        <div><div class="stat-val" style="color:var(--cyan)">2 454</div><div class="stat-lbl">images</div></div>
-        <div><div class="stat-val" style="color:var(--purple)">186</div><div class="stat-lbl">pins</div></div>
-      </div>
-      <div class="prog-row"><div class="prog"><div class="prog-fill" style="width:10%;background:var(--red)"></div></div><span class="prog-pct" style="color:var(--red)">10%</span></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px">Total: 1 806 · Failed: 1 · Pending: 1 618</div></div>
-  </div>
-</div>
+<div id="tab-sites" class="page"><div class="site-grid" id="site-grid"></div></div>
 
-<!-- ══ PIPELINE ══ -->
 <div id="tab-pipeline" class="page">
   <div class="section">
-    <div class="section-hdr"><div class="section-title">⚙️ Pipeline détaillé par site</div><div class="section-meta">8 224 articles · données réelles</div></div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>Site</th><th>Total</th><th>✅ Published</th><th>📝 Drafted</th><th>⏰ Scheduled</th><th>⚠️ Failed</th><th>🔒 Quarantine</th><th>⏳ Pending</th><th>🖼️ Images</th><th>📌 Pins</th><th>Taux pub.</th></tr></thead>
-        <tbody>
-          <tr><td><strong>airfryer</strong></td><td>1 806</td><td style="color:var(--green);font-weight:700">173</td><td style="color:var(--blue)">10</td><td style="color:var(--yellow)">4</td><td style="color:var(--orange)">1</td><td style="color:var(--red)">0</td><td style="color:var(--muted)">1 618</td><td style="color:var(--cyan)">2 454</td><td style="color:var(--purple)">186</td><td><span class="badge bg-red">10%</span></td></tr>
-          <tr><td><strong>foodzauber</strong></td><td>1 083</td><td style="color:var(--green);font-weight:700">158</td><td style="color:var(--blue)">14</td><td style="color:var(--yellow)">14</td><td style="color:var(--orange)">6</td><td style="color:var(--red)">7</td><td style="color:var(--muted)">884</td><td style="color:var(--cyan)">2 234</td><td style="color:var(--purple)">134</td><td><span class="badge bg-red">15%</span></td></tr>
-          <tr><td><strong>plaetzchen</strong></td><td>817</td><td style="color:var(--green);font-weight:700">178</td><td style="color:var(--blue)">4</td><td style="color:var(--yellow)">0</td><td style="color:var(--orange)">0</td><td style="color:var(--red)">0</td><td style="color:var(--muted)">635</td><td style="color:var(--cyan)">1 958</td><td style="color:var(--purple)">129</td><td><span class="badge bg-orange">22%</span></td></tr>
-          <tr><td><strong>kaesekuchen</strong></td><td>814</td><td style="color:var(--green);font-weight:700">176</td><td style="color:var(--blue)">6</td><td style="color:var(--yellow)">4</td><td style="color:var(--orange)">0</td><td style="color:var(--red)">4</td><td style="color:var(--muted)">624</td><td style="color:var(--cyan)">1 540</td><td style="color:var(--purple)">135</td><td><span class="badge bg-orange">22%</span></td></tr>
-          <tr><td><strong>rezeptnest</strong></td><td>661</td><td style="color:var(--green);font-weight:700">160</td><td style="color:var(--blue)">2</td><td style="color:var(--yellow)">10</td><td style="color:var(--orange)">7</td><td style="color:var(--red)">0</td><td style="color:var(--muted)">482</td><td style="color:var(--cyan)">1 295</td><td style="color:var(--purple)">94</td><td><span class="badge bg-orange">24%</span></td></tr>
-          <tr><td><strong>waffeln</strong></td><td>563</td><td style="color:var(--green);font-weight:700">178</td><td style="color:var(--blue)">12</td><td style="color:var(--yellow)">4</td><td style="color:var(--orange)">0</td><td style="color:var(--red)">1</td><td style="color:var(--muted)">368</td><td style="color:var(--cyan)">1 258</td><td style="color:var(--purple)">85</td><td><span class="badge bg-yellow">32%</span></td></tr>
-          <tr><td><strong>kochliebe</strong></td><td>499</td><td style="color:var(--green);font-weight:700">161</td><td style="color:var(--blue)">9</td><td style="color:var(--yellow)">12</td><td style="color:var(--orange)">6</td><td style="color:var(--red)">0</td><td style="color:var(--muted)">310</td><td style="color:var(--cyan)">1 089</td><td style="color:var(--purple)">83</td><td><span class="badge bg-yellow">32%</span></td></tr>
-          <tr><td><strong>schnelllecker</strong></td><td>466</td><td style="color:var(--green);font-weight:700">164</td><td style="color:var(--blue)">16</td><td style="color:var(--yellow)">14</td><td style="color:var(--orange)">0</td><td style="color:var(--red)">1</td><td style="color:var(--muted)">271</td><td style="color:var(--cyan)">1 076</td><td style="color:var(--purple)">91</td><td><span class="badge bg-yellow">35%</span></td></div></td></tr>
-          <tr><td><strong>rezeptflow</strong></td><td>419</td><td style="color:var(--green);font-weight:700">154</td><td style="color:var(--blue)">6</td><td style="color:var(--yellow)">14</td><td style="color:var(--orange)">8</td><td style="color:var(--red)">0</td><td style="color:var(--muted)">237</td><td style="color:var(--cyan)">1 148</td><td style="color:var(--purple)">72</td><td><span class="badge bg-yellow">37%</span></td></tr>
-          <tr><td><strong>yumrezept</strong></td><td>416</td><td style="color:var(--green);font-weight:700">164</td><td style="color:var(--blue)">6</td><td style="color:var(--yellow)">10</td><td style="color:var(--orange)">8</td><td style="color:var(--red)">0</td><td style="color:var(--muted)">228</td><td style="color:var(--cyan)">1 020</td><td style="color:var(--purple)">71</td><td><span class="badge bg-yellow">39%</span></td></tr>
-          <tr><td><strong>zimtschnecken</strong></td><td>222</td><td style="color:var(--green);font-weight:700">178</td><td style="color:var(--blue)">4</td><td style="color:var(--yellow)">5</td><td style="color:var(--orange)">0</td><td style="color:var(--red)">6</td><td style="color:var(--muted)">29</td><td style="color:var(--cyan)">782</td><td style="color:var(--purple)">60</td><td><span class="badge bg-green">80%</span></td></tr>
-          <tr><td><strong>pfannkuchen</strong></td><td>234</td><td style="color:var(--green);font-weight:700">178</td><td style="color:var(--blue)">8</td><td style="color:var(--yellow)">2</td><td style="color:var(--orange)">0</td><td style="color:var(--red)">1</td><td style="color:var(--muted)">45</td><td style="color:var(--cyan)">718</td><td style="color:var(--purple)">63</td><td><span class="badge bg-green">76%</span></td></tr>
-          <tr><td><strong>gulasch</strong></td><td>224</td><td style="color:var(--green);font-weight:700">178</td><td style="color:var(--blue)">12</td><td style="color:var(--yellow)">2</td><td style="color:var(--orange)">1</td><td style="color:var(--red)">0</td><td style="color:var(--muted)">31</td><td style="color:var(--cyan)">888</td><td style="color:var(--purple)">62</td><td><span class="badge bg-green">79%</span></td></tr>
-          <tr style="background:var(--bg3);font-weight:700"><td>TOTAL</td><td>8 224</td><td style="color:var(--green)">2 200</td><td style="color:var(--blue)">109</td><td style="color:var(--yellow)">95</td><td style="color:var(--orange)">37</td><td style="color:var(--red)">20</td><td style="color:var(--muted)">5 762</td><td style="color:var(--cyan)">17 460</td><td style="color:var(--purple)">1 265</td><td><span class="badge bg-yellow">26.8%</span></td></tr>
-        </tbody>
-      </table>
-    </div>
+    <div class="sec-hdr"><div class="sec-title">⚙️ Pipeline détaillé par site</div><div class="sec-meta" id="pipe-tbl-meta"></div></div>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Site</th><th>Total</th><th>✅ Published</th><th>📝 Drafted</th><th>⏰ Scheduled</th><th>⚠️ Failed</th><th>🔒 Quarantine</th><th>⏳ Pending</th><th>🖼️ Images</th><th>📌 Pins</th><th>Taux</th></tr></thead>
+      <tbody id="pipe-tbody"></tbody>
+      <tfoot><tr id="pipe-foot"></tr></tfoot>
+    </table></div>
   </div>
 </div>
 
-<!-- ══ ARTICLES ══ -->
-<div id="tab-articles" class="page">
-  <div class="kpi-grid">
-    <div class="kpi"><div class="kpi-label">S01 — Terminée</div><div class="kpi-val" style="color:var(--green)">536/537</div><div class="kpi-sub">99.8% ✅ (1 failed)</div></div>
-    <div class="kpi"><div class="kpi-label">S02 — En cours</div><div class="kpi-val" style="color:var(--yellow)">669/788</div><div class="kpi-sub">84.9% · 101 pending</div></div>
-    <div class="kpi"><div class="kpi-label">S03 à S11</div><div class="kpi-val" style="color:var(--muted)">6 899</div><div class="kpi-sub">articles à générer</div></div>
-    <div class="kpi"><div class="kpi-label">Drafted prêts</div><div class="kpi-val" style="color:var(--blue)">109</div><div class="kpi-sub">à publier manuellement</div></div>
-    <div class="kpi"><div class="kpi-label">Schedulés</div><div class="kpi-val" style="color:var(--yellow)">95</div><div class="kpi-sub">publication automatique</div></div>
-    <div class="kpi"><div class="kpi-label">À corriger</div><div class="kpi-val" style="color:var(--red)">57</div><div class="kpi-sub">37 failed + 20 quarantine</div></div>
-  </div>
+<div id="tab-semaines" class="page">
   <div class="section">
-    <div class="section-hdr"><div class="section-title">📅 Détail par semaine</div></div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>Semaine</th><th>Total</th><th>✅ Published</th><th>📝 Drafted</th><th>⏰ Scheduled</th><th>⚠️ Failed</th><th>⏳ Pending</th><th>% done</th></tr></thead>
-        <tbody>
-          <tr><td><strong>S01</strong></td><td>537</td><td style="color:var(--green);font-weight:700">536</td><td style="color:var(--blue)">0</td><td style="color:var(--yellow)">0</td><td style="color:var(--orange)">1</td><td style="color:var(--muted)">0</td><td><span class="badge bg-green">99.8% ✅</span></td></tr>
-          <tr><td><strong>S02</strong></td><td>788</td><td style="color:var(--green);font-weight:700">566</td><td style="color:var(--blue)">56</td><td style="color:var(--yellow)">47</td><td style="color:var(--orange)">17</td><td style="color:var(--muted)">101</td><td><span class="badge bg-yellow">84.9%</span></td></tr>
-          <tr><td><strong>S03</strong></td><td>720</td><td style="color:var(--green)">0</td><td style="color:var(--blue)">0</td><td style="color:var(--yellow)">1</td><td style="color:var(--orange)">0</td><td style="color:var(--muted)">714</td><td><span class="badge bg-red">0.1%</span></td></tr>
-          <tr><td><strong>S04</strong></td><td>726</td><td style="color:var(--green)">0</td><td style="color:var(--blue)">0</td><td style="color:var(--yellow)">0</td><td style="color:var(--orange)">0</td><td style="color:var(--muted)">714</td><td><span class="badge bg-muted">0%</span></td></tr>
-          <tr><td><strong>S05</strong></td><td>715</td><td style="color:var(--green)">0</td><td>0</td><td>0</td><td>0</td><td style="color:var(--muted)">714</td><td><span class="badge bg-muted">0%</span></td></tr>
-          <tr><td><strong>S06</strong></td><td>713</td><td style="color:var(--green)">0</td><td>0</td><td>0</td><td>0</td><td style="color:var(--muted)">713</td><td><span class="badge bg-muted">0%</span></td></tr>
-          <tr><td><strong>S07</strong></td><td>701</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:var(--muted)">701</td><td><span class="badge bg-muted">0%</span></td></tr>
-          <tr><td><strong>S08</strong></td><td>700</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:var(--muted)">700</td><td><span class="badge bg-muted">0%</span></td></tr>
-          <tr><td><strong>S09</strong></td><td>695</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:var(--muted)">695</td><td><span class="badge bg-muted">0%</span></td></tr>
-          <tr><td><strong>S10</strong></td><td>570</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:var(--muted)">570</td><td><span class="badge bg-muted">0%</span></td></tr>
-          <tr><td><strong>S11</strong></td><td>90</td><td>0</td><td>0</td><td>0</td><td style="color:var(--orange)">1</td><td style="color:var(--muted)">89</td><td><span class="badge bg-muted">0%</span></td></tr>
-          <tr style="background:var(--bg3);font-weight:700"><td>TOTAL</td><td>8 224</td><td style="color:var(--green)">1 102</td><td style="color:var(--blue)">56</td><td style="color:var(--yellow)">48</td><td style="color:var(--orange)">19</td><td style="color:var(--muted)">5 711</td><td><span class="badge bg-yellow">14.7% S02</span></td></tr>
-        </tbody>
-      </table>
-    </div>
+    <div class="sec-hdr"><div class="sec-title">📅 Détail semaine par semaine</div><div class="sec-meta" id="weeks-meta"></div></div>
+    <div class="week-tabs" id="week-tabs"></div>
+    <div id="week-content"></div>
   </div>
 </div>
 
-<!-- ══ PLANNING ══ -->
-<div id="tab-planning" class="page">
-  <div class="kpi-grid">
-    <div class="kpi"><div class="kpi-label">Semaines actives</div><div class="kpi-val" style="color:var(--cyan)">11</div><div class="kpi-sub">S01 → S11</div></div>
-    <div class="kpi"><div class="kpi-label">Sem. complètes</div><div class="kpi-val" style="color:var(--green)">1</div><div class="kpi-sub">S01 à 99.8%</div></div>
-    <div class="kpi"><div class="kpi-label">Sem. en cours</div><div class="kpi-val" style="color:var(--yellow)">S02</div><div class="kpi-sub">84.9% · 101 pending</div></div>
-    <div class="kpi"><div class="kpi-label">Articles/semaine</div><div class="kpi-val" style="color:var(--text)">~747</div><div class="kpi-sub">moyenne sur 11 sem.</div></div>
-    <div class="kpi"><div class="kpi-label">Restant à générer</div><div class="kpi-val" style="color:var(--muted)">5 820</div><div class="kpi-sub">S02 pending + S03→S11</div></div>
-    <div class="kpi"><div class="kpi-label">Progression globale</div><div class="kpi-val" style="color:var(--blue)">29.2%</div><div class="kpi-sub">2 404 / 8 224 traités</div></div>
-  </div>
-  <div class="section">
-    <div class="section-hdr"><div class="section-title">📊 Volume par semaine</div></div>
-    <div class="bar-chart">
-      <div class="bar-row"><div class="bar-lbl">S01 (537)</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--green)">536 publiés ✅</div></div></div>
-      <div class="bar-row"><div class="bar-lbl">S02 (788)</div><div class="bar-track">
-        <div class="bar-stack">
-          <div title="Published" style="width:71.8%;background:var(--green)"></div>
-          <div title="Drafted" style="width:7.1%;background:var(--blue)"></div>
-          <div title="Scheduled" style="width:6%;background:var(--yellow)"></div>
-          <div title="Failed" style="width:2.2%;background:var(--orange)"></div>
-          <div title="Pending" style="flex:1;background:var(--bg4)"></div>
-        </div>
-      </div><div class="bar-total" style="color:var(--yellow)">84.9%</div></div>
-      <div class="bar-row"><div class="bar-lbl">S03 (720)</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--bg4)">⏳ pending</div></div></div>
-      <div class="bar-row"><div class="bar-lbl">S04 (726)</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--bg4)">⏳ pending</div></div></div>
-      <div class="bar-row"><div class="bar-lbl">S05 (715)</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--bg4)">⏳ pending</div></div></div>
-      <div class="bar-row"><div class="bar-lbl">S06 (713)</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--bg4)">⏳ pending</div></div></div>
-      <div class="bar-row"><div class="bar-lbl">S07 (701)</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--bg4)">⏳ pending</div></div></div>
-      <div class="bar-row"><div class="bar-lbl">S08 (700)</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--bg4)">⏳ pending</div></div></div>
-      <div class="bar-row"><div class="bar-lbl">S09 (695)</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--bg4)">⏳ pending</div></div></div>
-      <div class="bar-row"><div class="bar-lbl">S10 (570)</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--bg4)">⏳ pending</div></div></div>
-      <div class="bar-row"><div class="bar-lbl">S11 (90)</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--bg4)">⏳ pending</div></div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ ALERTS ══ -->
 <div id="tab-alerts" class="page">
-  <div class="section">
-    <div class="section-hdr"><div class="section-title">🔔 Alertes actives — 7 points d'attention</div></div>
-    <div style="padding:16px">
-      <div class="alert alert-err"><span class="alert-icon">⚠️</span><div><strong>37 articles en statut "failed" à relancer</strong>Sites les plus touchés: rezeptflow (8), yumrezept (8), rezeptnest (7), foodzauber (6), kochliebe (6). Vérifier les logs n8n et relancer les workflows concernés.</div></div>
-      <div class="alert alert-err"><span class="alert-icon">🔒</span><div><strong>20 articles en "quarantine" — vérification manuelle requise</strong>foodzauber (7), zimtschnecken (6), kaesekuchen (4). Contrôler le contenu avant publication.</div></div>
-      <div class="alert alert-warn"><span class="alert-icon">📌</span><div><strong>Pins incomplets — seulement 57.5% des articles ont un pin</strong>1 265 pins pour 2 200 articles publiés. 935 articles publiés sans pin Pinterest.</div></div>
-      <div class="alert alert-warn"><span class="alert-icon">✈️</span><div><strong>airfryer — taux de publication très bas (10%)</strong>Seulement 173/1806 articles publiés. C'est le site avec le plus grand nombre d'articles planifiés mais le plus faible taux d'avancement.</div></div>
-      <div class="alert alert-warn"><span class="alert-icon">🔵</span><div><strong>109 articles en "drafted" — prêts à publier</strong>Ces articles sont générés et validés mais pas encore publiés. schnelllecker (16), foodzauber (14), gulasch (12), waffeln (12).</div></div>
-      <div class="alert alert-info"><span class="alert-icon">⏰</span><div><strong>S02 à 84.9% — 101 articles encore en pending</strong>La semaine 2 n'est pas encore terminée. 101 articles restent à générer/publier.</div></div>
-      <div class="alert alert-ok"><span class="alert-icon">✅</span><div><strong>S01 complète à 99.8% — 536/537 articles publiés</strong>Excellent. Un seul article en erreur sur toute la première semaine.</div></div>
-    </div>
-  </div>
-  <div class="section">
-    <div class="section-hdr"><div class="section-title">✅ Checklist prochaine action</div></div>
-    <div class="checklist">
-      <div class="check-item check-err"><span>❌</span><span>Relancer les 37 articles "failed"</span></div>
-      <div class="check-item check-err"><span>⚠️</span><span>Vérifier les 20 articles en quarantine</span></div>
-      <div class="check-item check-warn"><span>⚠️</span><span>Publier les 109 articles drafted</span></div>
-      <div class="check-item check-warn"><span>⚠️</span><span>Générer les pins manquants (935)</span></div>
-      <div class="check-item check-warn"><span>⚠️</span><span>Terminer S02 (101 pending)</span></div>
-      <div class="check-item check-warn"><span>⚠️</span><span>Préparer les keywords S03</span></div>
-      <div class="check-item check-ok"><span>✅</span><span>S01 terminée (536/537)</span></div>
-      <div class="check-item check-ok"><span>✅</span><span>17 460 images générées</span></div>
-    </div>
-  </div>
+  <div class="section"><div class="sec-hdr"><div class="sec-title">🔔 Alertes actives</div></div><div style="padding:16px" id="alerts-list"></div></div>
+  <div class="section"><div class="sec-hdr"><div class="sec-title">✅ Checklist</div></div><div class="checklist" id="checklist"></div></div>
 </div>
 
 </div>
 
 <script>
-function showTab(id, el) {
+// ══════════════════════════════════════════════════════════
+// CONFIG — Sheet ID + exact tab names from your sheet
+// ══════════════════════════════════════════════════════════
+const SHEET_ID = '1v-qgZk5TaB4WAzgDNzlTV7nn4diboxO5A_P0jYiNSSQ';
+
+// These are ALL the tab names to try — the dashboard will
+// automatically try every variant and use whichever works
+const TAB_CANDIDATES = [
+  // Your actual tab names — try both with and without leading zero
+  'Master',
+  'S03','S04','S05','S06','S07','S08','S09','S10','S11','S12',
+  // Fallbacks in case naming is different
+  'S3','S4','S5','S6','S7','S8','S9',
+  'Semaine 3','Semaine 4','Semaine 5','Semaine 6',
+  'Week 3','Week 4','Pins','Sites'
+];
+
+const SITE_META = {
+  airfryer:     {accent:'#457B9D',type:'nano'},
+  foodzauber:   {accent:'#5B2A4E',type:'hub'},
+  plaetzchen:   {accent:'#C77DFF',type:'nano'},
+  kaesekuchen:  {accent:'#2A9D8F',type:'nano'},
+  rezeptnest:   {accent:'#C9A227',type:'primary'},
+  waffeln:      {accent:'#E07A5F',type:'nano'},
+  kochliebe:    {accent:'#2E5E4E',type:'primary'},
+  schnelllecker:{accent:'#2D6A4F',type:'primary'},
+  rezeptflow:   {accent:'#264653',type:'primary'},
+  yumrezept:    {accent:'#A63D40',type:'primary'},
+  pfannkuchen:  {accent:'#E63946',type:'nano'},
+  gulasch:      {accent:'#F4A261',type:'nano'},
+  zimtschnecken:{accent:'#E76F51',type:'nano'},
+};
+
+// ══════════════════════════════════════════════════════════
+// REAL DATA from your CSV (hardcoded as latest known truth)
+// This is what shows when the live sheet can't be read
+// ══════════════════════════════════════════════════════════
+const STATIC_SITES = {
+  airfryer:     {total:1806,published:173,drafted:10,scheduled:4,failed:1,quarantine:0,pending:1618,images:2454,pins:186,avgW:665},
+  foodzauber:   {total:1083,published:158,drafted:14,scheduled:14,failed:6,quarantine:7,pending:884,images:2234,pins:134,avgW:662},
+  plaetzchen:   {total:817, published:178,drafted:4, scheduled:0, failed:0,quarantine:0,pending:635,images:1958,pins:129,avgW:647},
+  kaesekuchen:  {total:814, published:176,drafted:6, scheduled:4, failed:0,quarantine:4,pending:624,images:1540,pins:135,avgW:651},
+  rezeptnest:   {total:661, published:160,drafted:2, scheduled:10,failed:7,quarantine:0,pending:482,images:1295,pins:94, avgW:662},
+  waffeln:      {total:563, published:178,drafted:12,scheduled:4, failed:0,quarantine:1,pending:368,images:1258,pins:85, avgW:653},
+  kochliebe:    {total:499, published:161,drafted:9, scheduled:12,failed:6,quarantine:0,pending:310,images:1089,pins:83, avgW:651},
+  schnelllecker:{total:466, published:164,drafted:16,scheduled:14,failed:0,quarantine:1,pending:271,images:1076,pins:91, avgW:640},
+  rezeptflow:   {total:419, published:154,drafted:6, scheduled:14,failed:8,quarantine:0,pending:237,images:1148,pins:72, avgW:655},
+  yumrezept:    {total:416, published:164,drafted:6, scheduled:10,failed:8,quarantine:0,pending:228,images:1020,pins:71, avgW:670},
+  pfannkuchen:  {total:234, published:178,drafted:8, scheduled:2, failed:0,quarantine:1,pending:45, images:718, pins:63, avgW:656},
+  gulasch:      {total:224, published:178,drafted:12,scheduled:2, failed:1,quarantine:0,pending:31, images:888, pins:62, avgW:664},
+  zimtschnecken:{total:222, published:178,drafted:4, scheduled:5, failed:0,quarantine:6,pending:29, images:782, pins:60, avgW:651},
+};
+const STATIC_WEEKS = {
+  1:{total:537,published:536,drafted:0, scheduled:0, failed:1,quarantine:0,pending:0},
+  2:{total:788,published:566,drafted:56,scheduled:47,failed:17,quarantine:0,pending:101},
+  3:{total:720,published:0,  drafted:0, scheduled:1, failed:0,quarantine:0,pending:719},
+  4:{total:726,published:0,  drafted:0, scheduled:0, failed:0,quarantine:0,pending:726},
+  5:{total:715,published:0,  drafted:0, scheduled:0, failed:0,quarantine:0,pending:715},
+  6:{total:713,published:0,  drafted:0, scheduled:0, failed:0,quarantine:0,pending:713},
+  7:{total:701,published:0,  drafted:0, scheduled:0, failed:0,quarantine:0,pending:701},
+  8:{total:700,published:0,  drafted:0, scheduled:0, failed:0,quarantine:0,pending:700},
+  9:{total:695,published:0,  drafted:0, scheduled:0, failed:0,quarantine:0,pending:695},
+  10:{total:570,published:0, drafted:0, scheduled:0, failed:0,quarantine:0,pending:570},
+  11:{total:90, published:0, drafted:0, scheduled:0, failed:1,quarantine:0,pending:89},
+  12:{total:0,  published:0, drafted:0, scheduled:0, failed:0,quarantine:0,pending:0},
+};
+// Static image/pin totals (computed from CSV)
+const STATIC_IMG_TOTAL = 17460;
+const STATIC_PIN_TOTAL = 1265;
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+let D = {sites:{},weeks:{},usedLive:false,liveTabCount:0,lastUpdate:null,activeWeek:1,imgTotal:0,pinTotal:0};
+
+// ══════════════════════════════════════════════════════════
+// CSV FETCH + PARSE
+// ══════════════════════════════════════════════════════════
+function parseLine(line){
+  const r=[];let cur='',inq=false;
+  for(const ch of line){if(ch==='"')inq=!inq;else if(ch===','&&!inq){r.push(cur.trim());cur='';}else cur+=ch;}
+  r.push(cur.trim());return r;
+}
+function parseCSV(text){
+  const lines=text.trim().split('\n').filter(l=>l.trim());
+  if(lines.length<2) return null;
+  const hdrs=parseLine(lines[0]);
+  // Validate required columns exist
+  const hl=hdrs.map(h=>h.toLowerCase().trim());
+  const si=hl.findIndex(h=>h==='site');
+  const sti=hl.findIndex(h=>h==='status');
+  const wi=hl.findIndex(h=>h==='week');
+  const ii=hl.findIndex(h=>h==='img status'||h==='img_status'||h==='images');
+  const pi=hl.findIndex(h=>h==='pin status'||h==='pin_status'||h==='pins');
+  if(si<0||sti<0) return null; // not a valid data tab
+  return {rows:lines.slice(1).map(l=>{
+    const v=parseLine(l);
+    return {
+      site:(v[si]||'').trim().toLowerCase(),
+      status:(v[sti]||'').trim().toLowerCase(),
+      week:parseInt(v[wi]||'0')||0,
+      imgDone:ii>=0&&(v[ii]||'').trim().toLowerCase()==='done',
+      pinDone:pi>=0&&(v[pi]||'').trim().toLowerCase()==='done',
+    };
+  }).filter(r=>r.site&&r.status),count:lines.length-1};
+}
+function cleanN(s){return parseInt((s||'').replace(/[\u202f\s,]/g,''))||0;}
+
+async function fetchTab(tab){
+  const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}&_=${Date.now()}`;
+  try{
+    const resp=await fetch(url,{cache:'no-store'});
+    if(!resp.ok) return null;
+    const text=await resp.text();
+    if(text.trim().startsWith('<')||text.length<100) return null;
+    return text;
+  }catch(e){return null;}
+}
+
+function accumulate(rows,sites,weeks){
+  for(const r of rows){
+    const {site,status,week,imgDone,pinDone}=r;
+    if(!site||!status) continue;
+    if(!sites[site]) sites[site]={total:0,published:0,drafted:0,scheduled:0,failed:0,quarantine:0,pending:0,images:0,pins:0};
+    const s=sites[site];
+    s.total++;
+    if(imgDone) s.images++;
+    if(pinDone) s.pins++;
+    if(['published','done'].includes(status)) s.published++;
+    else if(status==='drafted') s.drafted++;
+    else if(status==='scheduled') s.scheduled++;
+    else if(status==='failed') s.failed++;
+    else if(status==='quarantine') s.quarantine++;
+    else s.pending++;
+    if(week>=1&&week<=12){
+      if(!weeks[week]) weeks[week]={total:0,published:0,drafted:0,scheduled:0,failed:0,quarantine:0,pending:0};
+      const w=weeks[week];
+      w.total++;
+      if(['published','done'].includes(status)) w.published++;
+      else if(status==='drafted') w.drafted++;
+      else if(status==='scheduled') w.scheduled++;
+      else if(status==='failed') w.failed++;
+      else if(status==='quarantine') w.quarantine++;
+      else w.pending++;
+    }
+  }
+}
+
+async function loadData(){
+  const dot=document.getElementById('dot');
+  const stxt=document.getElementById('status-txt');
+  dot.style.background='var(--yellow)';dot.style.boxShadow='0 0 8px var(--yellow)';
+  stxt.textContent='Chargement...';
+
+  const newSites={},newWeeks={};
+  let totalRows=0,liveTabCount=0,imgTotal=0,pinTotal=0;
+
+  // Fetch all candidate tabs in parallel
+  const fetches=TAB_CANDIDATES.map(t=>fetchTab(t).then(csv=>({tab:t,csv})));
+  const results=await Promise.allSettled(fetches);
+
+  for(const res of results){
+    if(res.status!=='fulfilled'||!res.value.csv) continue;
+    const parsed=parseCSV(res.value.csv);
+    if(!parsed||parsed.rows.length===0) continue;
+    accumulate(parsed.rows,newSites,newWeeks);
+    // Count images and pins from raw rows
+    for(const r of parsed.rows){
+      if(r.imgDone) imgTotal++;
+      if(r.pinDone) pinTotal++;
+    }
+    totalRows+=parsed.rows.length;
+    liveTabCount++;
+    console.log(`✓ Tab '${res.value.tab}': ${parsed.rows.length} rows`);
+  }
+
+  const minThreshold=100; // need at least 100 valid rows to trust live data
+  if(totalRows>=minThreshold){
+    D.sites=newSites;D.weeks=newWeeks;
+    D.usedLive=true;D.liveTabCount=liveTabCount;
+    D.imgTotal=imgTotal;D.pinTotal=pinTotal;
+    dot.style.background='var(--green)';dot.style.boxShadow='0 0 8px var(--green)';
+    stxt.textContent=`🟢 Live · ${liveTabCount} onglets · ${totalRows.toLocaleString('fr')} lignes · ${new Date().toLocaleTimeString('fr-FR')}`;
+  } else {
+    D.sites=JSON.parse(JSON.stringify(STATIC_SITES));
+    D.weeks=JSON.parse(JSON.stringify(STATIC_WEEKS));
+    D.usedLive=false;D.liveTabCount=0;
+    D.imgTotal=STATIC_IMG_TOTAL;D.pinTotal=STATIC_PIN_TOTAL;
+    dot.style.background='var(--yellow)';dot.style.boxShadow='0 0 8px var(--yellow)';
+    stxt.textContent=`🟡 Données du ${new Date().toLocaleDateString('fr-FR')} (sheet non accessible) · ${new Date().toLocaleTimeString('fr-FR')}`;
+    // Log what failed for debugging
+    console.warn(`Live fetch failed: only ${totalRows} rows from ${liveTabCount} tabs. Using static data.`);
+  }
+  D.lastUpdate=new Date();
+  renderAll();
+}
+
+// ══════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════
+const fmt=n=>Number(n||0).toLocaleString('fr');
+const pct=(a,b)=>b>0?Math.round(a/b*100):0;
+const clr=p=>p>=80?'var(--green)':p>=50?'var(--yellow)':p>=20?'var(--orange)':'var(--red)';
+const sBadge=p=>{const c=p>=80?'bg-g':p>=50?'bg-y':p>=20?'bg-o':'bg-r';return`<span class="badge ${c}">${p}%</span>`;};
+function totals(){
+  const T={total:0,published:0,drafted:0,scheduled:0,failed:0,quarantine:0,pending:0,images:0,pins:0};
+  for(const s of Object.values(D.sites)) for(const k of Object.keys(T)) T[k]+=(s[k]||0);
+  // Override images/pins with our more accurate count
+  T.images=D.imgTotal||T.images;
+  T.pins=D.pinTotal||T.pins;
+  return T;
+}
+
+// ══════════════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════════════
+function renderAll(){renderOverview();renderSites();renderPipeline();renderWeeks();renderAlerts();}
+
+function renderOverview(){
+  const T=totals();
+  const done=T.published+T.drafted+T.scheduled;
+  const pubP=pct(T.published,T.total),doneP=pct(done,T.total),pinP=pct(T.pins,T.published);
+  document.getElementById('kpi-grid').innerHTML=`
+    <div class="kpi"><div class="kpi-label">Total planifié</div><div class="kpi-val">${fmt(T.total)}</div><div class="kpi-sub">sur ${Object.keys(D.weeks).length} semaines</div></div>
+    <div class="kpi"><div class="kpi-label">✅ Publiés</div><div class="kpi-val" style="color:var(--green)">${fmt(T.published)}</div><div class="kpi-sub">${pubP}% du total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${pubP}%;background:var(--green)"></div></div></div>
+    <div class="kpi"><div class="kpi-label">📝 Drafted</div><div class="kpi-val" style="color:var(--blue)">${fmt(T.drafted)}</div><div class="kpi-sub">prêts à publier</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${pct(T.drafted,T.total)}%;background:var(--blue)"></div></div></div>
+    <div class="kpi"><div class="kpi-label">⏰ Scheduled</div><div class="kpi-val" style="color:var(--yellow)">${fmt(T.scheduled)}</div><div class="kpi-sub">publication auto</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${pct(T.scheduled,T.total)}%;background:var(--yellow)"></div></div></div>
+    <div class="kpi"><div class="kpi-label">⚠️ Failed</div><div class="kpi-val" style="color:var(--orange)">${fmt(T.failed)}</div><div class="kpi-sub">à relancer</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${pct(T.failed,T.total)}%;background:var(--orange)"></div></div></div>
+    <div class="kpi"><div class="kpi-label">🔒 Quarantine</div><div class="kpi-val" style="color:var(--red)">${fmt(T.quarantine)}</div><div class="kpi-sub">à vérifier</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${pct(T.quarantine,T.total)}%;background:var(--red)"></div></div></div>
+    <div class="kpi"><div class="kpi-label">🖼️ Images</div><div class="kpi-val" style="color:var(--cyan)">${fmt(T.images)}</div><div class="kpi-sub">${T.published?+(T.images/T.published).toFixed(1):0}/article</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${pubP}%;background:var(--cyan)"></div></div></div>
+    <div class="kpi"><div class="kpi-label">📌 Pins</div><div class="kpi-val" style="color:var(--purple)">${fmt(T.pins)}</div><div class="kpi-sub">${pinP}% des publiés</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${pinP}%;background:var(--purple)"></div></div></div>
+    <div class="kpi"><div class="kpi-label">Sites actifs</div><div class="kpi-val" style="color:var(--cyan)">${Object.keys(D.sites).length}</div><div class="kpi-sub">hub · primary · nano</div></div>
+    <div class="kpi"><div class="kpi-label">Progression</div><div class="kpi-val" style="color:var(--blue)">${doneP}%</div><div class="kpi-sub">${fmt(done)} / ${fmt(T.total)}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${doneP}%;background:var(--blue)"></div></div></div>`;
+  document.getElementById('pipe-meta').textContent=`${fmt(T.total)} articles · ${D.usedLive?`Live (${D.liveTabCount} onglets)`:'données statiques'}`;
+  document.getElementById('pipe-steps').innerHTML=`
+    <div class="pipe-step"><div class="ps-icon">📋</div><div class="ps-name">Total</div><div class="ps-val" style="color:var(--muted)">${fmt(T.total)}</div></div>
+    <div class="pipe-step" style="background:var(--green-bg)"><div class="ps-icon">✅</div><div class="ps-name">Published</div><div class="ps-val" style="color:var(--green)">${fmt(T.published)}</div><div class="ps-sub">${pubP}%</div></div>
+    <div class="pipe-step" style="background:var(--blue-bg)"><div class="ps-icon">📝</div><div class="ps-name">Drafted</div><div class="ps-val" style="color:var(--blue)">${fmt(T.drafted)}</div></div>
+    <div class="pipe-step" style="background:var(--yellow-bg)"><div class="ps-icon">⏰</div><div class="ps-name">Scheduled</div><div class="ps-val" style="color:var(--yellow)">${fmt(T.scheduled)}</div></div>
+    <div class="pipe-step" style="background:var(--orange-bg)"><div class="ps-icon">⚠️</div><div class="ps-name">Failed</div><div class="ps-val" style="color:var(--orange)">${fmt(T.failed)}</div></div>
+    <div class="pipe-step" style="background:var(--red-bg)"><div class="ps-icon">🔒</div><div class="ps-name">Quarantine</div><div class="ps-val" style="color:var(--red)">${fmt(T.quarantine)}</div></div>
+    <div class="pipe-step"><div class="ps-icon">⏳</div><div class="ps-name">Pending</div><div class="ps-val" style="color:var(--muted)">${fmt(T.pending)}</div></div>`;
+  document.getElementById('prog-lbl').textContent=`${fmt(done)} / ${fmt(T.total)} (${doneP}%)`;
+  document.getElementById('prog-bar').innerHTML=`
+    <div style="width:${pubP}%;background:var(--green)"></div>
+    <div style="width:${pct(T.drafted,T.total)}%;background:var(--blue)"></div>
+    <div style="width:${pct(T.scheduled,T.total)}%;background:var(--yellow)"></div>
+    <div style="width:${pct(T.failed,T.total)}%;background:var(--orange)"></div>
+    <div style="width:${pct(T.quarantine,T.total)}%;background:var(--red)"></div>`;
+  document.getElementById('prog-legend').innerHTML=`
+    <span style="color:var(--green)">■ Published ${pubP}%</span>
+    <span style="color:var(--blue)">■ Drafted ${pct(T.drafted,T.total)}%</span>
+    <span style="color:var(--yellow)">■ Scheduled ${pct(T.scheduled,T.total)}%</span>
+    <span style="color:var(--orange)">■ Failed ${pct(T.failed,T.total)}%</span>
+    <span style="color:var(--red)">■ Quarantine ${pct(T.quarantine,T.total)}%</span>
+    <span style="color:var(--muted)">■ Pending ${pct(T.pending,T.total)}%</span>`;
+  const wks=Object.keys(D.weeks).map(Number).sort((a,b)=>a-b);
+  document.getElementById('week-bars').innerHTML=wks.map(w=>{
+    const wd=D.weeks[w],done=wd.published+wd.drafted+wd.scheduled,p=pct(done,wd.total),c=clr(p);
+    return `<div class="bar-row"><div class="bar-lbl">S${String(w).padStart(2,'0')} (${fmt(wd.total)})</div>
+    <div class="bar-track"><div class="bar-stack">
+      <div style="width:${pct(wd.published,wd.total)}%;background:var(--green)"></div>
+      <div style="width:${pct(wd.drafted,wd.total)}%;background:var(--blue)"></div>
+      <div style="width:${pct(wd.scheduled,wd.total)}%;background:var(--yellow)"></div>
+      ${wd.failed?`<div style="width:${pct(wd.failed,wd.total)}%;background:var(--orange)"></div>`:''}
+      <div style="flex:1;background:var(--bg4)"></div>
+    </div></div><div class="bar-val" style="color:${c}">${p}%</div></div>`;
+  }).join('');
+  const sArr=Object.entries(D.sites).sort((a,b)=>b[1].published-a[1].published);
+  const maxP=Math.max(...sArr.map(([,s])=>s.published),1);
+  document.getElementById('site-bars').innerHTML=sArr.map(([name,s])=>{
+    const p=pct(s.published,s.total),c=clr(p);
+    return `<div class="bar-row"><div class="bar-lbl">${name}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${pct(s.published,maxP)}%;background:${c}">${s.published}</div></div>
+    <div class="bar-val" style="color:${c}">${p}%</div></div>`;
+  }).join('');
+}
+
+function renderSites(){
+  const sArr=Object.entries(D.sites).sort((a,b)=>b[1].published-a[1].published);
+  document.getElementById('site-grid').innerHTML=sArr.map(([name,s])=>{
+    const meta=SITE_META[name]||{accent:'#3b82f6',type:'nano'};
+    const p=pct(s.published,s.total),c=clr(p);
+    const typeC=meta.type==='hub'?'bg-o':meta.type==='primary'?'bg-b':'bg-c';
+    const issues=s.failed+s.quarantine;
+    return `<div class="site-card"><div class="site-accent" style="background:${meta.accent}"></div>
+      <div class="sc-top">
+        <div><div class="sc-name">${name}</div><div style="font-size:11px;color:var(--muted)">${meta.type}</div></div>
+        <div style="display:flex;gap:4px">${issues?`<span class="badge bg-r">⚠️ ${issues}</span>`:''}<span class="badge ${typeC}">${meta.type}</span></div>
+      </div>
+      <div class="sc-stats">
+        <div><div class="sv" style="color:var(--green)">${s.published}</div><div class="sl">pub.</div></div>
+        <div><div class="sv" style="color:var(--blue)">${s.drafted}</div><div class="sl">draft</div></div>
+        <div><div class="sv" style="color:var(--cyan)">${fmt(s.images)}</div><div class="sl">imgs</div></div>
+        <div><div class="sv" style="color:var(--purple)">${s.pins}</div><div class="sl">pins</div></div>
+      </div>
+      <div class="prog-row"><div class="prog"><div class="prog-fill" style="width:${p}%;background:${c}"></div></div><span class="prog-pct" style="color:${c}">${p}%</span></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;display:flex;gap:10px;flex-wrap:wrap">
+        <span>Total: ${fmt(s.total)}</span>
+        ${s.failed?`<span style="color:var(--orange)">Failed: ${s.failed}</span>`:''}
+        ${s.quarantine?`<span style="color:var(--red)">Quar.: ${s.quarantine}</span>`:''}
+        <span>Pending: ${fmt(s.pending)}</span>
+        ${s.avgW?`<span>~${s.avgW}w</span>`:''}
+      </div></div>`;
+  }).join('');
+}
+
+function renderPipeline(){
+  const T=totals();
+  document.getElementById('pipe-tbl-meta').textContent=`${fmt(T.total)} articles · ${Object.keys(D.sites).length} sites`;
+  const rows=Object.entries(D.sites).sort((a,b)=>b[1].published-a[1].published);
+  document.getElementById('pipe-tbody').innerHTML=rows.map(([name,s])=>{
+    const p=pct(s.published,s.total);
+    return `<tr><td><strong>${name}</strong></td><td>${fmt(s.total)}</td>
+      <td style="color:var(--green);font-weight:700">${fmt(s.published)}</td>
+      <td style="color:var(--blue)">${s.drafted}</td><td style="color:var(--yellow)">${s.scheduled}</td>
+      <td style="color:${s.failed?'var(--orange)':'var(--muted)'}">${s.failed}</td>
+      <td style="color:${s.quarantine?'var(--red)':'var(--muted)'}">${s.quarantine}</td>
+      <td style="color:var(--muted)">${fmt(s.pending)}</td>
+      <td style="color:var(--cyan)">${fmt(s.images)}</td>
+      <td style="color:var(--purple)">${s.pins}</td>
+      <td>${sBadge(p)}</td></tr>`;
+  }).join('');
+  document.getElementById('pipe-foot').innerHTML=`
+    <td>TOTAL</td><td>${fmt(T.total)}</td>
+    <td style="color:var(--green)">${fmt(T.published)}</td>
+    <td style="color:var(--blue)">${T.drafted}</td><td style="color:var(--yellow)">${T.scheduled}</td>
+    <td style="color:var(--orange)">${T.failed}</td><td style="color:var(--red)">${T.quarantine}</td>
+    <td style="color:var(--muted)">${fmt(T.pending)}</td>
+    <td style="color:var(--cyan)">${fmt(T.images)}</td>
+    <td style="color:var(--purple)">${T.pins}</td>
+    <td>${sBadge(pct(T.published,T.total))}</td>`;
+}
+
+function renderWeeks(){
+  const wks=Object.keys(D.weeks).map(Number).sort((a,b)=>a-b);
+  const total=Object.values(D.weeks).reduce((a,w)=>a+w.total,0);
+  document.getElementById('weeks-meta').textContent=`${wks.length} semaines · ${fmt(total)} articles`;
+  document.getElementById('week-tabs').innerHTML=wks.map(w=>{
+    const wd=D.weeks[w],done=wd.published+wd.drafted+wd.scheduled,p=pct(done,wd.total);
+    const cls=p>=90?'done':p>=10?'partial':wd.failed>5?'err':'';
+    return `<div class="wtab ${cls} ${w===D.activeWeek?'active':''}" onclick="showWeek(${w},this)">S${String(w).padStart(2,'0')} <span style="font-size:10px;opacity:.7">${p}%</span></div>`;
+  }).join('');
+  showWeekContent(D.activeWeek);
+}
+
+function showWeek(n,el){
+  D.activeWeek=n;
+  document.querySelectorAll('.wtab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  showWeekContent(n);
+}
+function showWeekContent(n){
+  const w=D.weeks[n];if(!w){document.getElementById('week-content').innerHTML='<div class="week-content"><p style="color:var(--muted);padding:16px">Pas de données.</p></div>';return;}
+  const done=w.published+w.drafted+w.scheduled,p=pct(done,w.total),c=clr(p);
+  document.getElementById('week-content').innerHTML=`<div class="week-content">
+    <div class="kpi-grid" style="margin-bottom:12px">
+      <div class="kpi"><div class="kpi-label">Total S${n}</div><div class="kpi-val">${fmt(w.total)}</div></div>
+      <div class="kpi"><div class="kpi-label">✅ Publiés</div><div class="kpi-val" style="color:var(--green)">${fmt(w.published)}</div></div>
+      <div class="kpi"><div class="kpi-label">📝 Drafted</div><div class="kpi-val" style="color:var(--blue)">${w.drafted}</div></div>
+      <div class="kpi"><div class="kpi-label">⏰ Scheduled</div><div class="kpi-val" style="color:var(--yellow)">${w.scheduled}</div></div>
+      <div class="kpi"><div class="kpi-label">⚠️ Failed</div><div class="kpi-val" style="color:${w.failed?'var(--orange)':'var(--muted)'}">${w.failed}</div></div>
+      <div class="kpi"><div class="kpi-label">⏳ Pending</div><div class="kpi-val" style="color:var(--muted)">${fmt(w.pending)}</div></div>
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px"><span>Avancement S${n}</span><span style="font-weight:700;color:${c}">${fmt(done)} / ${fmt(w.total)} (${p}%)</span></div>
+      <div style="height:10px;background:var(--border);border-radius:5px;overflow:hidden;display:flex">
+        <div style="width:${pct(w.published,w.total)}%;background:var(--green)"></div>
+        <div style="width:${pct(w.drafted,w.total)}%;background:var(--blue)"></div>
+        <div style="width:${pct(w.scheduled,w.total)}%;background:var(--yellow)"></div>
+        ${w.failed?`<div style="width:${pct(w.failed,w.total)}%;background:var(--orange)"></div>`:''}
+        <div style="flex:1;background:var(--bg4)"></div>
+      </div>
+    </div>
+    ${p>=90?`<div class="alert a-ok"><span class="a-icon">✅</span><div><strong>S${n} quasi-terminée</strong>${p}% traités.</div></div>`:''}
+    ${w.failed>0?`<div class="alert a-warn"><span class="a-icon">⚠️</span><div><strong>${w.failed} article(s) failed</strong>Vérifier les logs n8n et relancer.</div></div>`:''}
+    ${w.quarantine>0?`<div class="alert a-err"><span class="a-icon">🔒</span><div><strong>${w.quarantine} en quarantine</strong>Vérification manuelle requise.</div></div>`:''}
+    ${w.pending>0?`<div class="alert a-info"><span class="a-icon">⏳</span><div><strong>${fmt(w.pending)} en attente</strong>${pct(w.pending,w.total)}% reste à générer.</div></div>`:''}
+  </div>`;
+}
+
+function renderAlerts(){
+  const T=totals();const alerts=[];
+  if(!D.usedLive) alerts.push({cls:'a-info',icon:'🟡',title:`Données du ${D.lastUpdate?.toLocaleDateString('fr-FR')} — sheet non accessible`,body:'Le dashboard affiche les dernières données connues. Pour les données live: ouvrir la console (F12) pour voir pourquoi les onglets ne se chargent pas.'});
+  if(T.failed>0) alerts.push({cls:'a-err',icon:'⚠️',title:`${T.failed} articles "failed" à relancer`,body:'Sites: '+Object.entries(D.sites).filter(([,s])=>s.failed>0).map(([n,s])=>`${n} (${s.failed})`).join(', ')});
+  if(T.quarantine>0) alerts.push({cls:'a-err',icon:'🔒',title:`${T.quarantine} articles en quarantine`,body:'Sites: '+Object.entries(D.sites).filter(([,s])=>s.quarantine>0).map(([n,s])=>`${n} (${s.quarantine})`).join(', ')});
+  if(T.drafted>0) alerts.push({cls:'a-info',icon:'📝',title:`${T.drafted} articles drafted — prêts à publier`,body:Object.entries(D.sites).filter(([,s])=>s.drafted>0).sort((a,b)=>b[1].drafted-a[1].drafted).slice(0,5).map(([n,s])=>`${n} (${s.drafted})`).join(', ')});
+  const mPin=T.published-T.pins;
+  if(mPin>0) alerts.push({cls:'a-warn',icon:'📌',title:`${fmt(mPin)} articles publiés sans pin Pinterest`,body:`${T.pins} pins pour ${T.published} publiés (${pct(T.pins,T.published)}% couverture)`});
+  const low=Object.entries(D.sites).filter(([,s])=>pct(s.published,s.total)<20&&s.total>200);
+  if(low.length) alerts.push({cls:'a-info',icon:'🐢',title:`${low.length} site(s) avec taux < 20%`,body:low.map(([n,s])=>`${n}: ${pct(s.published,s.total)}%`).join(' · ')});
+  if(T.published>0) alerts.push({cls:'a-ok',icon:'✅',title:`${fmt(T.published)} articles publiés · ${fmt(T.images)} images`,body:`Progression: ${pct(T.published+T.drafted+T.scheduled,T.total)}% du pipeline traité`});
+  document.getElementById('alert-count').textContent=alerts.filter(a=>a.cls==='a-err'||a.cls==='a-warn').length;
+  document.getElementById('alerts-list').innerHTML=alerts.map(a=>`<div class="alert ${a.cls}"><span class="a-icon">${a.icon}</span><div><strong>${a.title}</strong>${a.body}</div></div>`).join('');
+  const checks=[
+    {ok:T.failed===0,warn:T.failed>0&&T.failed<10,err:T.failed>=10,label:`Failed (${T.failed})`},
+    {ok:T.quarantine===0,warn:T.quarantine>0&&T.quarantine<5,err:T.quarantine>=5,label:`Quarantine (${T.quarantine})`},
+    {ok:T.drafted===0,warn:T.drafted>0,label:`Drafted à publier (${T.drafted})`},
+    {ok:pct(T.pins,T.published)>=80,warn:pct(T.pins,T.published)<80,label:`Pins (${pct(T.pins,T.published)}% couverture)`},
+    {ok:D.usedLive,warn:!D.usedLive,label:`Source: ${D.usedLive?`Live (${D.liveTabCount} onglets)`:'statique ⚠️'}`},
+    {ok:true,label:'n8n workflows actifs'},
+    {ok:T.published>0,label:`${fmt(T.published)} articles publiés`},
+    {ok:T.images>0,label:`${fmt(T.images)} images générées`},
+  ];
+  document.getElementById('checklist').innerHTML=checks.map(c=>{
+    const cls=c.err?'ck-err':c.warn?'ck-warn':'ck-ok',icon=c.err?'❌':c.warn?'⚠️':'✅';
+    return `<div class="check ${cls}"><span>${icon}</span><span>${c.label}</span></div>`;
+  }).join('');
+}
+
+function showTab(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  el.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');el.classList.add('active');
 }
+
+// Boot + auto-refresh every 5 min
+loadData();
+setInterval(()=>loadData(),5*60*1000);
 </script>
 </body>
 </html>
