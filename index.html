@@ -173,9 +173,15 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 const SHEET_ID = '1v-qgZk5TaB4WAzgDNzlTV7nn4diboxO5A_P0jYiNSSQ';
 // IMPORTANT: Only read Master — it contains ALL articles already
 // S03-S12 tabs are subsets of Master → reading both = duplicates
-const TABS_TO_READ = ['Master'];
-// Fallback: if Master fails, try these tab names
-const FALLBACK_TABS = ['S01','S02','S03','S04','S05','S06','S07','S08','S09','S10','S11'];
+// Lightweight tabs written by n8n sync workflow
+// Instead of reading 8000+ rows, we read pre-computed stats
+const STATS_TABS = {
+  summary: 'Summary',  // global totals
+  sites:   'Sites',    // one row per site
+  weeks:   'Weeks',    // one row per week
+};
+// Fallback: read Master directly (slower but works without n8n)
+const FALLBACK_TABS = ['Master','S03','S04','S05','S06','S07','S08','S09','S10','S11'];
 
 const SITE_META = {
   airfryer:     {accent:'#457B9D',type:'nano'},
@@ -337,65 +343,133 @@ function buildStats(rows){
   return {sites,weeks};
 }
 
+// ═══════════════════════════════════════════════
+// FAST PATH: read pre-computed stats tabs (n8n writes these)
+// SLOW PATH fallback: read raw rows and compute locally
+// ═══════════════════════════════════════════════
+function parseSiteRow(r){
+  return {
+    total:     parseInt(r.total||0),
+    published: parseInt(r.published||0),
+    drafted:   parseInt(r.drafted||0),
+    scheduled: parseInt(r.scheduled||0),
+    failed:    parseInt(r.failed||0),
+    quarantine:parseInt(r.quarantine||0),
+    pending:   parseInt(r.pending||0),
+    images:    parseInt(r.images||0),
+    pins:      parseInt(r.pins||0),
+    avgW:      parseInt(r.avgW||0),
+  };
+}
+function parseWeekRow(r){
+  return {
+    total:     parseInt(r.total||0),
+    published: parseInt(r.published||0),
+    drafted:   parseInt(r.drafted||0),
+    scheduled: parseInt(r.scheduled||0),
+    failed:    parseInt(r.failed||0),
+    quarantine:parseInt(r.quarantine||0),
+    pending:   parseInt(r.pending||0),
+  };
+}
+function parseStatsCSV(text){
+  const lines=text.trim().split('\n').filter(l=>l.trim());
+  if(lines.length<2) return null;
+  const hdrs=parseLine(lines[0]).map(h=>h.toLowerCase().trim());
+  return lines.slice(1).map(l=>{
+    const vals=parseLine(l);
+    const o={};
+    hdrs.forEach((h,i)=>{ o[h]=(vals[i]||'').trim(); });
+    return o;
+  }).filter(r=>Object.values(r).some(v=>v));
+}
+
 async function loadData(){
   const dot=document.getElementById('dot');
   const stxt=document.getElementById('status-txt');
   dot.style.cssText='width:8px;height:8px;border-radius:50%;background:var(--yellow);box-shadow:0 0 8px var(--yellow)';
   stxt.textContent='Chargement...';
 
+  // ── FAST PATH: try pre-computed Summary/Sites/Weeks tabs ──
+  const [csvSites, csvWeeks] = await Promise.all([
+    fetchTab(STATS_TABS.sites),
+    fetchTab(STATS_TABS.weeks),
+  ]);
+
+  if(csvSites && csvWeeks){
+    const siteRows = parseStatsCSV(csvSites);
+    const weekRows = parseStatsCSV(csvWeeks);
+
+    if(siteRows && siteRows.length>=1 && weekRows && weekRows.length>=1){
+      // Build sites dict
+      const newSites={};
+      for(const r of siteRows){
+        const name=(r.site||'').toLowerCase().trim();
+        if(!name) continue;
+        newSites[name]=parseSiteRow(r);
+      }
+      // Build weeks dict
+      const newWeeks={};
+      for(const r of weekRows){
+        const wk=parseInt(r.week||0);
+        if(!wk) continue;
+        newWeeks[wk]=parseWeekRow(r);
+      }
+
+      // Validate: published total should be > 0
+      const totalPub=Object.values(newSites).reduce((a,s)=>a+s.published,0);
+      if(totalPub>0){
+        D.sites=newSites;
+        D.weeks=newWeeks;
+        D.usedLive=true;
+        D.liveRows=Object.values(newSites).reduce((a,s)=>a+s.total,0);
+        dot.style.cssText='width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)';
+        stxt.textContent=`🟢 Live (n8n sync) · ${D.liveRows.toLocaleString('fr')} articles · ${new Date().toLocaleTimeString('fr-FR')}`;
+        D.lastUpdate=new Date();
+        renderAll();
+        return;
+      }
+    }
+  }
+
+  // ── SLOW PATH: read raw rows and compute ──
   let allRows=[];
   let liveRows=0;
+  const seen={};
 
-  // Try Master first (contains everything)
-  for(const tab of TABS_TO_READ){
+  for(const tab of FALLBACK_TABS){
     const csv=await fetchTab(tab);
-    if(csv){
-      const rows=parseAndDedup(csv);
-      if(rows&&rows.length>50){
-        allRows=rows;
-        liveRows=rows.length;
-        break;
+    if(!csv) continue;
+    const rows=parseAndDedup(csv);
+    if(!rows||rows.length===0) continue;
+    for(const r of rows){
+      if(r.id){
+        const rank=STATUS_RANK[r.status]??0;
+        if(!seen[r.id]||rank>(STATUS_RANK[seen[r.id].status]??0)) seen[r.id]=r;
+      } else {
+        allRows.push(r);
       }
     }
+    liveRows+=rows.length;
   }
+  const deduped=Object.values(seen);
+  allRows=[...deduped,...allRows];
 
-  // If Master failed, try fallback tabs (dedup across all)
-  if(liveRows===0){
-    const seen={};
-    for(const tab of FALLBACK_TABS){
-      const csv=await fetchTab(tab);
-      if(!csv) continue;
-      const rows=parseAndDedup(csv);
-      if(!rows||rows.length===0) continue;
-      for(const r of rows){
-        if(r.id){
-          const rank=STATUS_RANK[r.status]??0;
-          if(!seen[r.id]||rank>(STATUS_RANK[seen[r.id].status]??0)) seen[r.id]=r;
-        } else {
-          allRows.push(r);
-        }
-      }
-    }
-    const deduped=Object.values(seen);
-    allRows=[...deduped,...allRows];
-    liveRows=allRows.length;
-  }
-
-  if(liveRows>=100){
+  if(allRows.length>=100){
     const stats=buildStats(allRows);
     D.sites=stats.sites;
     D.weeks=stats.weeks;
     D.usedLive=true;
-    D.liveRows=liveRows;
+    D.liveRows=allRows.length;
     dot.style.cssText='width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)';
-    stxt.textContent=`🟢 Live · ${liveRows.toLocaleString('fr')} articles · ${new Date().toLocaleTimeString('fr-FR')}`;
+    stxt.textContent=`🟢 Live (raw) · ${allRows.length.toLocaleString('fr')} articles · ${new Date().toLocaleTimeString('fr-FR')}`;
   } else {
     D.sites=JSON.parse(JSON.stringify(STATIC.sites));
     D.weeks=JSON.parse(JSON.stringify(STATIC.weeks));
     D.usedLive=false;
     D.liveRows=0;
     dot.style.cssText='width:8px;height:8px;border-radius:50%;background:var(--yellow);box-shadow:0 0 8px var(--yellow)';
-    stxt.textContent=`🟡 Données du 18/09/2026 · ${new Date().toLocaleTimeString('fr-FR')}`;
+    stxt.textContent=`🟡 Données statiques 18/09 · ${new Date().toLocaleTimeString('fr-FR')}`;
   }
   D.lastUpdate=new Date();
   renderAll();
