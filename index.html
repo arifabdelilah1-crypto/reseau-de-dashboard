@@ -206,7 +206,10 @@ const STATUS_RANK = {published:6,done:6,scheduled:5,drafted:4,failed:3,quarantin
 // STATIC DATA — real numbers from Drive (18/09/2026)
 // ══════════════════════════════════════════════
 const STATIC = {
-  // Real data from data.csv — 8224 articles, 2200 published (18/09/2026)
+  // Real data from data.csv — 8224 unique articles, 2200 published
+  // Images = col 'Images' (real count per article, avg 7.9)
+  // Pins   = col 'Pins'   (real count per article)
+  // Updated: 18/09/2026
   sites: {
     airfryer:     {total:1806,published:173,drafted:10,scheduled:4, failed:1, quarantine:0, pending:1618,images:2454,pins:186,avgW:665},
     foodzauber:   {total:1083,published:158,drafted:14,scheduled:14,failed:6, quarantine:7, pending:884, images:2234,pins:134,avgW:662},
@@ -260,8 +263,8 @@ function parseAndDedup(text){
     site:  hdrs.findIndex(h=>h==='site'),
     status:hdrs.findIndex(h=>h==='status'),
     week:  hdrs.findIndex(h=>h==='week'),
-    img:   hdrs.findIndex(h=>h==='img status'||h==='img_status'),
-    pin:   hdrs.findIndex(h=>h==='pin status'||h==='pin_status'),
+    img:   hdrs.findIndex(h=>h==='images'),          // col 'Images' = real count (7,8,9...)
+    pin:   hdrs.findIndex(h=>h==='pins'),             // col 'Pins' = real count
     words: hdrs.findIndex(h=>h==='words'),
   };
   if(idx.site<0||idx.status<0) return null;
@@ -269,14 +272,15 @@ function parseAndDedup(text){
   // Parse all rows
   const rawRows = lines.slice(1).map(l=>{
     const v=parseLine(l);
+    const cleanN=s=>parseInt((s||'').replace(/[\u202f\s,]/g,''))||0;
     return {
       id:     idx.id>=0?(v[idx.id]||'').trim():'',
       site:   (v[idx.site]||'').trim().toLowerCase(),
       status: (v[idx.status]||'').trim().toLowerCase(),
       week:   idx.week>=0?parseInt(v[idx.week]||'0')||0:0,
-      img:    idx.img>=0?(v[idx.img]||'').trim().toLowerCase()==='done':false,
-      pin:    idx.pin>=0?(v[idx.pin]||'').trim().toLowerCase()==='done':false,
-      words:  idx.words>=0?parseInt((v[idx.words]||'').replace(/[\u202f\s,]/g,''))||0:0,
+      images: idx.img>=0?cleanN(v[idx.img]):0,   // real count from 'Images' column
+      pins:   idx.pin>=0?cleanN(v[idx.pin]):0,    // real count from 'Pins' column
+      words:  idx.words>=0?cleanN(v[idx.words]):0,
     };
   }).filter(r=>r.site&&r.status);
 
@@ -316,8 +320,8 @@ function buildStats(rows){
     if(!sites[r.site]) sites[r.site]={total:0,published:0,drafted:0,scheduled:0,failed:0,quarantine:0,pending:0,images:0,pins:0,words:[]};
     const s=sites[r.site];
     s.total++;
-    if(r.img) s.images++;
-    if(r.pin) s.pins++;
+    s.images+=(r.images||0);   // real count from 'Images' col
+    s.pins+=(r.pins||0);       // real count from 'Pins' col
     if(r.words>0) s.words.push(r.words);
     const st=r.status;
     if(['published','done'].includes(st)) s.published++;
