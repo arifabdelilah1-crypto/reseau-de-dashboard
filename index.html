@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Réseau DE — Control Panel</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root {
   --bg:       #0d1117;
@@ -183,6 +184,7 @@ body{background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMac
   <div class="main">
     <div class="tabs">
       <div class="tab active" onclick="showTab('overview')">Vue d'ensemble</div>
+      <div class="tab" onclick="showTab('charts')">📊 Graphiques</div>
       <div class="tab" onclick="showTab('sites')">Sites</div>
       <div class="tab" onclick="showTab('weeks')">Semaines</div>
       <div class="tab" onclick="showTab('actions')">Actions</div>
@@ -204,8 +206,9 @@ body{background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMac
           <div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="ov-pub-bar" style="background:var(--green);width:0%"></div></div></div>
         </div>
         <div class="card">
-          <div class="card-title">Images done</div>
+          <div class="card-title">Images générées</div>
           <div class="big-num accent" id="ov-img">—</div>
+          <div class="sub-label" id="ov-img-sub">— articles complets</div>
           <div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="ov-img-bar" style="background:var(--accent);width:0%"></div></div></div>
         </div>
         <div class="card">
@@ -332,6 +335,36 @@ body{background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMac
       </div>
     </div>
 
+
+    <!-- ── CHARTS ── -->
+    <div class="tab-panel" id="tab-charts">
+      <div class="grid grid-2" style="margin-bottom:20px">
+        <div class="card">
+          <div class="section-header">
+            <div class="section-title">Publications par jour — 30 derniers jours</div>
+          </div>
+          <div style="position:relative;height:220px">
+            <canvas id="chart-daily"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-header">
+            <div class="section-title">Progression par site</div>
+          </div>
+          <div style="position:relative;height:220px">
+            <canvas id="chart-sites"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-header">
+          <div class="section-title">Images générées par site (colonne Images — count réel)</div>
+        </div>
+        <div style="position:relative;height:240px">
+          <canvas id="chart-images"></canvas>
+        </div>
+      </div>
+    </div>
     <!-- ── FAILED ── -->
     <div class="tab-panel" id="tab-failed">
       <div class="card">
@@ -415,7 +448,11 @@ const REFRESH_INTERVAL = 30000; // 30s
 // ── State ─────────────────────────────────────────────────────────────────────
 let AUTH = null;
 let DATA = null;
+let CHART_DATA = null;
 let refreshTimer = null;
+let chartDaily = null;
+let chartSites = null;
+let chartImages = null;
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 function doLogin() {
@@ -499,7 +536,10 @@ function loadData() {
     .then(d => {
       if (!d.ok) throw new Error(d.error);
       DATA = d.stats;
+      CHART_DATA = { daily: d.daily, siteProg: d.siteProg };
       renderAll(d.stats, d.weeks);
+      // Si l'onglet graphiques est actif, on le re-render
+      if (document.getElementById('tab-charts').classList.contains('active')) renderCharts();
       dot.className = 'status-dot';
       document.getElementById('refresh-time').textContent =
         'Actualisé ' + new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
@@ -547,7 +587,11 @@ function renderAll(d, weeks) {
 
   document.getElementById('ov-total').textContent  = n(d.total);
   document.getElementById('ov-pub').textContent    = n(pub);
-  document.getElementById('ov-img').textContent    = n(done_img);
+  // FIX: utilise totalImages (somme col Images) au lieu de count d'articles done
+  const totalImages = d.totalImages || 0;
+  const imgDone = d.imgDone || 0;
+  document.getElementById('ov-img').textContent    = n(totalImages);
+  document.getElementById('ov-img-sub').textContent = n(imgDone) + ' articles complets';
   document.getElementById('ov-pins').textContent   = n(pins_total);
   document.getElementById('ov-pins-sub').textContent = pins_posted + ' postés';
   document.getElementById('ov-gpu').textContent    = n(d.gpu || 0);
@@ -558,7 +602,7 @@ function renderAll(d, weeks) {
   document.getElementById('ov-vol-sub').textContent = n(d.volFait) + ' / ' + n(d.volTotal) + ' /mois';
 
   const pubPct = pct(pub + sched, d.total);
-  const imgPct = pct(done_img, d.total);
+  const imgPct = pct(imgDone, d.total);
   document.getElementById('ov-pub-bar').style.width = pubPct + '%';
   document.getElementById('ov-img-bar').style.width = imgPct + '%';
 
@@ -712,13 +756,14 @@ function publishPins(mode) {
 // ── UI helpers ────────────────────────────────────────────────────────────────
 function showTab(name) {
   document.querySelectorAll('.tab').forEach((t,i) => {
-    const names = ['overview','sites','weeks','actions','failed','pins'];
+    const names = ['overview','charts','sites','weeks','actions','failed','pins'];
     t.className = 'tab' + (names[i] === name ? ' active' : '');
   });
   document.querySelectorAll('.tab-panel').forEach(p => p.className = 'tab-panel');
   document.getElementById('tab-'+name).className = 'tab-panel active';
   if (name === 'failed') loadFailed();
   if (name === 'pins') loadPins();
+  if (name === 'charts') renderCharts();
 }
 
 function toast(msg, type) {
@@ -730,6 +775,135 @@ function toast(msg, type) {
   setTimeout(() => el.remove(), 4000);
 }
 
+
+// ── Charts ────────────────────────────────────────────────────────────────────
+function renderCharts() {
+  if (!CHART_DATA && DATA) {
+    // Fallback: construire depuis DATA si pas de données journalières
+    CHART_DATA = { siteProg: DATA.sites };
+  }
+  if (!CHART_DATA) return;
+
+  const isDark = document.body.style.background !== '' || window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const gridColor = 'rgba(255,255,255,0.07)';
+  const textColor = '#8b949e';
+  const tooltipBg = '#1c2128';
+
+  Chart.defaults.color = textColor;
+  Chart.defaults.borderColor = gridColor;
+
+  // ── Graphique 1 : Publications par jour ───────────────────────────────────
+  const daily = (CHART_DATA.daily || []);
+  const dailyLabels = daily.map(d => {
+    const dt = new Date(d.date);
+    return (dt.getMonth()+1) + '/' + dt.getDate();
+  });
+  const dailyData = daily.map(d => d.count);
+
+  if (chartDaily) chartDaily.destroy();
+  const ctx1 = document.getElementById('chart-daily');
+  if (ctx1) {
+    chartDaily = new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: dailyLabels,
+        datasets: [{
+          label: 'Articles publiés',
+          data: dailyData,
+          backgroundColor: 'rgba(88,166,255,0.7)',
+          borderColor: '#58a6ff',
+          borderWidth: 1,
+          borderRadius: 3,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { backgroundColor: tooltipBg, titleColor: '#e6edf3', bodyColor: '#8b949e' }
+        },
+        scales: {
+          x: { grid: { color: gridColor }, ticks: { maxTicksLimit: 10, color: textColor } },
+          y: { grid: { color: gridColor }, ticks: { color: textColor }, beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  // ── Graphique 2 : Progression par site ───────────────────────────────────
+  const sites = (CHART_DATA.siteProg || DATA && DATA.sites || []).slice(0, 13);
+  const siteNames = sites.map(s => s.nom);
+  const pubData   = sites.map(s => s.texte || s.published || 0);
+  const schedData = sites.map(s => s.scheduled || 0);
+  const totData   = sites.map(s => s.t || s.total || 0);
+  const pendData  = sites.map(s => Math.max(0, (s.t||s.total||0) - (s.texte||s.published||0)));
+
+  if (chartSites) chartSites.destroy();
+  const ctx2 = document.getElementById('chart-sites');
+  if (ctx2) {
+    chartSites = new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: siteNames,
+        datasets: [
+          { label: 'Publiés', data: pubData, backgroundColor: 'rgba(63,185,80,0.8)', borderRadius: 3 },
+          { label: 'Pending', data: pendData, backgroundColor: 'rgba(48,54,61,0.9)', borderRadius: 3 },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: textColor, boxWidth: 12 } },
+          tooltip: { backgroundColor: tooltipBg, titleColor: '#e6edf3', bodyColor: '#8b949e' }
+        },
+        scales: {
+          x: { stacked: true, grid: { color: gridColor }, ticks: { color: textColor } },
+          y: { stacked: true, grid: { color: gridColor }, ticks: { color: textColor } }
+        }
+      }
+    });
+  }
+
+  // ── Graphique 3 : Images par site (count réel) ───────────────────────────
+  const imgData = sites.map(s => s.imgCount || 0);
+  const imgDoneData = sites.map(s => s.imgDone || 0);
+
+  if (chartImages) chartImages.destroy();
+  const ctx3 = document.getElementById('chart-images');
+  if (ctx3) {
+    chartImages = new Chart(ctx3, {
+      type: 'bar',
+      data: {
+        labels: siteNames,
+        datasets: [
+          { label: 'Total images (col AA)', data: imgData, backgroundColor: 'rgba(88,166,255,0.75)', borderRadius: 3 },
+          { label: 'Articles images done', data: imgDoneData, backgroundColor: 'rgba(188,140,255,0.6)', borderRadius: 3 },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: textColor, boxWidth: 12 } },
+          tooltip: { backgroundColor: tooltipBg, titleColor: '#e6edf3', bodyColor: '#8b949e',
+            callbacks: {
+              afterBody: function(items) {
+                if (items[0]) {
+                  const si = sites[items[0].dataIndex];
+                  const tot = si.t || si.total || 1;
+                  return 'Avg: ' + (si.imgCount ? (si.imgCount / tot).toFixed(1) : '0') + ' img/article';
+                }
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: { color: gridColor }, ticks: { color: textColor } },
+          y: { grid: { color: gridColor }, ticks: { color: textColor }, beginAtZero: true }
+        }
+      }
+    });
+  }
+}
 // ── Auto-login if session exists ──────────────────────────────────────────────
 (function() {
   const saved = sessionStorage.getItem('rde_auth');
