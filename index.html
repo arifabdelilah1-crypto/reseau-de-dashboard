@@ -6,919 +6,887 @@
 <title>Réseau DE — Control Panel</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root {
-  --bg:       #0d1117;
-  --surface:  #161b22;
-  --surface2: #21262d;
-  --border:   #30363d;
-  --text:     #e6edf3;
-  --muted:    #8b949e;
-  --accent:   #58a6ff;
-  --green:    #3fb950;
-  --yellow:   #d29922;
-  --orange:   #db6d28;
-  --red:      #f85149;
-  --purple:   #bc8cff;
-  --teal:     #39d353;
-  --radius:   8px;
+:root{
+  --bg:#0d1117;--s1:#161b22;--s2:#21262d;--s3:#2d333b;
+  --border:#30363d;--border2:#444c56;
+  --text:#e6edf3;--muted:#8b949e;--hint:#484f58;
+  --green:#3fb950;--blue:#58a6ff;--yellow:#d29922;
+  --orange:#db6d28;--red:#f85149;--purple:#bc8cff;--teal:#39d353;
+  --r:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+body{background:var(--bg);color:var(--text);font:13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+code{font-family:monospace;font-size:11px;background:var(--s3);padding:1px 5px;border-radius:3px;color:var(--blue)}
 
 /* ── Login ── */
-#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-.login-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:40px;width:100%;max-width:380px}
-.login-logo{font-size:24px;font-weight:700;color:var(--accent);margin-bottom:8px}
-.login-sub{color:var(--muted);font-size:13px;margin-bottom:28px}
-.field{margin-bottom:16px}
-.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.field input{width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font:inherit;outline:none;transition:border-color .2s}
-.field input:focus{border-color:var(--accent)}
-.btn-primary{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font:600 14px inherit;cursor:pointer;transition:opacity .2s}
-.btn-primary:hover{opacity:.85}
-.btn-primary:disabled{opacity:.5;cursor:not-allowed}
-.login-err{color:var(--red);font-size:13px;margin-top:10px;min-height:20px}
+#login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.lcard{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:40px;width:100%;max-width:360px}
+.llogo{font-size:22px;font-weight:700;color:var(--blue);margin-bottom:6px}
+.lsub{color:var(--muted);font-size:12px;margin-bottom:28px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.field input{width:100%;padding:9px 11px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font:inherit;outline:none;transition:border .2s}
+.field input:focus{border-color:var(--blue)}
+.btn-login{width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font:600 13px inherit;cursor:pointer;transition:opacity .2s}
+.btn-login:hover{opacity:.85}
+.btn-login:disabled{opacity:.4;cursor:not-allowed}
+.lerr{color:var(--red);font-size:12px;margin-top:8px;min-height:18px}
 
-/* ── App shell ── */
-#app{display:none;min-height:100vh}
-.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.logo{font-size:16px;font-weight:700;color:var(--accent)}
-.topbar-right{display:flex;align-items:center;gap:16px}
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);display:inline-block}
-.status-dot.yellow{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
-.status-dot.red{background:var(--red);box-shadow:0 0 6px var(--red)}
-.refresh-time{color:var(--muted);font-size:12px}
-.btn-logout{background:none;border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:var(--radius);cursor:pointer;font:inherit;font-size:12px}
-.btn-logout:hover{border-color:var(--text);color:var(--text)}
+/* ── Shell ── */
+#app{display:none;min-height:100vh;display:none}
+.topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-size:15px;font-weight:700;color:var(--blue);display:flex;align-items:center;gap:8px}
+.topbar-r{display:flex;align-items:center;gap:12px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green)}
+.dot.y{background:var(--yellow);box-shadow:0 0 5px var(--yellow)}
+.dot.r{background:var(--red);box-shadow:0 0 5px var(--red)}
+.rtime{color:var(--muted);font-size:11px}
+.btn-sm{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:var(--r);cursor:pointer;font:inherit;font-size:12px}
+.btn-sm:hover{border-color:var(--text);color:var(--text)}
 
 /* ── Layout ── */
-.main{padding:24px;max-width:1400px;margin:0 auto}
-.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto}
-.tab{padding:10px 18px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;font-size:13px;white-space:nowrap;transition:color .2s}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.tab:hover:not(.active){color:var(--text)}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
+.wrap{padding:20px;max-width:1500px;margin:0 auto}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:20px;overflow-x:auto}
+.tab{padding:9px 16px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;font-size:12px;white-space:nowrap;transition:color .15s;user-select:none}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+.tab:hover:not(.on){color:var(--text)}
+.panel{display:none}
+.panel.on{display:block}
 
-/* ── Cards ── */
-.grid{display:grid;gap:16px}
-.grid-4{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
-.grid-3{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
-.grid-2{grid-template-columns:repeat(auto-fill,minmax(360px,1fr))}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.card-title{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:10px}
-.big-num{font-size:32px;font-weight:700;line-height:1;letter-spacing:-1px}
-.big-num.green{color:var(--green)}
-.big-num.yellow{color:var(--yellow)}
-.big-num.red{color:var(--red)}
-.big-num.accent{color:var(--accent)}
-.big-num.purple{color:var(--purple)}
-.sub-label{font-size:12px;color:var(--muted);margin-top:4px}
+/* ── Cards & Grid ── */
+.g4{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+.g3{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.g2{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+.g2f{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.card-t{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:8px}
+.bignum{font-size:30px;font-weight:700;line-height:1;letter-spacing:-1px}
+.sub{font-size:11px;color:var(--muted);margin-top:3px}
+.pbar{height:5px;background:var(--s3);border-radius:3px;overflow:hidden;margin-top:8px}
+.pfill{height:100%;border-radius:3px;transition:width .6s}
 
-/* ── Progress bars ── */
-.prog-wrap{margin-top:8px}
-.prog-bar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
-.prog-fill{height:100%;border-radius:3px;transition:width .6s ease}
+/* ── Status dots & badges ── */
+.sdot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.srow{display:flex;align-items:center;gap:7px;font-size:12px;padding:3px 0}
+.scount{margin-left:auto;font-weight:600}
+.badge{display:inline-block;padding:1px 7px;border-radius:3px;font-size:11px;font-weight:600}
+.bg{background:rgba(63,185,80,.15);color:var(--green)}
+.by{background:rgba(210,153,34,.15);color:var(--yellow)}
+.br{background:rgba(248,81,73,.15);color:var(--red)}
+.bb{background:rgba(88,166,255,.15);color:var(--blue)}
+.bp{background:rgba(188,140,255,.15);color:var(--purple)}
 
-/* ── Status breakdown ── */
-.status-list{display:flex;flex-direction:column;gap:6px}
-.status-row{display:flex;align-items:center;gap:8px;font-size:13px}
-.status-dot-sm{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-.status-count{margin-left:auto;font-weight:600;color:var(--text)}
-.status-label{color:var(--muted);flex:1}
+/* ── Buttons ── */
+.btn{padding:7px 13px;border-radius:var(--r);font:600 12px inherit;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-g{background:rgba(63,185,80,.12);color:var(--green);border-color:rgba(63,185,80,.25)}.btn-g:hover:not(:disabled){background:rgba(63,185,80,.22)}
+.btn-b{background:rgba(88,166,255,.12);color:var(--blue);border-color:rgba(88,166,255,.25)}.btn-b:hover:not(:disabled){background:rgba(88,166,255,.22)}
+.btn-r{background:rgba(248,81,73,.12);color:var(--red);border-color:rgba(248,81,73,.25)}.btn-r:hover:not(:disabled){background:rgba(248,81,73,.22)}
+.btn-y{background:rgba(210,153,34,.12);color:var(--yellow);border-color:rgba(210,153,34,.25)}.btn-y:hover:not(:disabled){background:rgba(210,153,34,.22)}
+.btn-p{background:rgba(188,140,255,.12);color:var(--purple);border-color:rgba(188,140,255,.25)}.btn-p:hover:not(:disabled){background:rgba(188,140,255,.22)}
+.btn-ghost{background:none;color:var(--muted);border-color:var(--border)}.btn-ghost:hover:not(:disabled){color:var(--text);border-color:var(--border2)}
+.btn-full{width:100%;justify-content:center}
 
-/* ── Site table ── */
-.site-table{width:100%;border-collapse:collapse;font-size:13px}
-.site-table th{text-align:left;color:var(--muted);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:8px 12px;border-bottom:1px solid var(--border)}
-.site-table td{padding:10px 12px;border-bottom:1px solid var(--border)}
-.site-table tr:last-child td{border-bottom:none}
-.site-table tr:hover td{background:var(--surface2)}
-.prog-mini{height:4px;background:var(--surface2);border-radius:2px;width:80px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:6px}
-.prog-mini-fill{height:100%;border-radius:2px;background:var(--green)}
-.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
-.badge-red{background:rgba(248,81,73,.15);color:var(--red)}
-.badge-green{background:rgba(63,185,80,.15);color:var(--green)}
-.badge-yellow{background:rgba(210,153,34,.15);color:var(--yellow)}
+/* ── Section header ── */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:gap}
+.sh-t{font-size:14px;font-weight:600}
+.sh-s{font-size:11px;color:var(--muted)}
 
-/* ── Weeks ── */
-.week-row{display:grid;grid-template-columns:60px 1fr 80px 80px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
-.week-row:last-child{border-bottom:none}
-.week-name{font-weight:600;color:var(--accent)}
-.week-pct{text-align:right;color:var(--muted);font-size:12px}
+/* ── Tables ── */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.5px;padding:7px 10px;border-bottom:1px solid var(--border)}
+.tbl td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2)}
+.pmini{height:3px;background:var(--s3);border-radius:2px;width:70px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:5px}
+.pmini-f{height:100%;border-radius:2px}
 
-/* ── Action buttons ── */
-.action-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.action-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:10px}
-.action-card h3{font-size:13px;font-weight:600;color:var(--text)}
-.action-card p{font-size:12px;color:var(--muted);flex:1}
-.btn{padding:8px 14px;border-radius:var(--radius);font:600 12px inherit;cursor:pointer;transition:all .2s;border:none;display:inline-flex;align-items:center;gap:6px}
-.btn-red{background:rgba(248,81,73,.15);color:var(--red);border:1px solid rgba(248,81,73,.3)}
-.btn-red:hover{background:rgba(248,81,73,.25)}
-.btn-green{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3)}
-.btn-green:hover{background:rgba(63,185,80,.25)}
-.btn-blue{background:rgba(88,166,255,.15);color:var(--accent);border:1px solid rgba(88,166,255,.3)}
-.btn-blue:hover{background:rgba(88,166,255,.25)}
-.btn-yellow{background:rgba(210,153,34,.15);color:var(--yellow);border:1px solid rgba(210,153,34,.3)}
-.btn-yellow:hover{background:rgba(210,153,34,.25)}
-.btn-purple{background:rgba(188,140,255,.15);color:var(--purple);border:1px solid rgba(188,140,255,.3)}
-.btn-purple:hover{background:rgba(188,140,255,.25)}
-.btn:disabled{opacity:.4;cursor:not-allowed}
+/* ── Control Panel (site selector) ── */
+.ctrl-wrap{display:flex;flex-direction:column;gap:16px}
+.site-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.site-chk{position:relative}
+.site-chk input{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;margin:0;z-index:1}
+.site-chk label{display:flex;flex-direction:column;gap:3px;padding:10px 12px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;user-select:none}
+.site-chk input:checked + label{border-color:var(--blue);background:rgba(88,166,255,.08)}
+.site-chk label .sname{font-weight:600;font-size:12px}
+.site-chk label .spct{font-size:10px;color:var(--muted)}
+.wk-grid{display:flex;flex-wrap:wrap;gap:6px}
+.wk-chk{position:relative}
+.wk-chk input{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;margin:0;z-index:1}
+.wk-chk label{padding:5px 12px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;user-select:none;display:block}
+.wk-chk input:checked + label{border-color:var(--blue);background:rgba(88,166,255,.08);color:var(--blue)}
+.sel-btns{display:flex;gap:6px;flex-wrap:wrap}
+.wf-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.wf-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.wf-title{font-weight:600;font-size:13px}
+.wf-desc{font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.wf-actions{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ── Queue / Log ── */
+.log-wrap{display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto}
+.log-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:var(--s2);border-radius:5px;font-size:11px;border-left:3px solid var(--border)}
+.log-item.ok{border-left-color:var(--green)}
+.log-item.err{border-left-color:var(--red)}
+.log-item.run{border-left-color:var(--blue)}
+.log-item.warn{border-left-color:var(--yellow)}
+.log-time{color:var(--muted);flex-shrink:0;width:55px}
+.log-msg{color:var(--text);flex:1}
+.log-empty{text-align:center;padding:24px;color:var(--muted);font-size:12px}
 
 /* ── Failed table ── */
-.failed-table{width:100%;border-collapse:collapse;font-size:12px}
-.failed-table th{text-align:left;color:var(--muted);font-weight:500;font-size:11px;padding:8px 10px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.5px}
-.failed-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
-.failed-table tr:hover td{background:var(--surface2)}
-.err-text{color:var(--muted);font-size:11px;max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chk{cursor:pointer;width:14px;height:14px}
+.ftbl{width:100%;border-collapse:collapse;font-size:12px}
+.ftbl th{text-align:left;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.5px;padding:7px 10px;border-bottom:1px solid var(--border)}
+.ftbl td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.ftbl tr:hover td{background:var(--s2)}
+.err-clip{color:var(--muted);font-size:11px;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:help}
+.chk{cursor:pointer;accent-color:var(--blue)}
+.retry-row{background:rgba(88,166,255,.06)!important}
+
+/* ── Week bar ── */
+.wk-row{display:grid;grid-template-columns:52px 1fr 70px 55px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.wk-row:last-child{border-bottom:none}
 
 /* ── Toast ── */
-.toast-wrap{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:8px;z-index:999}
-.toast{padding:12px 18px;border-radius:var(--radius);font-size:13px;font-weight:500;animation:fadeIn .3s ease;max-width:340px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
-.toast.ok{background:#1a4a2e;color:#3fb950;border:1px solid rgba(63,185,80,.3)}
-.toast.err{background:#4a1a1a;color:#f85149;border:1px solid rgba(248,81,73,.3)}
-.toast.info{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+#toasts{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:6px;z-index:999}
+.toast{padding:10px 16px;border-radius:var(--r);font-size:12px;font-weight:500;max-width:320px;animation:fin .25s ease;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.toast.ok{background:#1a3a28;color:var(--green);border:1px solid rgba(63,185,80,.3)}
+.toast.err{background:#3a1a1a;color:var(--red);border:1px solid rgba(248,81,73,.3)}
+.toast.info{background:var(--s2);color:var(--text);border:1px solid var(--border)}
+@keyframes fin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── Spinner ── */
-.spin{display:inline-block;width:14px;height:14px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:sp .6s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
 
-/* ── Section headers ── */
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.section-title{font-size:15px;font-weight:600;color:var(--text)}
-.section-sub{font-size:12px;color:var(--muted)}
+/* ── Filter bar ── */
+.fbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.finput{padding:6px 10px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font:inherit;font-size:12px;outline:none;flex:1;min-width:160px}
+.finput:focus{border-color:var(--blue)}
+select.finput{cursor:pointer}
+
+@media(max-width:600px){.g4{grid-template-columns:repeat(2,1fr)}.g2f{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- ─────────── LOGIN ─────────── -->
-<div id="login-screen">
-  <div class="login-card">
-    <div class="login-logo">🎛️ Réseau DE</div>
-    <div class="login-sub">Control Panel — 13 sites • n8n automation</div>
-    <div class="field">
-      <label>Identifiant</label>
-      <input type="text" id="inp-user" placeholder="arif" autocomplete="username">
-    </div>
-    <div class="field">
-      <label>Mot de passe</label>
-      <input type="password" id="inp-pass" placeholder="••••••••" autocomplete="current-password">
-    </div>
-    <button class="btn-primary" id="btn-login" onclick="doLogin()">Se connecter</button>
-    <div class="login-err" id="login-err"></div>
+<!-- LOGIN -->
+<div id="login">
+  <div class="lcard">
+    <div class="llogo">🎛️ Réseau DE</div>
+    <div class="lsub">Control Panel · 13 sites · n8n automation</div>
+    <div class="field"><label>Identifiant</label><input id="u" type="text" placeholder="arif" autocomplete="username"></div>
+    <div class="field"><label>Mot de passe</label><input id="pw" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+    <button class="btn-login" id="btnl" onclick="doLogin()">Se connecter</button>
+    <div class="lerr" id="lerr"></div>
   </div>
 </div>
 
-<!-- ─────────── APP ─────────── -->
+<!-- APP -->
 <div id="app">
   <div class="topbar">
     <div class="logo">🎛️ Réseau DE</div>
-    <div class="topbar-right">
-      <span class="status-dot" id="status-dot"></span>
-      <span class="refresh-time" id="refresh-time">—</span>
-      <button class="btn-logout" onclick="doLogout()">Déconnexion</button>
+    <div class="topbar-r">
+      <span class="dot" id="sdot"></span>
+      <span class="rtime" id="rtime">—</span>
+      <button class="btn-sm" onclick="loadData()">↻ Refresh</button>
+      <button class="btn-sm" onclick="doLogout()">Déconnexion</button>
     </div>
   </div>
 
-  <div class="main">
+  <div class="wrap">
     <div class="tabs">
-      <div class="tab active" onclick="showTab('overview')">Vue d'ensemble</div>
-      <div class="tab" onclick="showTab('charts')">📊 Graphiques</div>
-      <div class="tab" onclick="showTab('sites')">Sites</div>
-      <div class="tab" onclick="showTab('weeks')">Semaines</div>
-      <div class="tab" onclick="showTab('actions')">Actions</div>
-      <div class="tab" onclick="showTab('failed')">⚠ Échecs</div>
-      <div class="tab" onclick="showTab('pins')">Pinterest</div>
+      <div class="tab on"  onclick="ST('overview')">Vue d'ensemble</div>
+      <div class="tab"     onclick="ST('control')">⚙ Contrôle</div>
+      <div class="tab"     onclick="ST('charts')">📊 Graphiques</div>
+      <div class="tab"     onclick="ST('sites')">Sites</div>
+      <div class="tab"     onclick="ST('weeks')">Semaines</div>
+      <div class="tab"     onclick="ST('failed')">⚠ Échecs <span id="failed-badge"></span></div>
+      <div class="tab"     onclick="ST('pins')">📌 Pinterest</div>
+      <div class="tab"     onclick="ST('log')">📋 Journal</div>
     </div>
 
-    <!-- ── OVERVIEW ── -->
-    <div class="tab-panel active" id="tab-overview">
-      <div class="grid grid-4" style="margin-bottom:20px">
-        <div class="card">
-          <div class="card-title">Total planifié</div>
-          <div class="big-num accent" id="ov-total">—</div>
-          <div class="sub-label">articles</div>
-        </div>
-        <div class="card">
-          <div class="card-title">Publiés</div>
-          <div class="big-num green" id="ov-pub">—</div>
-          <div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="ov-pub-bar" style="background:var(--green);width:0%"></div></div></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Images générées</div>
-          <div class="big-num accent" id="ov-img">—</div>
-          <div class="sub-label" id="ov-img-sub">— articles complets</div>
-          <div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="ov-img-bar" style="background:var(--accent);width:0%"></div></div></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Pins créés</div>
-          <div class="big-num purple" id="ov-pins">—</div>
-          <div class="sub-label" id="ov-pins-sub">—</div>
-        </div>
-        <div class="card">
-          <div class="card-title">Volume acquis</div>
-          <div class="big-num green" id="ov-vol">—</div>
-          <div class="sub-label" id="ov-vol-sub">recherches/mois</div>
-        </div>
-        <div class="card">
-          <div class="card-title">GPU actif</div>
-          <div class="big-num yellow" id="ov-gpu">—</div>
-          <div class="sub-label">articles en génération</div>
-        </div>
-        <div class="card">
-          <div class="card-title">Envoi WP</div>
-          <div class="big-num teal" id="ov-envoi" style="color:var(--teal)">—</div>
-          <div class="sub-label">images en transfert</div>
-        </div>
-        <div class="card">
-          <div class="card-title">Échecs</div>
-          <div class="big-num red" id="ov-failed">—</div>
-          <div class="sub-label" id="ov-failed-sub">texte + images</div>
-        </div>
+    <!-- ═══ OVERVIEW ═══ -->
+    <div class="panel on" id="tab-overview">
+      <div class="g4" style="margin-bottom:14px">
+        <div class="card"><div class="card-t">Total planifié</div><div class="bignum" style="color:var(--blue)" id="ov-total">—</div><div class="sub">articles · 13 sites</div></div>
+        <div class="card"><div class="card-t">Publiés</div><div class="bignum" style="color:var(--green)" id="ov-pub">—</div><div class="sub" id="ov-pub-pct">—</div><div class="pbar"><div class="pfill" id="ov-pub-bar" style="background:var(--green)"></div></div></div>
+        <div class="card"><div class="card-t">Images générées</div><div class="bignum" style="color:var(--blue)" id="ov-img">—</div><div class="sub" id="ov-img-sub">—</div><div class="pbar"><div class="pfill" id="ov-img-bar" style="background:var(--blue)"></div></div></div>
+        <div class="card"><div class="card-t">Pins créés</div><div class="bignum" style="color:var(--purple)" id="ov-pins">—</div><div class="sub" id="ov-pins-sub">—</div></div>
+        <div class="card"><div class="card-t">Volume acquis</div><div class="bignum" style="color:var(--green)" id="ov-vol">—</div><div class="sub" id="ov-vol-sub">—</div></div>
+        <div class="card"><div class="card-t">GPU actif</div><div class="bignum" style="color:var(--yellow)" id="ov-gpu">—</div><div class="sub">en génération</div></div>
+        <div class="card"><div class="card-t">Envoi WP</div><div class="bignum" style="color:var(--teal)" id="ov-envoi">—</div><div class="sub">images en transfert</div></div>
+        <div class="card"><div class="card-t">Échecs</div><div class="bignum" style="color:var(--red)" id="ov-failed">—</div><div class="sub" id="ov-failed-sub">—</div></div>
       </div>
-
-      <div class="grid grid-2">
-        <div class="card">
-          <div class="card-title">Statut contenu</div>
-          <div class="status-list" id="st-content"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Statut images</div>
-          <div class="status-list" id="st-img"></div>
-        </div>
+      <div class="g2">
+        <div class="card"><div class="card-t">Statut contenu</div><div id="st-content"></div></div>
+        <div class="card"><div class="card-t">Statut images</div><div id="st-img"></div></div>
       </div>
     </div>
 
-    <!-- ── SITES ── -->
-    <div class="tab-panel" id="tab-sites">
+    <!-- ═══ CONTRÔLE ═══ -->
+    <div class="panel" id="tab-control">
+      <div class="ctrl-wrap">
+
+        <!-- Site selector -->
+        <div class="card">
+          <div class="sh"><div class="sh-t">Sélection des sites</div>
+            <div class="sel-btns">
+              <button class="btn btn-ghost" onclick="selSites('all')">Tous</button>
+              <button class="btn btn-ghost" onclick="selSites('none')">Aucun</button>
+              <button class="btn btn-ghost" onclick="selSites('hub')">Hub</button>
+              <button class="btn btn-ghost" onclick="selSites('nano')">Nano</button>
+            </div>
+          </div>
+          <div class="site-grid" id="site-checkboxes"></div>
+        </div>
+
+        <!-- Week selector -->
+        <div class="card">
+          <div class="sh"><div class="sh-t">Sélection des semaines</div>
+            <div class="sel-btns">
+              <button class="btn btn-ghost" onclick="selWeeks('all')">Toutes</button>
+              <button class="btn btn-ghost" onclick="selWeeks('none')">Aucune</button>
+              <button class="btn btn-ghost" onclick="selWeeks('pending')">Pending seulement</button>
+            </div>
+          </div>
+          <div class="wk-grid" id="week-checkboxes"></div>
+        </div>
+
+        <!-- WF1 -->
+        <div class="wf-card">
+          <div class="wf-header">
+            <div class="wf-title">① WF1 — Génération de contenu</div>
+            <span class="badge bb">DeepSeek</span>
+          </div>
+          <div class="wf-desc">Lance la génération d'articles pour les sites et semaines sélectionnés. Les articles pending avec une date > 48h seront traités en priorité.</div>
+          <div class="wf-actions">
+            <button class="btn btn-g" onclick="runWF('wf1_run')">▶ Lancer WF1 (sélection)</button>
+            <button class="btn btn-r" onclick="runWF('wf1_retry_failed')">↩ Retry Failed (sélection)</button>
+            <button class="btn btn-ghost" onclick="runWF('wf1_run',true)">▶ Lancer TOUT</button>
+          </div>
+        </div>
+
+        <!-- WF2 -->
+        <div class="wf-card">
+          <div class="wf-header">
+            <div class="wf-title">② WF2 — Images</div>
+            <div style="display:flex;gap:6px"><span class="badge by">GPU</span><span class="badge bb">S3</span></div>
+          </div>
+          <div class="wf-desc">WF2a génère les images sur le GPU (pod doit être allumé). WF2b envoie vers WordPress (fonctionne pod éteint via S3).</div>
+          <div class="wf-actions">
+            <button class="btn btn-y" onclick="runWF('wf2_run')">▶ Générer images GPU (sélection)</button>
+            <button class="btn btn-b" onclick="runWF('wf2b_run')">⬆ Envoyer WP (sélection)</button>
+            <button class="btn btn-r" onclick="runWF('wf2_retry_failed')">↩ Retry images (sélection)</button>
+          </div>
+        </div>
+
+        <!-- WF3 -->
+        <div class="wf-card">
+          <div class="wf-header">
+            <div class="wf-title">③ WF3 — Pinterest</div>
+            <span class="badge bp">Blotato</span>
+          </div>
+          <div class="wf-desc">WF3a génère les pins (6 par article). WF3b publie ou programme sur Pinterest via Blotato.</div>
+          <div class="wf-actions">
+            <button class="btn btn-p" onclick="runWF('wf3_run')">▶ Générer pins (sélection)</button>
+            <button class="btn btn-g" onclick="publishPins('slot')">📅 Programmer Blotato</button>
+            <button class="btn btn-y" onclick="publishPins('direct')">⚡ Publier maintenant</button>
+          </div>
+        </div>
+
+        <!-- Global actions -->
+        <div class="wf-card">
+          <div class="wf-header"><div class="wf-title">⚡ Actions globales</div></div>
+          <div class="wf-actions">
+            <button class="btn btn-r" onclick="confirmRun('reset_failed','Remettre TOUS les échecs (texte + images) en pending ?')">⚠ Reset global failed</button>
+            <button class="btn btn-ghost" onclick="loadData()">🔃 Actualiser stats</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ GRAPHIQUES ═══ -->
+    <div class="panel" id="tab-charts">
+      <div class="g2f" style="margin-bottom:14px">
+        <div class="card">
+          <div class="sh"><div class="sh-t">Publications par jour — 30j</div></div>
+          <div style="position:relative;height:200px"><canvas id="ch-daily"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="sh"><div class="sh-t">Progression par site</div></div>
+          <div style="position:relative;height:200px"><canvas id="ch-sites"></canvas></div>
+        </div>
+      </div>
       <div class="card">
-        <div class="section-header">
-          <div class="section-title">13 sites</div>
-          <div class="section-sub" id="sites-updated"></div>
-        </div>
-        <table class="site-table">
-          <thead><tr>
-            <th>Site</th><th>Texte</th><th>Images</th><th>Pins</th><th>Progression</th><th>Alertes</th>
-          </tr></thead>
+        <div class="sh"><div class="sh-t">Images par site — count réel colonne AA</div></div>
+        <div style="position:relative;height:220px"><canvas id="ch-images"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ═══ SITES ═══ -->
+    <div class="panel" id="tab-sites">
+      <div class="card">
+        <div class="sh"><div class="sh-t">13 sites</div><div class="sh-s" id="sites-ts"></div></div>
+        <table class="tbl">
+          <thead><tr><th>Site</th><th>Texte</th><th>%</th><th>Images</th><th>Img/article</th><th>Pins</th><th>Alertes</th></tr></thead>
           <tbody id="sites-tbody"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- ── WEEKS ── -->
-    <div class="tab-panel" id="tab-weeks">
+    <!-- ═══ SEMAINES ═══ -->
+    <div class="panel" id="tab-weeks">
       <div class="card">
-        <div class="section-header">
-          <div class="section-title">Avancement par semaine</div>
-        </div>
+        <div class="sh"><div class="sh-t">Avancement S01 → S11</div></div>
         <div id="weeks-list"></div>
       </div>
     </div>
 
-    <!-- ── ACTIONS ── -->
-    <div class="tab-panel" id="tab-actions">
-      <div class="section-header" style="margin-bottom:20px">
-        <div class="section-title">Actions workflows</div>
-        <div class="section-sub">Toutes les actions passent par Google Apps Script → n8n</div>
-      </div>
-      <div class="action-grid">
-
-        <div class="action-card">
-          <h3>① WF1 — Contenu</h3>
-          <p>Lance la génération d'articles pour tout ce qui est en pending avec une date dans les 48h.</p>
-          <button class="btn btn-green" onclick="runAction('wf1_run')">▶ Lancer WF1</button>
-        </div>
-
-        <div class="action-card">
-          <h3>🔄 Retry textes failed</h3>
-          <p>Remet tous les articles <code>failed</code> et <code>processing</code> en <code>pending</code> puis relance WF1.</p>
-          <button class="btn btn-red" onclick="runAction('wf1_retry_failed')">↩ Retry textes échoués</button>
-        </div>
-
-        <div class="action-card">
-          <h3>② WF2a — Générer images</h3>
-          <p>Lance la génération d'images sur le GPU pour les articles publiés sans images. Pod doit être allumé.</p>
-          <button class="btn btn-yellow" onclick="runAction('wf2_run')">▶ Générer images (GPU)</button>
-        </div>
-
-        <div class="action-card">
-          <h3>② WF2b — Envoyer images</h3>
-          <p>Envoie les images déjà générées vers WordPress. Fonctionne pod éteint via API S3.</p>
-          <button class="btn btn-blue" onclick="runAction('wf2b_run')">⬆ Envoyer vers WP</button>
-        </div>
-
-        <div class="action-card">
-          <h3>🔄 Retry images failed</h3>
-          <p>Remet les images <code>failed</code>, <code>failed_upload</code>, <code>uploading</code> en <code>generated</code> puis relance WF2b.</p>
-          <button class="btn btn-red" onclick="runAction('wf2_retry_failed')">↩ Retry images échouées</button>
-        </div>
-
-        <div class="action-card">
-          <h3>③ WF3a — Générer pins</h3>
-          <p>Génère les pins Pinterest pour le prochain lot d'articles publiés sans pins. 6 pins/article.</p>
-          <button class="btn btn-purple" onclick="runAction('wf3_run')">▶ Générer pins</button>
-        </div>
-
-        <div class="action-card">
-          <h3>🔄 Reset tous les failed</h3>
-          <p>Remet en <code>pending</code> tous les articles et images en échec. Action globale.</p>
-          <button class="btn btn-red" onclick="confirmAction('reset_failed','Remettre TOUS les échecs en pending ?')">⚠ Reset global</button>
-        </div>
-
-        <div class="action-card">
-          <h3>🔃 Actualiser les stats</h3>
-          <p>Force un rafraîchissement immédiat des données sans attendre le cycle automatique.</p>
-          <button class="btn btn-blue" onclick="loadData()">🔃 Actualiser maintenant</button>
-        </div>
-
-      </div>
-    </div>
-
-
-    <!-- ── CHARTS ── -->
-    <div class="tab-panel" id="tab-charts">
-      <div class="grid grid-2" style="margin-bottom:20px">
-        <div class="card">
-          <div class="section-header">
-            <div class="section-title">Publications par jour — 30 derniers jours</div>
-          </div>
-          <div style="position:relative;height:220px">
-            <canvas id="chart-daily"></canvas>
-          </div>
-        </div>
-        <div class="card">
-          <div class="section-header">
-            <div class="section-title">Progression par site</div>
-          </div>
-          <div style="position:relative;height:220px">
-            <canvas id="chart-sites"></canvas>
-          </div>
-        </div>
-      </div>
+    <!-- ═══ ÉCHECS ═══ -->
+    <div class="panel" id="tab-failed">
       <div class="card">
-        <div class="section-header">
-          <div class="section-title">Images générées par site (colonne Images — count réel)</div>
-        </div>
-        <div style="position:relative;height:240px">
-          <canvas id="chart-images"></canvas>
-        </div>
-      </div>
-    </div>
-    <!-- ── FAILED ── -->
-    <div class="tab-panel" id="tab-failed">
-      <div class="card">
-        <div class="section-header">
-          <div class="section-title">Articles en échec</div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-red" onclick="retrySelected()">↩ Retry sélection</button>
-            <button class="btn btn-yellow" onclick="loadFailed()">🔃 Actualiser</button>
+        <div class="sh">
+          <div class="sh-t">Articles en échec</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-r" onclick="retrySelected()">↩ Retry sélection</button>
+            <button class="btn btn-ghost" onclick="loadFailed()">↻ Actualiser</button>
           </div>
         </div>
-        <table class="failed-table">
+        <!-- Filter bar -->
+        <div class="fbar">
+          <input class="finput" id="f-kw" placeholder="Filtrer par keyword..." oninput="filterFailed()">
+          <select class="finput" id="f-site" onchange="filterFailed()" style="flex:0;min-width:130px">
+            <option value="">Tous les sites</option>
+          </select>
+          <select class="finput" id="f-status" onchange="filterFailed()" style="flex:0;min-width:130px">
+            <option value="">Tous les statuts</option>
+            <option value="failed">failed</option>
+            <option value="processing">processing</option>
+          </select>
+        </div>
+        <table class="ftbl">
           <thead><tr>
-            <th><input type="checkbox" id="chk-all" onchange="toggleAll(this)"></th>
-            <th>ID</th><th>Site</th><th>Keyword</th><th>Status</th><th>Img</th><th>Erreur</th>
+            <th><input type="checkbox" class="chk" id="chk-all" onchange="toggleAll(this)"></th>
+            <th>ID</th><th>Site</th><th>Keyword</th><th>Status</th><th>Img</th><th>Erreur</th><th>Action</th>
           </tr></thead>
           <tbody id="failed-tbody"></tbody>
         </table>
-        <div id="failed-empty" style="text-align:center;padding:32px;color:var(--muted);font-size:13px;display:none">
-          ✅ Aucun article en échec
+        <div id="failed-empty" style="text-align:center;padding:28px;color:var(--muted);display:none">✅ Aucun échec</div>
+        <div id="failed-count" style="font-size:11px;color:var(--muted);margin-top:8px;text-align:right"></div>
+      </div>
+    </div>
+
+    <!-- ═══ PINTEREST ═══ -->
+    <div class="panel" id="tab-pins">
+      <div class="g4" style="margin-bottom:14px">
+        <div class="card"><div class="card-t">Total pins</div><div class="bignum" style="color:var(--purple)" id="pin-total">—</div></div>
+        <div class="card"><div class="card-t">Postés</div><div class="bignum" style="color:var(--green)" id="pin-posted">—</div></div>
+        <div class="card"><div class="card-t">Programmés</div><div class="bignum" style="color:var(--yellow)" id="pin-sched">—</div></div>
+        <div class="card"><div class="card-t">Prêts (done)</div><div class="bignum" style="color:var(--blue)" id="pin-done">—</div></div>
+      </div>
+      <div class="g2">
+        <div class="card"><div class="card-t">Par statut</div><div id="pin-list"></div></div>
+        <div class="card">
+          <div class="card-t" style="margin-bottom:12px">Actions Pinterest</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-p btn-full" onclick="runWF('wf3_run')">▶ Générer prochain lot (WF3a)</button>
+            <button class="btn btn-g btn-full" onclick="publishPins('slot')">📅 Programmer dans Blotato</button>
+            <button class="btn btn-y btn-full" onclick="publishPins('direct')">⚡ Publier MAINTENANT</button>
+          </div>
+          <div style="margin-top:10px;font-size:11px;color:var(--muted);line-height:1.5">Pour une sélection précise, utilisez l'onglet Pins dans Google Sheets.</div>
         </div>
       </div>
     </div>
 
-    <!-- ── PINS ── -->
-    <div class="tab-panel" id="tab-pins">
-      <div class="grid grid-4" style="margin-bottom:20px">
-        <div class="card">
-          <div class="card-title">Total pins</div>
-          <div class="big-num purple" id="pin-total">—</div>
+    <!-- ═══ JOURNAL ═══ -->
+    <div class="panel" id="tab-log">
+      <div class="card">
+        <div class="sh">
+          <div class="sh-t">Journal des actions</div>
+          <button class="btn btn-ghost" onclick="clearLog()">🗑 Vider</button>
         </div>
-        <div class="card">
-          <div class="card-title">Publiés (posted)</div>
-          <div class="big-num green" id="pin-posted">—</div>
-        </div>
-        <div class="card">
-          <div class="card-title">Programmés</div>
-          <div class="big-num yellow" id="pin-sched">—</div>
-        </div>
-        <div class="card">
-          <div class="card-title">Prêts à publier</div>
-          <div class="big-num accent" id="pin-done">—</div>
-        </div>
-      </div>
-
-      <div class="grid grid-2">
-        <div class="card">
-          <div class="card-title">Par statut</div>
-          <div class="status-list" id="pin-status-list"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Actions Pinterest</div>
-          <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
-            <button class="btn btn-purple" onclick="runAction('wf3_run')" style="justify-content:center">
-              ▶ Générer prochain lot de pins (WF3a)
-            </button>
-            <button class="btn btn-green" onclick="publishPins('slot')" style="justify-content:center">
-              📅 Programmer dans Blotato (file d'attente)
-            </button>
-            <button class="btn btn-yellow" onclick="publishPins('direct')" style="justify-content:center">
-              ⚡ Publier MAINTENANT sur Pinterest
-            </button>
-          </div>
-          <div style="margin-top:12px;font-size:12px;color:var(--muted)">
-            Pour publier/programmer une sélection, utilisez le menu Réseau DE dans Google Sheets (onglet Pins).
-          </div>
+        <div class="log-wrap" id="log-list">
+          <div class="log-empty">Aucune action pour l'instant. Lance un workflow depuis l'onglet Contrôle.</div>
         </div>
       </div>
     </div>
 
-  </div>
-</div>
+  </div><!-- /wrap -->
+</div><!-- /app -->
 
-<div class="toast-wrap" id="toasts"></div>
+<div id="toasts"></div>
 
 <script>
-// ── Config ────────────────────────────────────────────────────────────────────
-// IMPORTANT: remplace par l'URL de ton déploiement Apps Script
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYEdIECXi6yUxWGQSFD6fWWAm7M93yPElUXx0wzrlgZp6VQMcelP3TAh92A9o7KhXQDw/exec';
-const REFRESH_INTERVAL = 30000; // 30s
+// ═══════════════════════════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════════════════════════
+const AS_URL = 'https://script.google.com/macros/s/AKfycbyYEdIECXi6yUxWGQSFD6fWWAm7M93yPElUXx0wzrlgZp6VQMcelP3TAh92A9o7KhXQDw/exec';
+const REFRESH = 30000;
 
-// ── State ─────────────────────────────────────────────────────────────────────
-let AUTH = null;
-let DATA = null;
-let CHART_DATA = null;
-let refreshTimer = null;
-let chartDaily = null;
-let chartSites = null;
-let chartImages = null;
-
-// ── Auth ──────────────────────────────────────────────────────────────────────
-function doLogin() {
-  const u = document.getElementById('inp-user').value.trim();
-  const p = document.getElementById('inp-pass').value;
-  const btn = document.getElementById('btn-login');
-  const err = document.getElementById('login-err');
-  if (!u || !p) { err.textContent = 'Remplis les deux champs.'; return; }
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span> Connexion…';
-  err.textContent = '';
-
-  apiFetch('GET', { action: 'stats', u, p })
-    .then(d => {
-      if (!d.ok) throw new Error(d.error || 'Identifiants incorrects');
-      AUTH = { u, p };
-      sessionStorage.setItem('rde_auth', JSON.stringify(AUTH));
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      DATA = d;
-      renderAll(d);
-      refreshTimer = setInterval(loadData, REFRESH_INTERVAL);
-      loadFailed();
-      loadPins();
-    })
-    .catch(e => {
-      err.textContent = e.message;
-      btn.disabled = false;
-      btn.textContent = 'Se connecter';
-    });
-}
-
-function doLogout() {
-  AUTH = null;
-  sessionStorage.removeItem('rde_auth');
-  clearInterval(refreshTimer);
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('inp-pass').value = '';
-}
-
-// Restore session
-(function() {
-  const saved = sessionStorage.getItem('rde_auth');
-  if (saved) {
-    try {
-      AUTH = JSON.parse(saved);
-      document.getElementById('inp-user').value = AUTH.u;
-    } catch(e) {}
-  }
-  document.getElementById('inp-pass').addEventListener('keydown', e => {
-    if (e.key === 'Enter') doLogin();
-  });
-  document.getElementById('inp-user').addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('inp-pass').focus();
-  });
-})();
-
-// ── API ───────────────────────────────────────────────────────────────────────
-function apiFetch(method, params, body) {
-  // Apps Script ne supporte pas CORS en POST depuis GitHub Pages
-  // On passe TOUT en GET — les params sont dans l'URL
-  let p = {};
-  if (method === 'GET') p = params || {};
-  else p = Object.assign({}, AUTH, body || {});
-  // Sérialiser les arrays/objects en JSON string
-  const qs = Object.entries(p).map(([k,v]) => {
-    const val = (typeof v === 'object') ? JSON.stringify(v) : v;
-    return k + '=' + encodeURIComponent(val);
-  }).join('&');
-  return fetch(APPS_SCRIPT_URL + '?' + qs)
-    .then(r => r.json());
-}
-
-// ── Data loading ──────────────────────────────────────────────────────────────
-function loadData() {
-  if (!AUTH) return;
-  const dot = document.getElementById('status-dot');
-  dot.className = 'status-dot yellow';
-  apiFetch('GET', { action: 'summary', ...AUTH })
-    .then(d => {
-      if (!d.ok) throw new Error(d.error);
-      DATA = d.stats;
-      CHART_DATA = { daily: d.daily, siteProg: d.siteProg };
-      renderAll(d.stats, d.weeks);
-      // Si l'onglet graphiques est actif, on le re-render
-      if (document.getElementById('tab-charts').classList.contains('active')) renderCharts();
-      dot.className = 'status-dot';
-      document.getElementById('refresh-time').textContent =
-        'Actualisé ' + new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    })
-    .catch(e => {
-      dot.className = 'status-dot red';
-      toast('Erreur de chargement: ' + e.message, 'err');
-    });
-}
-
-function loadFailed() {
-  if (!AUTH) return;
-  apiFetch('GET', { action: 'failed', ...AUTH })
-    .then(d => { if (d.ok) renderFailed(d.failed); })
-    .catch(() => {});
-}
-
-function loadPins() {
-  if (!AUTH) return;
-  apiFetch('GET', { action: 'pins', ...AUTH })
-    .then(d => { if (d.ok) renderPins(d); })
-    .catch(() => {});
-}
-
-// ── Render ────────────────────────────────────────────────────────────────────
-const STATUS_COLORS = {
-  published: '#3fb950', scheduled: '#58a6ff', drafted: '#d29922',
-  pending: '#8b949e', failed: '#f85149', processing: '#d29922',
-  generating: '#bc8cff', generated: '#58a6ff', uploading: '#39d353',
-  done: '#3fb950', failed_gpu: '#f85149', failed_upload: '#db6d28',
-  skip: '#484f58', quarantine: '#f85149'
+const SITES_META = {
+  foodzauber:'hub', kochliebe:'primary', rezeptflow:'primary',
+  schnelllecker:'primary', rezeptnest:'primary', yumrezept:'primary',
+  airfryer:'nano', plaetzchen:'nano', zimtschnecken:'nano',
+  waffeln:'nano', kaesekuchen:'nano', gulasch:'nano', pfannkuchen:'nano'
+};
+const STATUS_COL = {
+  published:'#3fb950',scheduled:'#58a6ff',drafted:'#d29922',
+  pending:'#484f58',failed:'#f85149',processing:'#d29922',
+  generating:'#bc8cff',generated:'#58a6ff',uploading:'#39d353',
+  done:'#3fb950',failed_gpu:'#f85149',failed_upload:'#db6d28',
+  skip:'#444c56',quarantine:'#f85149'
 };
 
-function pct(a, b) { return b ? Math.round(a / b * 100) : 0; }
-function n(v) { return (v || 0).toLocaleString('fr-FR'); }
+// ═══════════════════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════════════════
+let AUTH = null, DATA = null, CHART_DATA = null, FAILED_ALL = [];
+let timer = null;
+let chDaily = null, chSites = null, chImages = null;
+let logEntries = [];
 
-function renderAll(d, weeks) {
-  if (!d) return;
-  const pub = (d.st && d.st.published) || 0;
-  const sched = (d.st && d.st.scheduled) || 0;
-  const done_img = (d.img && d.img.done) || 0;
-  const failed_all = (d.failedText || 0) + (d.failedImg || 0);
-  const pins_total = Object.values(d.pin || {}).reduce((a,b) => a+b, 0);
-  const pins_posted = (d.pin && d.pin.posted) || 0;
+// ═══════════════════════════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════════════════════════
+function doLogin() {
+  const u = document.getElementById('u').value.trim();
+  const p = document.getElementById('pw').value;
+  const btn = document.getElementById('btnl');
+  const err = document.getElementById('lerr');
+  if (!u||!p){err.textContent='Remplis les deux champs.';return;}
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Connexion…'; err.textContent='';
+  api({action:'stats',u,p}).then(d=>{
+    if(!d.ok) throw new Error(d.error||'Identifiants incorrects');
+    AUTH={u,p};
+    sessionStorage.setItem('rde',JSON.stringify(AUTH));
+    document.getElementById('login').style.display='none';
+    document.getElementById('app').style.display='block';
+    initSiteCheckboxes();
+    initWeekCheckboxes();
+    DATA=d; renderAll(d);
+    loadFailed(); loadPins();
+    timer=setInterval(loadData,REFRESH);
+  }).catch(e=>{
+    err.textContent=e.message;
+    btn.disabled=false; btn.textContent='Se connecter';
+  });
+}
+function doLogout(){
+  AUTH=null; sessionStorage.removeItem('rde');
+  clearInterval(timer);
+  document.getElementById('app').style.display='none';
+  document.getElementById('login').style.display='flex';
+  document.getElementById('pw').value='';
+}
+(function(){
+  const s=sessionStorage.getItem('rde');
+  if(s){try{AUTH=JSON.parse(s);document.getElementById('u').value=AUTH.u;}catch(e){}}
+  ['u','pw'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();}));
+  if(AUTH){
+    document.getElementById('login').style.display='none';
+    document.getElementById('app').style.display='block';
+    initSiteCheckboxes(); initWeekCheckboxes();
+    loadData(); loadFailed(); loadPins();
+    timer=setInterval(loadData,REFRESH);
+  }
+})();
 
-  document.getElementById('ov-total').textContent  = n(d.total);
-  document.getElementById('ov-pub').textContent    = n(pub);
-  // FIX: utilise totalImages (somme col Images) au lieu de count d'articles done
-  const totalImages = d.totalImages || 0;
-  const imgDone = d.imgDone || 0;
-  document.getElementById('ov-img').textContent    = n(totalImages);
-  document.getElementById('ov-img-sub').textContent = n(imgDone) + ' articles complets';
-  document.getElementById('ov-pins').textContent   = n(pins_total);
-  document.getElementById('ov-pins-sub').textContent = pins_posted + ' postés';
-  document.getElementById('ov-gpu').textContent    = n(d.gpu || 0);
-  document.getElementById('ov-envoi').textContent  = n(d.envoi || 0);
-  document.getElementById('ov-failed').textContent = n(failed_all);
-  document.getElementById('ov-failed-sub').textContent = (d.failedText||0) + ' texte · ' + (d.failedImg||0) + ' images';
-  document.getElementById('ov-vol').textContent    = pct(d.volFait, d.volTotal) + '%';
-  document.getElementById('ov-vol-sub').textContent = n(d.volFait) + ' / ' + n(d.volTotal) + ' /mois';
-
-  const pubPct = pct(pub + sched, d.total);
-  const imgPct = pct(imgDone, d.total);
-  document.getElementById('ov-pub-bar').style.width = pubPct + '%';
-  document.getElementById('ov-img-bar').style.width = imgPct + '%';
-
-  // Status lists
-  renderStatusList('st-content', d.st || {}, d.total);
-  renderStatusList('st-img', d.img || {}, d.total);
-
-  // Sites
-  if (d.sites) renderSites(d.sites);
-
-  // Weeks
-  if (weeks) renderWeeks(weeks);
+// ═══════════════════════════════════════════════════════════════════════════
+//  API
+// ═══════════════════════════════════════════════════════════════════════════
+function api(params){
+  const qs=Object.entries(Object.assign({},AUTH||{},params)).map(([k,v])=>{
+    const val=(typeof v==='object')?JSON.stringify(v):v;
+    return k+'='+encodeURIComponent(val);
+  }).join('&');
+  return fetch(AS_URL+'?'+qs).then(r=>r.json());
 }
 
-function renderStatusList(id, obj, total) {
-  const el = document.getElementById(id);
-  const sorted = Object.entries(obj).sort((a,b) => b[1]-a[1]);
-  el.innerHTML = sorted.map(([k,v]) => `
-    <div class="status-row">
-      <div class="status-dot-sm" style="background:${STATUS_COLORS[k]||'#484f58'}"></div>
-      <span class="status-label">${k}</span>
-      <span class="status-count">${n(v)}</span>
-      <span style="color:var(--muted);font-size:11px;width:36px;text-align:right">${pct(v,total)}%</span>
+// ═══════════════════════════════════════════════════════════════════════════
+//  DATA LOADING
+// ═══════════════════════════════════════════════════════════════════════════
+function loadData(){
+  if(!AUTH) return;
+  const dot=document.getElementById('sdot');
+  dot.className='dot y';
+  api({action:'summary'}).then(d=>{
+    if(!d.ok) throw new Error(d.error);
+    DATA=d.stats;
+    CHART_DATA={daily:d.daily,siteProg:d.siteProg};
+    renderAll(d.stats,d.weeks);
+    updateSiteCheckboxes(d.stats);
+    updateWeekCheckboxes(d.weeks);
+    if(document.getElementById('tab-charts').classList.contains('on')) renderCharts();
+    dot.className='dot';
+    document.getElementById('rtime').textContent='↻ '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }).catch(e=>{dot.className='dot r';toast('Erreur: '+e.message,'err');});
+}
+function loadFailed(){
+  if(!AUTH) return;
+  api({action:'failed'}).then(d=>{if(d.ok){FAILED_ALL=d.failed;renderFailed(d.failed);}}).catch(()=>{});
+}
+function loadPins(){
+  if(!AUTH) return;
+  api({action:'pins'}).then(d=>{if(d.ok) renderPins(d);}).catch(()=>{});
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════════════════════════
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const N=v=>(v||0).toLocaleString('fr-FR');
+
+function renderAll(d,weeks){
+  if(!d) return;
+  const pub=(d.st&&d.st.published)||0;
+  const sched=(d.st&&d.st.scheduled)||0;
+  const imgDone=d.imgDone||0;
+  const totalImg=d.totalImages||0;
+  const pins_total=Object.values(d.pin||{}).reduce((a,b)=>a+b,0);
+  const pins_posted=(d.pin&&d.pin.posted)||0;
+  const failed_all=(d.failedText||0)+(d.failedImg||0);
+
+  El('ov-total',N(d.total));
+  El('ov-pub',N(pub));
+  El('ov-pub-pct',pct(pub+sched,d.total)+'% du total');
+  El('ov-img',N(totalImg));
+  El('ov-img-sub',N(imgDone)+' articles complets');
+  El('ov-pins',N(pins_total));
+  El('ov-pins-sub',N(pins_posted)+' postés');
+  El('ov-gpu',N(d.gpu||0));
+  El('ov-envoi',N(d.envoi||0));
+  El('ov-failed',N(failed_all));
+  El('ov-failed-sub',(d.failedText||0)+' texte · '+(d.failedImg||0)+' images');
+  El('ov-vol',pct(d.volFait,d.volTotal)+'%');
+  El('ov-vol-sub',N(d.volFait)+' / '+N(d.volTotal)+' /mois');
+  bar('ov-pub-bar',pct(pub+sched,d.total));
+  bar('ov-img-bar',pct(imgDone,d.total));
+
+  // Status lists
+  statusList('st-content',d.st||{},d.total);
+  statusList('st-img',d.img||{},d.total);
+
+  // Failed badge
+  const fb=document.getElementById('failed-badge');
+  if(fb) fb.innerHTML=failed_all>0?` <span class="badge br">${failed_all}</span>`:'';
+
+  // Sites
+  if(d.sites) renderSites(d.sites);
+  // Weeks
+  if(weeks) renderWeeks(weeks);
+}
+
+function statusList(id,obj,total){
+  document.getElementById(id).innerHTML=
+    Object.entries(obj).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`
+    <div class="srow">
+      <div class="sdot" style="background:${STATUS_COL[k]||'#444'}"></div>
+      <span style="color:var(--muted);flex:1">${k}</span>
+      <span class="scount">${N(v)}</span>
+      <span style="color:var(--hint);font-size:10px;width:32px;text-align:right">${pct(v,total)}%</span>
     </div>`).join('');
 }
 
-function renderSites(sites) {
-  document.getElementById('sites-updated').textContent = new Date().toLocaleTimeString('fr-FR');
-  const tbody = document.getElementById('sites-tbody');
-  tbody.innerHTML = sites.map(s => {
-    const textPct = pct(s.texte, s.t);
-    const imgPct  = pct(s.img, s.t);
-    const alerts = [];
-    if (s.failed_text > 0) alerts.push(`<span class="badge badge-red">${s.failed_text} texte</span>`);
-    if (s.failed_img > 0)  alerts.push(`<span class="badge badge-yellow">${s.failed_img} img</span>`);
+function renderSites(sites){
+  document.getElementById('sites-ts').textContent=new Date().toLocaleTimeString('fr-FR');
+  document.getElementById('sites-tbody').innerHTML=sites.map(s=>{
+    const tp=pct(s.texte,s.t);
+    const avg=s.t?((s.imgCount||0)/s.t).toFixed(1):'—';
+    const alerts=[];
+    if(s.failed_text>0) alerts.push(`<span class="badge br">${s.failed_text} texte</span>`);
+    if(s.failed_img>0)  alerts.push(`<span class="badge by">${s.failed_img} img</span>`);
     return `<tr>
       <td><strong>${s.nom}</strong></td>
-      <td>${n(s.texte)}/${n(s.t)}
-        <div class="prog-mini"><div class="prog-mini-fill" style="width:${textPct}%"></div></div>
-      </td>
-      <td>${n(s.img)}
-        <div class="prog-mini"><div class="prog-mini-fill" style="width:${imgPct}%;background:var(--accent)"></div></div>
-      </td>
-      <td>${n(s.pins)}</td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px">
-          <div class="prog-bar" style="width:100px"><div class="prog-fill" style="background:var(--green);width:${textPct}%"></div></div>
-          <span style="font-size:11px;color:var(--muted)">${textPct}%</span>
-        </div>
-      </td>
-      <td>${alerts.join(' ') || '<span style="color:var(--muted);font-size:11px">✓</span>'}</td>
+      <td>${N(s.texte)}/${N(s.t)}</td>
+      <td><div style="display:flex;align-items:center;gap:6px">
+        <div class="pbar" style="width:80px;margin:0"><div class="pfill" style="background:var(--green);width:${tp}%"></div></div>
+        <span style="font-size:10px;color:var(--muted)">${tp}%</span>
+      </div></td>
+      <td>${N(s.imgCount||0)}</td>
+      <td style="color:var(--muted)">${avg}</td>
+      <td>${N(s.pins||0)}</td>
+      <td>${alerts.join(' ')||'<span style="color:var(--muted);font-size:10px">✓</span>'}</td>
     </tr>`;
   }).join('');
 }
 
-function renderWeeks(weeks) {
-  const el = document.getElementById('weeks-list');
-  el.innerHTML = weeks.map(w => {
-    const done = (w.published || 0) + (w.scheduled || 0) + (w.drafted || 0);
-    const p = pct(done, w.total);
-    const color = p === 100 ? 'var(--green)' : p > 50 ? 'var(--accent)' : p > 0 ? 'var(--yellow)' : 'var(--surface2)';
-    return `<div class="week-row">
-      <div class="week-name">S${String(w.week).padStart(2,'0')}</div>
-      <div>
-        <div class="prog-bar"><div class="prog-fill" style="background:${color};width:${p}%"></div></div>
-      </div>
-      <div style="font-size:12px;color:var(--muted);text-align:right">${done}/${w.total}</div>
-      <div class="week-pct">${p}%</div>
+function renderWeeks(weeks){
+  document.getElementById('weeks-list').innerHTML=weeks.map(w=>{
+    const done=(w.published||0)+(w.scheduled||0)+(w.drafted||0);
+    const p=pct(done,w.total);
+    const c=p===100?'var(--green)':p>50?'var(--blue)':p>0?'var(--yellow)':'var(--s3)';
+    return `<div class="wk-row">
+      <div style="font-weight:600;color:var(--blue)">S${String(w.week).padStart(2,'0')}</div>
+      <div><div class="pbar" style="margin:0"><div class="pfill" style="background:${c};width:${p}%"></div></div></div>
+      <div style="font-size:11px;color:var(--muted);text-align:right">${done}/${w.total}</div>
+      <div style="font-size:11px;color:var(--muted);text-align:right">${p}%</div>
     </div>`;
   }).join('');
 }
 
-function renderFailed(list) {
-  const tbody = document.getElementById('failed-tbody');
-  const empty = document.getElementById('failed-empty');
-  if (!list || !list.length) {
-    tbody.innerHTML = '';
-    empty.style.display = 'block';
+function renderFailed(list){
+  const kw=document.getElementById('f-kw').value.toLowerCase();
+  const site=document.getElementById('f-site').value;
+  const stat=document.getElementById('f-status').value;
+  const sites=[...new Set((list||[]).map(f=>f.site))].sort();
+  const sel=document.getElementById('f-site');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Tous les sites</option>'+sites.map(s=>`<option value="${s}">${s}</option>`).join('');
+  sel.value=cur;
+  let filtered=(list||[]).filter(f=>
+    (!kw||f.keyword.toLowerCase().includes(kw)||f.id.toLowerCase().includes(kw))&&
+    (!site||f.site===site)&&
+    (!stat||f.status===stat)
+  );
+  const empty=document.getElementById('failed-empty');
+  const count=document.getElementById('failed-count');
+  if(!filtered.length){
+    document.getElementById('failed-tbody').innerHTML='';
+    empty.style.display='block';
+    count.textContent='';
     return;
   }
-  empty.style.display = 'none';
-  tbody.innerHTML = list.map(f => `
+  empty.style.display='none';
+  count.textContent=filtered.length+' article(s) affiché(s)';
+  document.getElementById('failed-tbody').innerHTML=filtered.map(f=>`
     <tr>
       <td><input type="checkbox" class="chk" value="${f.id}"></td>
-      <td style="font-family:monospace;font-size:11px;color:var(--muted)">${f.id}</td>
-      <td><span class="badge badge-yellow">${f.site}</span></td>
-      <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.keyword}</td>
-      <td><span style="color:${STATUS_COLORS[f.status]||'var(--red)'};font-size:12px">${f.status}</span></td>
-      <td><span style="color:${STATUS_COLORS[f.img_status]||'var(--muted)'};font-size:12px">${f.img_status||'—'}</span></td>
-      <td class="err-text" title="${f.error}">${f.error||'—'}</td>
+      <td style="font-family:monospace;color:var(--muted);font-size:10px">${f.id}</td>
+      <td><span class="badge by">${f.site}</span></td>
+      <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.keyword}</td>
+      <td><span style="color:${STATUS_COL[f.status]||'var(--red)'}">${f.status}</span></td>
+      <td><span style="color:${STATUS_COL[f.img_status]||'var(--muted)'}">${f.img_status||'—'}</span></td>
+      <td class="err-clip" title="${f.error}">${f.error||'—'}</td>
+      <td><button class="btn btn-r" style="padding:3px 8px;font-size:11px" onclick="retrySingle('${f.id}')">↩</button></td>
     </tr>`).join('');
 }
+function filterFailed(){ renderFailed(FAILED_ALL); }
 
-function renderPins(d) {
-  document.getElementById('pin-total').textContent  = n(d.total);
-  document.getElementById('pin-posted').textContent = n(d.byStatus.posted || 0);
-  document.getElementById('pin-sched').textContent  = n(d.byStatus.scheduled || 0);
-  document.getElementById('pin-done').textContent   = n(d.byStatus.done || 0);
-  renderStatusList('pin-status-list', d.byStatus || {}, d.total);
+function renderPins(d){
+  El('pin-total',N(d.total));
+  El('pin-posted',N(d.byStatus.posted||0));
+  El('pin-sched',N(d.byStatus.scheduled||0));
+  El('pin-done',N(d.byStatus.done||0));
+  statusList('pin-list',d.byStatus||{},d.total);
 }
 
-// ── Actions ───────────────────────────────────────────────────────────────────
-function runAction(action, label) {
-  const lbl = label || action;
-  toast('Lancement: ' + lbl + '…', 'info');
-  apiFetch('POST', null, { action })
-    .then(d => {
-      if (d.ok) {
-        toast('✅ ' + lbl + ' lancé', 'ok');
-        setTimeout(loadData, 3000);
+// ═══════════════════════════════════════════════════════════════════════════
+//  SITE & WEEK CHECKBOXES
+// ═══════════════════════════════════════════════════════════════════════════
+function initSiteCheckboxes(){
+  const sites=Object.keys(SITES_META);
+  document.getElementById('site-checkboxes').innerHTML=sites.map(s=>`
+    <div class="site-chk">
+      <input type="checkbox" id="sc-${s}" value="${s}" checked>
+      <label for="sc-${s}">
+        <span class="sname">${s}</span>
+        <span class="spct" id="sc-pct-${s}">—</span>
+      </label>
+    </div>`).join('');
+}
+function updateSiteCheckboxes(d){
+  if(!d||!d.sites) return;
+  d.sites.forEach(s=>{
+    const el=document.getElementById('sc-pct-'+s.nom);
+    if(el) el.textContent=pct(s.texte,s.t)+'% · '+N(s.texte)+'/'+N(s.t);
+  });
+}
+function initWeekCheckboxes(){
+  const weeks=[1,2,3,4,5,6,7,8,9,10,11];
+  document.getElementById('week-checkboxes').innerHTML=weeks.map(w=>`
+    <div class="wk-chk">
+      <input type="checkbox" id="wk-${w}" value="${w}" checked>
+      <label for="wk-${w}">S${String(w).padStart(2,'0')}</label>
+    </div>`).join('');
+}
+function updateWeekCheckboxes(weeks){
+  if(!weeks) return;
+  weeks.forEach(w=>{
+    const lbl=document.querySelector(`label[for="wk-${w.week}"]`);
+    if(lbl){
+      const done=(w.published||0)+(w.scheduled||0)+(w.drafted||0);
+      const p=pct(done,w.total);
+      lbl.title=`S${w.week}: ${done}/${w.total} (${p}%)`;
+      // Color the label based on completion
+      const inp=document.getElementById('wk-'+w.week);
+      if(inp&&inp.checked) lbl.style.borderColor=p===100?'var(--green)':p>0?'var(--blue)':'var(--border)';
+    }
+  });
+}
+function selSites(mode){
+  const all=Object.keys(SITES_META);
+  const hubs=all.filter(s=>SITES_META[s]==='hub');
+  const nanos=all.filter(s=>SITES_META[s]==='nano');
+  all.forEach(s=>{
+    const el=document.getElementById('sc-'+s);
+    if(el) el.checked=mode==='all'?true:mode==='none'?false:mode==='hub'?hubs.includes(s):nanos.includes(s);
+  });
+}
+function selWeeks(mode){
+  [1,2,3,4,5,6,7,8,9,10,11].forEach(w=>{
+    const el=document.getElementById('wk-'+w);
+    if(!el) return;
+    if(mode==='all') el.checked=true;
+    else if(mode==='none') el.checked=false;
+    else if(mode==='pending'){
+      // Only check weeks that have pending articles
+      const lbl=document.querySelector(`label[for="wk-${w}"]`);
+      const title=lbl?lbl.title:'';
+      const p=parseInt((title.match(/\((\d+)%\)/)||['','0'])[1]);
+      el.checked=p<100;
+    }
+  });
+}
+function getSelectedSites(){
+  return [...document.querySelectorAll('#site-checkboxes input:checked')].map(el=>el.value);
+}
+function getSelectedWeeks(){
+  return [...document.querySelectorAll('#week-checkboxes input:checked')].map(el=>parseInt(el.value));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════════════════════════════════════════
+function runWF(action, allSites){
+  const sites=allSites?Object.keys(SITES_META):getSelectedSites();
+  const weeks=getSelectedWeeks();
+  if(!sites.length){toast('Sélectionne au moins un site','info');return;}
+  const label=action.replace(/_/g,' ');
+  const sLabel=allSites?'tous les sites':sites.join(', ');
+  toast(`Lancement ${label} sur: ${sLabel}`,'info');
+  addLog('run',`${label} → ${sites.length} site(s), sem. ${weeks.join(',')}`);
+  api({action, sites:JSON.stringify(sites), weeks:JSON.stringify(weeks)})
+    .then(d=>{
+      if(d.ok){
+        toast(`✅ ${label} lancé`,'ok');
+        addLog('ok',`${label} accepté par n8n`);
+        setTimeout(loadData,4000);
       } else {
-        toast('❌ ' + (d.error || d.body?.message || 'Erreur'), 'err');
+        toast(`❌ ${d.error||'Erreur'}`,'err');
+        addLog('err',`${label} → ${d.error||'Erreur'}`);
       }
-    })
-    .catch(e => toast('❌ ' + e.message, 'err'));
+    }).catch(e=>{toast('❌ '+e.message,'err');addLog('err',e.message);});
 }
 
-function confirmAction(action, msg) {
-  if (!confirm(msg)) return;
-  runAction(action, msg);
+function confirmRun(action,msg){
+  if(!confirm(msg)) return;
+  addLog('warn',msg);
+  api({action}).then(d=>{
+    if(d.ok){toast('✅ Fait','ok');addLog('ok','Reset effectué');setTimeout(loadData,3000);}
+    else{toast('❌ '+(d.error||'Erreur'),'err');}
+  }).catch(e=>toast('❌ '+e.message,'err'));
 }
 
-function retrySelected() {
-  const ids = [...document.querySelectorAll('.chk:checked')].map(c => c.value);
-  if (!ids.length) { toast('Aucune ligne sélectionnée', 'info'); return; }
-  toast('Retry ' + ids.length + ' article(s)…', 'info');
-  apiFetch('POST', null, { action: 'wf1_selection', ids })
-    .then(d => {
-      if (d.ok) toast('✅ ' + ids.length + ' article(s) relancé(s)', 'ok');
-      else toast('❌ ' + (d.error || 'Erreur'), 'err');
-    })
-    .catch(e => toast('❌ ' + e.message, 'err'));
+function retrySelected(){
+  const ids=[...document.querySelectorAll('#failed-tbody .chk:checked')].map(c=>c.value);
+  if(!ids.length){toast('Sélectionne des lignes','info');return;}
+  addLog('run',`Retry ${ids.length} article(s): ${ids.slice(0,5).join(', ')}${ids.length>5?'…':''}`);
+  api({action:'wf1_selection',ids:JSON.stringify(ids)})
+    .then(d=>{
+      if(d.ok){toast(`✅ ${ids.length} article(s) relancé(s)`,'ok');addLog('ok',`${ids.length} relancé(s)`);}
+      else{toast('❌ '+(d.error||'Erreur'),'err');}
+    }).catch(e=>toast('❌ '+e.message,'err'));
 }
 
-function toggleAll(el) {
-  document.querySelectorAll('.chk').forEach(c => c.checked = el.checked);
+function retrySingle(id){
+  addLog('run','Retry individuel: '+id);
+  api({action:'wf1_selection',ids:JSON.stringify([id])})
+    .then(d=>{
+      if(d.ok){toast(`✅ ${id} relancé`,'ok');addLog('ok',id+' relancé');}
+      else{toast('❌ '+(d.error||'Erreur'),'err');}
+    }).catch(e=>toast('❌ '+e.message,'err'));
 }
 
-function publishPins(mode) {
-  const label = mode === 'direct' ? 'Publier MAINTENANT' : 'Programmer dans Blotato';
-  if (!confirm(label + ' — tous les pins en status "done" ?')) return;
-  toast(label + '…', 'info');
-  apiFetch('POST', null, { action: 'wf3_publish_pins', mode, ids: [] })
-    .then(d => {
-      if (d.ok) { toast('✅ ' + label + ' lancé', 'ok'); setTimeout(loadPins, 3000); }
-      else toast('❌ ' + (d.error || 'Erreur'), 'err');
-    })
-    .catch(e => toast('❌ ' + e.message, 'err'));
+function publishPins(mode){
+  const label=mode==='direct'?'Publier MAINTENANT':'Programmer Blotato';
+  if(!confirm(label+' — tous les pins "done" ?')) return;
+  addLog('run',label);
+  api({action:'wf3_publish_pins',ids:'[]',mode})
+    .then(d=>{
+      if(d.ok){toast('✅ '+label+' lancé','ok');addLog('ok',label+' accepté');}
+      else{toast('❌ '+(d.error||'Erreur'),'err');}
+    }).catch(e=>toast('❌ '+e.message,'err'));
 }
 
-// ── UI helpers ────────────────────────────────────────────────────────────────
-function showTab(name) {
-  document.querySelectorAll('.tab').forEach((t,i) => {
-    const names = ['overview','charts','sites','weeks','actions','failed','pins'];
-    t.className = 'tab' + (names[i] === name ? ' active' : '');
-  });
-  document.querySelectorAll('.tab-panel').forEach(p => p.className = 'tab-panel');
-  document.getElementById('tab-'+name).className = 'tab-panel active';
-  if (name === 'failed') loadFailed();
-  if (name === 'pins') loadPins();
-  if (name === 'charts') renderCharts();
+function toggleAll(el){document.querySelectorAll('#failed-tbody .chk').forEach(c=>c.checked=el.checked);}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  CHARTS
+// ═══════════════════════════════════════════════════════════════════════════
+function renderCharts(){
+  if(!CHART_DATA&&DATA) CHART_DATA={siteProg:DATA.sites};
+  if(!CHART_DATA) return;
+  const gc='rgba(255,255,255,0.06)';
+  const tc='#8b949e';
+  Chart.defaults.color=tc; Chart.defaults.borderColor=gc;
+
+  // Daily
+  const daily=CHART_DATA.daily||[];
+  if(chDaily) chDaily.destroy();
+  const c1=document.getElementById('ch-daily');
+  if(c1) chDaily=new Chart(c1,{type:'bar',data:{
+    labels:daily.map(d=>{ const dt=new Date(d.date); return (dt.getMonth()+1)+'/'+dt.getDate(); }),
+    datasets:[{label:'Publiés',data:daily.map(d=>d.count),backgroundColor:'rgba(88,166,255,.7)',borderColor:'#58a6ff',borderWidth:1,borderRadius:3}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1c2128',titleColor:'#e6edf3',bodyColor:tc}},scales:{x:{grid:{color:gc},ticks:{maxTicksLimit:10,color:tc}},y:{grid:{color:gc},ticks:{color:tc},beginAtZero:true}}}});
+
+  // Sites
+  const sp=CHART_DATA.siteProg||DATA&&DATA.sites||[];
+  const sn=sp.map(s=>s.nom);
+  if(chSites) chSites.destroy();
+  const c2=document.getElementById('ch-sites');
+  if(c2) chSites=new Chart(c2,{type:'bar',data:{labels:sn,datasets:[
+    {label:'Publiés',data:sp.map(s=>s.texte||s.published||0),backgroundColor:'rgba(63,185,80,.8)',borderRadius:3},
+    {label:'Pending',data:sp.map(s=>Math.max(0,(s.t||s.total||0)-(s.texte||s.published||0))),backgroundColor:'rgba(48,54,61,.9)',borderRadius:3}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,boxWidth:10}},tooltip:{backgroundColor:'#1c2128',titleColor:'#e6edf3',bodyColor:tc}},scales:{x:{stacked:true,grid:{color:gc},ticks:{color:tc}},y:{stacked:true,grid:{color:gc},ticks:{color:tc}}}}});
+
+  // Images
+  if(chImages) chImages.destroy();
+  const c3=document.getElementById('ch-images');
+  if(c3) chImages=new Chart(c3,{type:'bar',data:{labels:sn,datasets:[
+    {label:'Images totales (col AA)',data:sp.map(s=>s.imgCount||0),backgroundColor:'rgba(88,166,255,.75)',borderRadius:3},
+    {label:'Articles done',data:sp.map(s=>s.imgDone||0),backgroundColor:'rgba(188,140,255,.6)',borderRadius:3}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,boxWidth:10}},tooltip:{backgroundColor:'#1c2128',titleColor:'#e6edf3',bodyColor:tc,callbacks:{afterBody(items){const si=sp[items[0].dataIndex];const tot=si.t||si.total||1;return si.imgCount?'Avg: '+(si.imgCount/tot).toFixed(1)+' img/article':'';}}},},scales:{x:{grid:{color:gc},ticks:{color:tc}},y:{grid:{color:gc},ticks:{color:tc},beginAtZero:true}}}});
 }
 
-function toast(msg, type) {
-  const wrap = document.getElementById('toasts');
-  const el = document.createElement('div');
-  el.className = 'toast ' + (type || 'info');
-  el.textContent = msg;
-  wrap.appendChild(el);
-  setTimeout(() => el.remove(), 4000);
+// ═══════════════════════════════════════════════════════════════════════════
+//  LOG
+// ═══════════════════════════════════════════════════════════════════════════
+function addLog(type,msg){
+  logEntries.unshift({type,msg,time:new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})});
+  if(logEntries.length>100) logEntries.pop();
+  if(document.getElementById('tab-log').classList.contains('on')) renderLog();
 }
-
-
-// ── Charts ────────────────────────────────────────────────────────────────────
-function renderCharts() {
-  if (!CHART_DATA && DATA) {
-    // Fallback: construire depuis DATA si pas de données journalières
-    CHART_DATA = { siteProg: DATA.sites };
-  }
-  if (!CHART_DATA) return;
-
-  const isDark = document.body.style.background !== '' || window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const gridColor = 'rgba(255,255,255,0.07)';
-  const textColor = '#8b949e';
-  const tooltipBg = '#1c2128';
-
-  Chart.defaults.color = textColor;
-  Chart.defaults.borderColor = gridColor;
-
-  // ── Graphique 1 : Publications par jour ───────────────────────────────────
-  const daily = (CHART_DATA.daily || []);
-  const dailyLabels = daily.map(d => {
-    const dt = new Date(d.date);
-    return (dt.getMonth()+1) + '/' + dt.getDate();
-  });
-  const dailyData = daily.map(d => d.count);
-
-  if (chartDaily) chartDaily.destroy();
-  const ctx1 = document.getElementById('chart-daily');
-  if (ctx1) {
-    chartDaily = new Chart(ctx1, {
-      type: 'bar',
-      data: {
-        labels: dailyLabels,
-        datasets: [{
-          label: 'Articles publiés',
-          data: dailyData,
-          backgroundColor: 'rgba(88,166,255,0.7)',
-          borderColor: '#58a6ff',
-          borderWidth: 1,
-          borderRadius: 3,
-        }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: { backgroundColor: tooltipBg, titleColor: '#e6edf3', bodyColor: '#8b949e' }
-        },
-        scales: {
-          x: { grid: { color: gridColor }, ticks: { maxTicksLimit: 10, color: textColor } },
-          y: { grid: { color: gridColor }, ticks: { color: textColor }, beginAtZero: true }
-        }
-      }
-    });
-  }
-
-  // ── Graphique 2 : Progression par site ───────────────────────────────────
-  const sites = (CHART_DATA.siteProg || DATA && DATA.sites || []).slice(0, 13);
-  const siteNames = sites.map(s => s.nom);
-  const pubData   = sites.map(s => s.texte || s.published || 0);
-  const schedData = sites.map(s => s.scheduled || 0);
-  const totData   = sites.map(s => s.t || s.total || 0);
-  const pendData  = sites.map(s => Math.max(0, (s.t||s.total||0) - (s.texte||s.published||0)));
-
-  if (chartSites) chartSites.destroy();
-  const ctx2 = document.getElementById('chart-sites');
-  if (ctx2) {
-    chartSites = new Chart(ctx2, {
-      type: 'bar',
-      data: {
-        labels: siteNames,
-        datasets: [
-          { label: 'Publiés', data: pubData, backgroundColor: 'rgba(63,185,80,0.8)', borderRadius: 3 },
-          { label: 'Pending', data: pendData, backgroundColor: 'rgba(48,54,61,0.9)', borderRadius: 3 },
-        ]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: textColor, boxWidth: 12 } },
-          tooltip: { backgroundColor: tooltipBg, titleColor: '#e6edf3', bodyColor: '#8b949e' }
-        },
-        scales: {
-          x: { stacked: true, grid: { color: gridColor }, ticks: { color: textColor } },
-          y: { stacked: true, grid: { color: gridColor }, ticks: { color: textColor } }
-        }
-      }
-    });
-  }
-
-  // ── Graphique 3 : Images par site (count réel) ───────────────────────────
-  const imgData = sites.map(s => s.imgCount || 0);
-  const imgDoneData = sites.map(s => s.imgDone || 0);
-
-  if (chartImages) chartImages.destroy();
-  const ctx3 = document.getElementById('chart-images');
-  if (ctx3) {
-    chartImages = new Chart(ctx3, {
-      type: 'bar',
-      data: {
-        labels: siteNames,
-        datasets: [
-          { label: 'Total images (col AA)', data: imgData, backgroundColor: 'rgba(88,166,255,0.75)', borderRadius: 3 },
-          { label: 'Articles images done', data: imgDoneData, backgroundColor: 'rgba(188,140,255,0.6)', borderRadius: 3 },
-        ]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: textColor, boxWidth: 12 } },
-          tooltip: { backgroundColor: tooltipBg, titleColor: '#e6edf3', bodyColor: '#8b949e',
-            callbacks: {
-              afterBody: function(items) {
-                if (items[0]) {
-                  const si = sites[items[0].dataIndex];
-                  const tot = si.t || si.total || 1;
-                  return 'Avg: ' + (si.imgCount ? (si.imgCount / tot).toFixed(1) : '0') + ' img/article';
-                }
-              }
-            }
-          }
-        },
-        scales: {
-          x: { grid: { color: gridColor }, ticks: { color: textColor } },
-          y: { grid: { color: gridColor }, ticks: { color: textColor }, beginAtZero: true }
-        }
-      }
-    });
-  }
+function renderLog(){
+  const el=document.getElementById('log-list');
+  if(!logEntries.length){el.innerHTML='<div class="log-empty">Aucune action pour l\'instant.</div>';return;}
+  el.innerHTML=logEntries.map(e=>`<div class="log-item ${e.type}"><span class="log-time">${e.time}</span><span class="log-msg">${e.msg}</span></div>`).join('');
 }
-// ── Auto-login if session exists ──────────────────────────────────────────────
-(function() {
-  const saved = sessionStorage.getItem('rde_auth');
-  if (saved) {
-    try {
-      AUTH = JSON.parse(saved);
-      loadData();
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      loadFailed();
-      loadPins();
-      refreshTimer = setInterval(loadData, REFRESH_INTERVAL);
-    } catch(e) { sessionStorage.removeItem('rde_auth'); }
-  }
-})();
+function clearLog(){logEntries=[];renderLog();}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════════════════════════════════════
+function ST(name){
+  const names=['overview','control','charts','sites','weeks','failed','pins','log'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.className='tab'+(names[i]===name?' on':''));
+  document.querySelectorAll('.panel').forEach(p=>p.className='panel');
+  document.getElementById('tab-'+name).className='panel on';
+  if(name==='failed') loadFailed();
+  if(name==='pins') loadPins();
+  if(name==='charts') renderCharts();
+  if(name==='log') renderLog();
+}
+function El(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function bar(id,p){const e=document.getElementById(id);if(e)e.style.width=p+'%';}
+function toast(msg,type){
+  const w=document.getElementById('toasts');
+  const el=document.createElement('div');
+  el.className='toast '+(type||'info');
+  el.textContent=msg;
+  w.appendChild(el);
+  setTimeout(()=>el.remove(),4000);
+}
 </script>
 </body>
 </html>
