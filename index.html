@@ -6,89 +6,127 @@
 <title>Réseau DE — Control Panel</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{
-  --bg:#0d1117;--s1:#161b22;--s2:#21262d;--s3:#2d333b;
-  --border:#30363d;--border2:#444c56;
-  --text:#e6edf3;--muted:#8b949e;--hint:#484f58;
-  --green:#3fb950;--blue:#58a6ff;--yellow:#d29922;
-  --orange:#db6d28;--red:#f85149;--purple:#bc8cff;--teal:#39d353;
-  --r:8px;--r2:12px;
+:root {
+  --bg:#0d1117; --s1:#161b22; --s2:#21262d; --s3:#2d333b;
+  --border:#30363d; --border2:#444c56;
+  --text:#e6edf3; --muted:#8b949e; --hint:#484f58;
+  --green:#3fb950; --blue:#58a6ff; --yellow:#d29922;
+  --orange:#db6d28; --red:#f85149; --purple:#bc8cff; --teal:#39d353;
+  --r:8px; --r2:12px;
+  --topbar:54px; --sidebar:220px;
   --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
 body{background:var(--bg);color:var(--text);font:13px/1.5 var(--font);min-height:100vh}
-a{color:var(--blue);text-decoration:none}
-code{font-family:monospace;font-size:11px;background:var(--s3);padding:1px 5px;border-radius:3px;color:var(--blue)}
+input,select,textarea,button{font:inherit}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
 /* ── Login ── */
-#login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:radial-gradient(ellipse at 60% 20%,rgba(88,166,255,.06) 0%,transparent 60%)}
-.lcard{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:44px;width:100%;max-width:380px;box-shadow:0 24px 64px rgba(0,0,0,.4)}
-.llogo{font-size:24px;font-weight:800;color:var(--blue);margin-bottom:4px;letter-spacing:-.5px}
-.lsub{color:var(--muted);font-size:12px;margin-bottom:30px}
-.field{margin-bottom:14px}
-.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;font-weight:500}
-.field input,.field select,.field textarea{width:100%;padding:9px 12px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font:inherit;outline:none;transition:border .15s}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue)}
-.field textarea{resize:vertical;min-height:80px}
-.btn-login{width:100%;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font:600 13px var(--font);cursor:pointer;transition:opacity .15s;letter-spacing:.2px}
+#login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;
+  background:radial-gradient(ellipse at 60% 20%,rgba(88,166,255,.07) 0%,transparent 60%)}
+.lcard{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);
+  padding:40px;width:100%;max-width:380px;box-shadow:0 24px 64px rgba(0,0,0,.4)}
+.llogo{font-size:22px;font-weight:800;color:var(--blue);margin-bottom:4px;letter-spacing:-.4px}
+.lsub{color:var(--muted);font-size:12px;margin-bottom:28px}
+.lfield{margin-bottom:14px}
+.lfield label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;
+  text-transform:uppercase;letter-spacing:.5px;font-weight:500}
+.lfield input{width:100%;padding:9px 12px;background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);color:var(--text);outline:none;transition:border .15s}
+.lfield input:focus{border-color:var(--blue)}
+.btn-login{width:100%;padding:11px;background:var(--blue);color:#fff;border:none;
+  border-radius:var(--r);font:600 13px var(--font);cursor:pointer;letter-spacing:.2px;transition:opacity .15s}
 .btn-login:hover{opacity:.85}.btn-login:disabled{opacity:.4;cursor:not-allowed}
 .lerr{color:var(--red);font-size:12px;margin-top:8px;min-height:18px}
 
 /* ── Shell ── */
-#app{display:none;min-height:100vh}
-.topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
-.logo{font-size:15px;font-weight:800;color:var(--blue);letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
-.logo-badge{background:rgba(88,166,255,.15);color:var(--blue);font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;border:1px solid rgba(88,166,255,.25)}
-.topbar-r{display:flex;align-items:center;gap:10px}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);transition:all .3s}
-.dot.y{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
-.dot.r{background:var(--red);box-shadow:0 0 6px var(--red)}
-.rtime{color:var(--muted);font-size:11px}
-.btn-sm{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:var(--r);cursor:pointer;font:inherit;font-size:12px;transition:all .15s}
-.btn-sm:hover{border-color:var(--border2);color:var(--text)}
+#app{display:none;height:100vh;flex-direction:column}
 
-/* ── Sidebar + Content ── */
-.layout{display:flex;min-height:calc(100vh - 54px)}
-.sidebar{width:220px;background:var(--s1);border-right:1px solid var(--border);padding:16px 0;flex-shrink:0;position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto}
-.nav-section{padding:0 12px;margin-bottom:4px;font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--hint);font-weight:600;margin-top:16px}
-.nav-section:first-child{margin-top:8px}
-.nav-item{display:flex;align-items:center;gap:9px;padding:8px 16px;cursor:pointer;color:var(--muted);font-size:13px;border-radius:0;transition:all .15s;border-left:2px solid transparent;margin:1px 0}
+/* ── Topbar ── */
+.topbar{height:var(--topbar);background:var(--s1);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;position:sticky;top:0;z-index:300}
+.ham{background:none;border:none;cursor:pointer;padding:6px;color:var(--muted);font-size:18px;line-height:1;
+  border-radius:6px;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.ham:hover{background:var(--s3);color:var(--text)}
+.logo{font-size:15px;font-weight:800;color:var(--blue);letter-spacing:-.3px;white-space:nowrap}
+.net-switcher{display:flex;align-items:center;gap:8px;margin-left:8px}
+.net-select{background:var(--s2);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);padding:4px 28px 4px 10px;font-size:12px;font-weight:600;cursor:pointer;
+  appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center}
+.net-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.topbar-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);transition:all .3s;flex-shrink:0}
+.sdot.y{background:var(--yellow);box-shadow:0 0 5px var(--yellow)}
+.sdot.r{background:var(--red);box-shadow:0 0 5px var(--red)}
+.rtime{color:var(--muted);font-size:11px;white-space:nowrap}
+.tbtn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;
+  border-radius:var(--r);cursor:pointer;font-size:12px;transition:all .15s;white-space:nowrap}
+.tbtn:hover{border-color:var(--border2);color:var(--text)}
+
+/* ── Layout ── */
+.layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - var(--topbar))}
+
+/* ── Sidebar ── */
+.sidebar{width:var(--sidebar);background:var(--s1);border-right:1px solid var(--border);
+  flex-shrink:0;overflow-y:auto;transition:transform .25s ease;z-index:200}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;
+  backdrop-filter:blur(2px)}
+.nav-sec{padding:12px 12px 4px;font-size:10px;text-transform:uppercase;letter-spacing:.7px;
+  color:var(--hint);font-weight:600}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 16px;cursor:pointer;
+  color:var(--muted);font-size:13px;transition:all .15s;border-left:2px solid transparent;
+  user-select:none}
 .nav-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
 .nav-item.on{background:rgba(88,166,255,.08);color:var(--blue);border-left-color:var(--blue)}
-.nav-item .icon{font-size:15px;width:18px;text-align:center}
-.nav-badge{margin-left:auto;background:rgba(248,81,73,.15);color:var(--red);font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px}
-.nav-badge.green{background:rgba(63,185,80,.15);color:var(--green)}
-.content{flex:1;padding:24px;min-width:0}
+.nav-icon{font-size:14px;width:20px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:rgba(248,81,73,.2);color:var(--red);
+  font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;min-width:18px;text-align:center}
 
-/* ── Cards ── */
-.g4{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
-.g3{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
-.g2{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
-.g2f{display:grid;gap:14px;grid-template-columns:1fr 1fr}
-.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px}
-.card-t{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:10px;font-weight:600}
-.bignum{font-size:30px;font-weight:800;line-height:1;letter-spacing:-1px}
-.sub{font-size:11px;color:var(--muted);margin-top:4px}
-.pbar{height:4px;background:var(--s3);border-radius:2px;margin-top:10px;overflow:hidden}
-.pfill{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+/* ── Content ── */
+.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:20px}
 
 /* ── Page header ── */
-.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
 .ph-t{font-size:18px;font-weight:700;letter-spacing:-.3px}
 .ph-s{font-size:12px;color:var(--muted);margin-top:2px}
 
 /* ── Panels ── */
 .panel{display:none}.panel.on{display:block}
 
-/* ── Status ── */
-.sdot{width:7px;height:7px;border-radius:2px;flex-shrink:0;display:inline-block}
-.srow{display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+/* ── Grids ── */
+.g4{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.g3{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+.g2{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.g2f{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+
+/* ── Cards ── */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.card+.card{margin-top:0}
+.ct{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
+  margin-bottom:8px;font-weight:600}
+.bignum{font-size:28px;font-weight:800;line-height:1;letter-spacing:-1px}
+.sub{font-size:11px;color:var(--muted);margin-top:3px}
+.pbar{height:4px;background:var(--s3);border-radius:2px;margin-top:8px;overflow:hidden}
+.pfill{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+
+/* ── Section header ── */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;flex-wrap:wrap}
+.sh-t{font-size:14px;font-weight:600}
+
+/* ── Status rows ── */
+.srow{display:flex;align-items:center;gap:7px;font-size:12px;padding:4px 0;
+  border-bottom:1px solid rgba(255,255,255,.03)}
 .srow:last-child{border-bottom:none}
-.scount{margin-left:auto;font-weight:600;font-size:13px}
-.spct{color:var(--hint);font-size:10px;width:32px;text-align:right}
+.sdotb{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.scount{margin-left:auto;font-weight:600}
+.spct{color:var(--hint);font-size:10px;width:30px;text-align:right}
 
 /* ── Badges ── */
-.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.bdg{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
 .bg{background:rgba(63,185,80,.15);color:var(--green)}
 .by{background:rgba(210,153,34,.15);color:var(--yellow)}
 .br{background:rgba(248,81,73,.15);color:var(--red)}
@@ -97,7 +135,9 @@ code{font-family:monospace;font-size:11px;background:var(--s3);padding:1px 5px;b
 .bo{background:rgba(219,109,40,.15);color:var(--orange)}
 
 /* ── Buttons ── */
-.btn{padding:8px 14px;border-radius:var(--r);font:600 12px var(--font);cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap;letter-spacing:.1px}
+.btn{padding:7px 13px;border-radius:var(--r);font:600 12px var(--font);cursor:pointer;
+  border:1px solid transparent;display:inline-flex;align-items:center;gap:5px;
+  transition:all .15s;white-space:nowrap;letter-spacing:.1px}
 .btn:disabled{opacity:.35;cursor:not-allowed}
 .btn-g{background:rgba(63,185,80,.12);color:var(--green);border-color:rgba(63,185,80,.25)}.btn-g:hover:not(:disabled){background:rgba(63,185,80,.2)}
 .btn-b{background:rgba(88,166,255,.12);color:var(--blue);border-color:rgba(88,166,255,.25)}.btn-b:hover:not(:disabled){background:rgba(88,166,255,.2)}
@@ -106,269 +146,319 @@ code{font-family:monospace;font-size:11px;background:var(--s3);padding:1px 5px;b
 .btn-p{background:rgba(188,140,255,.12);color:var(--purple);border-color:rgba(188,140,255,.25)}.btn-p:hover:not(:disabled){background:rgba(188,140,255,.2)}
 .btn-ghost{background:none;color:var(--muted);border-color:var(--border)}.btn-ghost:hover:not(:disabled){color:var(--text);border-color:var(--border2)}
 .btn-full{width:100%;justify-content:center}
-.btn-lg{padding:11px 18px;font-size:13px}
+.btn-lg{padding:10px 18px;font-size:13px}
+
+/* ── Forms ── */
+.fi{width:100%;padding:8px 11px;background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);color:var(--text);outline:none;transition:border .15s}
+.fi:focus{border-color:var(--blue)}
+.fi::placeholder{color:var(--hint)}
+textarea.fi{resize:vertical;min-height:72px}
+select.fi{cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;
+  text-transform:uppercase;letter-spacing:.4px;font-weight:500}
+.field .hint{font-size:10px;color:var(--hint);margin-top:4px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fgrid .s2{grid-column:1/-1}
+.div{border:none;border-top:1px solid var(--border);margin:16px 0}
 
 /* ── Tables ── */
 .tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{text-align:left;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.5px;padding:8px 12px;border-bottom:1px solid var(--border)}
-.tbl td{padding:9px 12px;border-bottom:1px solid rgba(48,54,61,.7);vertical-align:middle}
+.tbl th{text-align:left;color:var(--muted);font-weight:500;font-size:10px;text-transform:uppercase;
+  letter-spacing:.5px;padding:8px 10px;border-bottom:1px solid var(--border)}
+.tbl td{padding:8px 10px;border-bottom:1px solid rgba(48,54,61,.6);vertical-align:middle}
 .tbl tr:last-child td{border-bottom:none}
-.tbl tbody tr:hover td{background:rgba(255,255,255,.025)}
-.pmini{height:3px;background:var(--s3);border-radius:2px;width:60px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:6px}
-.pmini-f{height:100%;border-radius:2px}
+.tbl tbody tr:hover td{background:rgba(255,255,255,.02)}
+.ec{color:var(--muted);font-size:11px;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* ── Control panel ── */
-.site-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
-.site-chk{position:relative}
-.site-chk input{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;z-index:1;margin:0}
-.site-chk label{display:flex;flex-direction:column;gap:2px;padding:9px 12px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;user-select:none}
-.site-chk input:checked+label{border-color:var(--blue);background:rgba(88,166,255,.07)}
-.site-chk label .sn{font-weight:600;font-size:12px}
-.site-chk label .sp{font-size:10px;color:var(--muted)}
-.wk-grid{display:flex;flex-wrap:wrap;gap:6px}
-.wk-chk{position:relative}
-.wk-chk input{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;z-index:1;margin:0}
-.wk-chk label{padding:5px 11px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;user-select:none;display:block}
-.wk-chk input:checked+label{border-color:var(--blue);background:rgba(88,166,255,.07);color:var(--blue)}
-.sel-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.wf-block{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
-.wf-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.wf-title{font-weight:700;font-size:13px}
-.wf-desc{font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.6}
-.wf-btns{display:flex;gap:8px;flex-wrap:wrap}
+/* ── Control selectors ── */
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+.sch{position:relative}
+.sch input{position:absolute;opacity:0;inset:0;cursor:pointer;z-index:1;margin:0}
+.sch label{display:flex;flex-direction:column;gap:2px;padding:8px 10px;background:var(--s2);
+  border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;user-select:none}
+.sch input:checked+label{border-color:var(--blue);background:rgba(88,166,255,.08)}
+.sch label .sn{font-weight:600;font-size:11px}
+.sch label .sp{font-size:10px;color:var(--muted)}
+.wg{display:flex;flex-wrap:wrap;gap:5px}
+.wch{position:relative}
+.wch input{position:absolute;opacity:0;inset:0;cursor:pointer;z-index:1;margin:0}
+.wch label{padding:4px 10px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);
+  cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;user-select:none;display:block}
+.wch input:checked+label{border-color:var(--blue);background:rgba(88,166,255,.08);color:var(--blue)}
+.sr{display:flex;gap:5px;flex-wrap:wrap}
+.wfb{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.wft{font-weight:700;font-size:13px}
+.wfd{font-size:11px;color:var(--muted);margin:5px 0 12px;line-height:1.6}
+.wfa{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ── Wizard ── */
+.wiz{display:flex;gap:0;margin-bottom:24px;position:relative;overflow-x:auto;padding-bottom:4px}
+.wiz::before{content:'';position:absolute;top:14px;left:14px;right:14px;height:2px;background:var(--border);z-index:0}
+.ws{flex:1;min-width:60px;text-align:center;position:relative;z-index:1}
+.wsd{width:28px;height:28px;border-radius:50%;background:var(--s2);border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 5px;font-size:12px;
+  font-weight:700;transition:all .3s;color:var(--muted)}
+.ws.done .wsd{background:var(--green);border-color:var(--green);color:#fff}
+.ws.active .wsd{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 0 3px rgba(88,166,255,.2)}
+.wsl{font-size:10px;color:var(--muted);font-weight:500;white-space:nowrap}
+.ws.active .wsl{color:var(--blue)}.ws.done .wsl{color:var(--green)}
+.sp{display:none}.sp.on{display:block}
+
+/* ── Keyword list ── */
+.kwl{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);
+  padding:8px;max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
+.kwi{display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--s3);
+  border-radius:5px;font-size:12px}
+.kwi input[type=text]{flex:1;background:none;border:none;color:var(--text);outline:none;font:inherit}
+.kwi .h1t{flex:1.4;color:var(--muted);font-size:11px;font-style:italic;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.kwi.gen .h1t{color:var(--yellow)}
+.kwi.done .h1t{color:var(--text);font-style:normal}
+.kwi.err .h1t{color:var(--red);font-style:normal}
+.kwdel{cursor:pointer;color:var(--hint);font-size:16px;line-height:1;padding:0 2px;transition:color .15s;flex-shrink:0}
+.kwdel:hover{color:var(--red)}
+.kwidx{color:var(--hint);font-size:10px;width:20px;flex-shrink:0;text-align:right}
+.kwvol{color:var(--hint);font-size:10px;width:40px;flex-shrink:0}
+.gprog{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-top:10px}
+.gbar{height:5px;background:var(--s3);border-radius:3px;overflow:hidden;margin-top:6px}
+.gfill{height:100%;background:var(--blue);border-radius:3px;transition:width .3s}
+.prev-row{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;
+  border-bottom:1px solid var(--border)}
+.prev-row:last-child{border-bottom:none}
+
+/* ── Site cards ── */
+.sc{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px}
+.sc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sc-name{font-weight:700;font-size:13px}
+.sc-dom{font-size:11px;color:var(--muted)}
+.sc-stats{display:flex;gap:10px;margin-top:8px}
+.sc-stat .v{font-size:16px;font-weight:700;line-height:1}
+.sc-stat .l{font-size:10px;color:var(--muted);text-transform:uppercase}
 
 /* ── Log ── */
-.log-wrap{max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
-.logitem{display:flex;gap:8px;padding:7px 10px;border-radius:5px;background:var(--s2);font-size:11px;border-left:3px solid var(--border);align-items:flex-start}
-.logitem.ok{border-left-color:var(--green)}
-.logitem.err{border-left-color:var(--red)}
-.logitem.run{border-left-color:var(--blue)}
-.logitem.warn{border-left-color:var(--yellow)}
-.log-time{color:var(--muted);flex-shrink:0;width:58px;font-family:monospace}
-.log-empty{text-align:center;padding:32px;color:var(--muted);font-size:12px}
+.logw{max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
+.li{display:flex;gap:8px;padding:6px 10px;border-radius:5px;background:var(--s2);
+  font-size:11px;border-left:3px solid var(--border);align-items:flex-start}
+.li.ok{border-left-color:var(--green)}
+.li.err{border-left-color:var(--red)}
+.li.run{border-left-color:var(--blue)}
+.li.warn{border-left-color:var(--yellow)}
+.lt{color:var(--muted);flex-shrink:0;width:55px;font-family:monospace;font-size:10px}
+.lmsg{flex:1;color:var(--text);line-height:1.4}
 
-/* ── Failed ── */
-.fbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-.finput{padding:7px 11px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font:inherit;font-size:12px;outline:none;flex:1;min-width:150px}
-.finput:focus{border-color:var(--blue)}
-select.finput{cursor:pointer;flex:0;min-width:130px}
-.chk{cursor:pointer;accent-color:var(--blue);width:13px;height:13px}
-.err-clip{color:var(--muted);font-size:11px;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-/* ── Onboarding wizard ── */
-.wizard-steps{display:flex;gap:0;margin-bottom:28px;position:relative}
-.wizard-steps::before{content:'';position:absolute;top:16px;left:16px;right:16px;height:2px;background:var(--border);z-index:0}
-.wstep{flex:1;text-align:center;position:relative;z-index:1}
-.wstep-dot{width:32px;height:32px;border-radius:50%;background:var(--s2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-size:13px;font-weight:700;transition:all .3s;color:var(--muted)}
-.wstep.done .wstep-dot{background:var(--green);border-color:var(--green);color:#fff}
-.wstep.active .wstep-dot{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 0 4px rgba(88,166,255,.2)}
-.wstep-label{font-size:11px;color:var(--muted);font-weight:500}
-.wstep.active .wstep-label{color:var(--blue)}
-.wstep.done .wstep-label{color:var(--green)}
-.step-panel{display:none}.step-panel.on{display:block}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.form-grid .span2{grid-column:1/-1}
-.kw-list{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:10px;max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
-.kw-item{display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--s3);border-radius:5px;font-size:12px}
-.kw-item input[type=text]{flex:1;background:none;border:none;color:var(--text);font:inherit;outline:none}
-.kw-item .kw-del{cursor:pointer;color:var(--hint);font-size:14px;line-height:1;padding:0 4px;transition:color .15s}
-.kw-item .kw-del:hover{color:var(--red)}
-.kw-item .kw-h1{flex:1.5;color:var(--muted);font-size:11px;font-style:italic}
-.kw-item.generating .kw-h1{color:var(--yellow)}
-.kw-item.done .kw-h1{color:var(--text);font-style:normal}
-.gen-progress{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-top:12px}
-.gen-bar{height:6px;background:var(--s3);border-radius:3px;overflow:hidden;margin-top:6px}
-.gen-fill{height:100%;background:var(--blue);border-radius:3px;transition:width .4s}
-.preview-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px}
-.preview-stat{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--border)}
-.preview-stat:last-child{border-bottom:none}
-
-/* ── Sites management ── */
-.site-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px}
-.site-card-header{display:flex;align-items:center;justify-content:space-between}
-.site-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.site-name{font-weight:700;font-size:13px}
-.site-domain{font-size:11px;color:var(--muted)}
-.site-stats{display:flex;gap:12px}
-.site-stat{text-align:center}
-.site-stat .v{font-size:16px;font-weight:700}
-.site-stat .l{font-size:10px;color:var(--muted);text-transform:uppercase}
-
-/* ── Week rows ── */
-.wk-row{display:grid;grid-template-columns:56px 1fr 80px 60px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(48,54,61,.7)}
-.wk-row:last-child{border-bottom:none}
-
-/* ── Toast ── */
-#toasts{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:6px;z-index:999;pointer-events:none}
-.toast{padding:10px 16px;border-radius:var(--r);font-size:12px;font-weight:500;max-width:340px;animation:fin .2s ease;box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:all}
+/* ── Toasts ── */
+#toasts{position:fixed;bottom:16px;right:16px;display:flex;flex-direction:column;
+  gap:6px;z-index:999;pointer-events:none;max-width:320px}
+.toast{padding:10px 14px;border-radius:var(--r);font-size:12px;font-weight:500;
+  animation:fin .2s ease;box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:all;word-break:break-word}
 .toast.ok{background:#162a1e;color:var(--green);border:1px solid rgba(63,185,80,.3)}
 .toast.err{background:#2a1616;color:var(--red);border:1px solid rgba(248,81,73,.3)}
 .toast.info{background:var(--s2);color:var(--text);border:1px solid var(--border)}
-@keyframes fin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fin{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
 
-/* ── Spinner ── */
-.spin{display:inline-block;width:11px;height:11px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:sp .6s linear infinite}
+/* ── Misc ── */
+.spin{display:inline-block;width:11px;height:11px;border:2px solid transparent;
+  border-top-color:currentColor;border-radius:50%;animation:sp .6s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
+.chk{cursor:pointer;accent-color:var(--blue);width:13px;height:13px}
+.mt{margin-top:12px}.mb{margin-bottom:12px}
+.info-box{background:rgba(88,166,255,.06);border:1px solid rgba(88,166,255,.2);
+  border-radius:var(--r);padding:12px;font-size:12px;color:var(--muted);line-height:1.6}
+.week-row{display:grid;grid-template-columns:52px 1fr 72px 52px;gap:8px;align-items:center;
+  padding:7px 0;border-bottom:1px solid rgba(48,54,61,.6)}
+.week-row:last-child{border-bottom:none}
 
-/* ── Divider ── */
-.div-h{border:none;border-top:1px solid var(--border);margin:16px 0}
-
+/* ══ MOBILE ══ */
 @media(max-width:768px){
-  .sidebar{display:none}
+  :root{--sidebar:260px}
+  .sidebar{position:fixed;top:var(--topbar);left:0;bottom:0;transform:translateX(-100%);
+    box-shadow:4px 0 24px rgba(0,0,0,.4)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.open{display:block}
+  .content{padding:14px}
   .g4{grid-template-columns:repeat(2,1fr)}
   .g2f{grid-template-columns:1fr}
-  .form-grid{grid-template-columns:1fr}
-  .form-grid .span2{grid-column:1}
+  .fgrid{grid-template-columns:1fr}
+  .fgrid .s2{grid-column:1}
+  .rtime{display:none}
+  .ph{flex-direction:column;gap:8px}
+  .ph .btn{align-self:flex-start}
+  .wiz::before{display:none}
+  .wsl{font-size:9px}
+}
+@media(max-width:480px){
+  .g4{grid-template-columns:1fr 1fr}
+  .lcard{padding:28px 22px}
+  .wiz{gap:2px}
+  .wsd{width:24px;height:24px;font-size:10px}
 }
 </style>
 </head>
 <body>
 
-<!-- ════════════ LOGIN ════════════ -->
+<!-- ════ LOGIN ════ -->
 <div id="login">
   <div class="lcard">
-    <div class="llogo">🎛️ Réseau DE</div>
-    <div class="lsub">Control Panel · 13 sites · n8n automation</div>
-    <div class="field"><label>Identifiant</label><input id="u" type="text" placeholder="arif" autocomplete="username"></div>
-    <div class="field"><label>Mot de passe</label><input id="pw" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+    <div class="llogo">🎛️ Control Panel</div>
+    <div class="lsub">Réseau DE · Multi-réseau · n8n automation</div>
+    <div class="lfield"><label>Identifiant</label><input id="u" type="text" placeholder="arif" autocomplete="username"></div>
+    <div class="lfield"><label>Mot de passe</label><input id="pw" type="password" placeholder="••••••••" autocomplete="current-password"></div>
     <button class="btn-login" id="btnl" onclick="doLogin()">Se connecter</button>
     <div class="lerr" id="lerr"></div>
   </div>
 </div>
 
-<!-- ════════════ APP ════════════ -->
+<!-- ════ APP ════ -->
 <div id="app">
+  <!-- TOPBAR -->
   <div class="topbar">
-    <div class="logo">🎛️ Réseau DE <span class="logo-badge" id="site-count-badge">— sites</span></div>
-    <div class="topbar-r">
-      <span class="dot" id="sdot"></span>
+    <button class="ham" id="ham" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+    <div class="logo">🎛️ Réseau DE</div>
+    <!-- Network switcher -->
+    <div class="net-switcher">
+      <span class="net-dot" id="net-dot" style="background:var(--blue)"></span>
+      <select class="net-select" id="net-select" onchange="switchNetwork()">
+        <option value="de-recipes">🇩🇪 Recettes DE</option>
+        <option value="fr-recipes">🇫🇷 Recettes FR</option>
+        <option value="custom">⚙️ Autre...</option>
+      </select>
+    </div>
+    <div class="topbar-right">
+      <span class="sdot" id="sdot"></span>
       <span class="rtime" id="rtime">—</span>
-      <button class="btn-sm" onclick="loadData()">↻</button>
-      <button class="btn-sm" onclick="doLogout()">⎋ Déconnexion</button>
+      <button class="tbtn" onclick="loadData()">↻</button>
+      <button class="tbtn" onclick="doLogout()">⎋</button>
     </div>
   </div>
 
   <div class="layout">
+    <!-- OVERLAY mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
     <!-- SIDEBAR -->
-    <nav class="sidebar">
-      <div class="nav-section">Production</div>
-      <div class="nav-item on" onclick="SN('overview')" id="ni-overview"><span class="icon">📊</span> Vue d'ensemble</div>
-      <div class="nav-item" onclick="SN('control')" id="ni-control"><span class="icon">⚙️</span> Contrôle WF</div>
-      <div class="nav-item" onclick="SN('failed')" id="ni-failed"><span class="icon">⚠️</span> Échecs <span class="nav-badge" id="nb-failed"></span></div>
-      <div class="nav-item" onclick="SN('charts')" id="ni-charts"><span class="icon">📈</span> Graphiques</div>
-      <div class="nav-item" onclick="SN('weeks')" id="ni-weeks"><span class="icon">📅</span> Semaines</div>
-      <div class="nav-item" onclick="SN('pins')" id="ni-pins"><span class="icon">📌</span> Pinterest</div>
-      <div class="nav-section">Sites</div>
-      <div class="nav-item" onclick="SN('sites-list')" id="ni-sites-list"><span class="icon">🌐</span> Mes sites</div>
-      <div class="nav-item" onclick="SN('add-site')" id="ni-add-site"><span class="icon">➕</span> Ajouter un site</div>
-      <div class="nav-item" onclick="SN('add-keywords')" id="ni-add-keywords"><span class="icon">🔑</span> Ajouter keywords</div>
-      <div class="nav-section">Système</div>
-      <div class="nav-item" onclick="SN('log')" id="ni-log"><span class="icon">📋</span> Journal</div>
+    <nav class="sidebar" id="sidebar">
+      <div class="nav-sec">Production</div>
+      <div class="nav-item on" onclick="SN('overview')" id="ni-overview"><span class="nav-icon">📊</span>Vue d'ensemble</div>
+      <div class="nav-item" onclick="SN('control')" id="ni-control"><span class="nav-icon">⚙️</span>Contrôle WF</div>
+      <div class="nav-item" onclick="SN('failed')" id="ni-failed"><span class="nav-icon">⚠️</span>Échecs<span class="nav-badge" id="nb-failed" style="display:none">0</span></div>
+      <div class="nav-item" onclick="SN('charts')" id="ni-charts"><span class="nav-icon">📈</span>Graphiques</div>
+      <div class="nav-item" onclick="SN('weeks')" id="ni-weeks"><span class="nav-icon">📅</span>Semaines</div>
+      <div class="nav-item" onclick="SN('pins')" id="ni-pins"><span class="nav-icon">📌</span>Pinterest</div>
+      <div class="nav-sec">Sites</div>
+      <div class="nav-item" onclick="SN('sites-list')" id="ni-sites-list"><span class="nav-icon">🌐</span>Mes sites</div>
+      <div class="nav-item" onclick="SN('add-site')" id="ni-add-site"><span class="nav-icon">➕</span>Nouveau site</div>
+      <div class="nav-item" onclick="SN('add-kw')" id="ni-add-kw"><span class="nav-icon">🔑</span>Ajouter keywords</div>
+      <div class="nav-sec">Système</div>
+      <div class="nav-item" onclick="SN('networks')" id="ni-networks"><span class="nav-icon">🔗</span>Réseaux</div>
+      <div class="nav-item" onclick="SN('log')" id="ni-log"><span class="nav-icon">📋</span>Journal</div>
     </nav>
 
     <!-- CONTENT -->
-    <main class="content">
+    <main class="content" id="main-content">
 
       <!-- ═══ OVERVIEW ═══ -->
       <div class="panel on" id="tab-overview">
-        <div class="ph"><div><div class="ph-t">Vue d'ensemble</div><div class="ph-s" id="ov-updated">—</div></div>
-          <button class="btn btn-ghost" onclick="loadData()"><span class="spin" id="ov-spin" style="display:none"></span> Actualiser</button>
+        <div class="ph">
+          <div><div class="ph-t" id="ov-title">Vue d'ensemble</div><div class="ph-s" id="ov-ts">—</div></div>
+          <button class="btn btn-ghost" onclick="loadData()"><span class="spin" id="ov-spin" style="display:none"></span>Actualiser</button>
         </div>
-        <div class="g4" style="margin-bottom:16px">
-          <div class="card"><div class="card-t">Total planifié</div><div class="bignum" style="color:var(--blue)" id="ov-total">—</div><div class="sub">articles · <span id="ov-sites">—</span> sites</div></div>
-          <div class="card"><div class="card-t">Publiés</div><div class="bignum" style="color:var(--green)" id="ov-pub">—</div><div class="sub" id="ov-pub-pct">—</div><div class="pbar"><div class="pfill" id="ov-pub-bar" style="background:var(--green)"></div></div></div>
-          <div class="card"><div class="card-t">Images totales</div><div class="bignum" style="color:var(--blue)" id="ov-img">—</div><div class="sub" id="ov-img-sub">—</div><div class="pbar"><div class="pfill" id="ov-img-bar" style="background:var(--blue)"></div></div></div>
-          <div class="card"><div class="card-t">Pins</div><div class="bignum" style="color:var(--purple)" id="ov-pins">—</div><div class="sub" id="ov-pins-sub">—</div></div>
-          <div class="card"><div class="card-t">Volume acquis</div><div class="bignum" style="color:var(--teal)" id="ov-vol">—</div><div class="sub" id="ov-vol-sub">—</div></div>
-          <div class="card"><div class="card-t">GPU actif</div><div class="bignum" style="color:var(--yellow)" id="ov-gpu">—</div><div class="sub">en génération</div></div>
-          <div class="card"><div class="card-t">Envoi WP</div><div class="bignum" id="ov-envoi" style="color:var(--teal)">—</div><div class="sub">en transfert</div></div>
-          <div class="card"><div class="card-t">Échecs</div><div class="bignum" style="color:var(--red)" id="ov-failed">—</div><div class="sub" id="ov-failed-sub">—</div></div>
+        <div class="g4 mb">
+          <div class="card"><div class="ct">Total</div><div class="bignum" style="color:var(--blue)" id="ov-total">—</div><div class="sub" id="ov-sub">—</div></div>
+          <div class="card"><div class="ct">Publiés</div><div class="bignum" style="color:var(--green)" id="ov-pub">—</div><div class="sub" id="ov-pub-s">—</div><div class="pbar"><div class="pfill" id="pb-pub" style="background:var(--green)"></div></div></div>
+          <div class="card"><div class="ct">Images</div><div class="bignum" style="color:var(--blue)" id="ov-img">—</div><div class="sub" id="ov-img-s">—</div><div class="pbar"><div class="pfill" id="pb-img" style="background:var(--blue)"></div></div></div>
+          <div class="card"><div class="ct">Pins</div><div class="bignum" style="color:var(--purple)" id="ov-pins">—</div><div class="sub" id="ov-pins-s">—</div></div>
+          <div class="card"><div class="ct">Volume acquis</div><div class="bignum" style="color:var(--teal)" id="ov-vol">—</div><div class="sub" id="ov-vol-s">—</div></div>
+          <div class="card"><div class="ct">GPU</div><div class="bignum" style="color:var(--yellow)" id="ov-gpu">—</div><div class="sub">en génération</div></div>
+          <div class="card"><div class="ct">Envoi WP</div><div class="bignum" style="color:var(--teal)" id="ov-up">—</div><div class="sub">en transfert</div></div>
+          <div class="card"><div class="ct">Échecs</div><div class="bignum" style="color:var(--red)" id="ov-err">—</div><div class="sub" id="ov-err-s">—</div></div>
         </div>
         <div class="g2">
-          <div class="card"><div class="card-t">Statut contenu</div><div id="st-content"></div></div>
-          <div class="card"><div class="card-t">Statut images</div><div id="st-img"></div></div>
+          <div class="card"><div class="ct">Statut contenu</div><div id="st-c"></div></div>
+          <div class="card"><div class="ct">Statut images</div><div id="st-i"></div></div>
         </div>
       </div>
 
       <!-- ═══ CONTRÔLE ═══ -->
       <div class="panel" id="tab-control">
-        <div class="ph"><div class="ph-t">Contrôle workflows</div><div class="ph-s">Sélectionne les sites et semaines puis lance</div></div>
-        <div class="card" style="margin-bottom:14px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-            <div class="card-t" style="margin:0">Sites</div>
-            <div class="sel-row" style="margin:0">
-              <button class="btn btn-ghost" style="padding:3px 10px;font-size:11px" onclick="selS('all')">Tous</button>
-              <button class="btn btn-ghost" style="padding:3px 10px;font-size:11px" onclick="selS('none')">Aucun</button>
-              <button class="btn btn-ghost" style="padding:3px 10px;font-size:11px" onclick="selS('hub')">Hub</button>
-              <button class="btn btn-ghost" style="padding:3px 10px;font-size:11px" onclick="selS('nano')">Nano</button>
+        <div class="ph"><div class="ph-t">Contrôle workflows</div></div>
+        <div class="card mb">
+          <div class="sh"><div class="sh-t">Sites</div>
+            <div class="sr">
+              <button class="btn btn-ghost" style="padding:3px 9px;font-size:11px" onclick="selS('all')">Tous</button>
+              <button class="btn btn-ghost" style="padding:3px 9px;font-size:11px" onclick="selS('none')">Aucun</button>
+              <button class="btn btn-ghost" style="padding:3px 9px;font-size:11px" onclick="selS('hub')">Hub</button>
+              <button class="btn btn-ghost" style="padding:3px 9px;font-size:11px" onclick="selS('nano')">Nano</button>
             </div>
           </div>
-          <div class="site-grid" id="site-chk-grid"></div>
+          <div class="sg" id="site-chk-grid"></div>
         </div>
-        <div class="card" style="margin-bottom:14px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-            <div class="card-t" style="margin:0">Semaines</div>
-            <div class="sel-row" style="margin:0">
-              <button class="btn btn-ghost" style="padding:3px 10px;font-size:11px" onclick="selW('all')">Toutes</button>
-              <button class="btn btn-ghost" style="padding:3px 10px;font-size:11px" onclick="selW('none')">Aucune</button>
-              <button class="btn btn-ghost" style="padding:3px 10px;font-size:11px" onclick="selW('pending')">Pending</button>
+        <div class="card mb">
+          <div class="sh"><div class="sh-t">Semaines</div>
+            <div class="sr">
+              <button class="btn btn-ghost" style="padding:3px 9px;font-size:11px" onclick="selW('all')">Toutes</button>
+              <button class="btn btn-ghost" style="padding:3px 9px;font-size:11px" onclick="selW('none')">Aucune</button>
+              <button class="btn btn-ghost" style="padding:3px 9px;font-size:11px" onclick="selW('pending')">Pending</button>
             </div>
           </div>
-          <div class="wk-grid" id="week-chk-grid"></div>
+          <div class="wg" id="week-chk-grid"></div>
         </div>
-        <!-- WF blocks -->
-        <div class="wf-block"><div class="wf-header"><div class="wf-title">① WF1 — Contenu</div><span class="badge bb">DeepSeek</span></div>
-          <div class="wf-desc">Génère les articles pour les sites/semaines sélectionnés. Prend les articles pending avec Publish At &gt; 48h.</div>
-          <div class="wf-btns">
+        <div class="wfb"><div class="sh"><div class="wft">① WF1 — Contenu</div><span class="bdg bb">DeepSeek</span></div>
+          <div class="wfd">Génère les articles pour la sélection. Articles pending avec Publish At &gt; 48h.</div>
+          <div class="wfa">
             <button class="btn btn-g" onclick="runWF('wf1_run')">▶ Lancer WF1</button>
             <button class="btn btn-r" onclick="runWF('wf1_retry_failed')">↩ Retry failed</button>
             <button class="btn btn-ghost" onclick="runWF('wf1_run',true)">▶ Tout lancer</button>
           </div>
         </div>
-        <div class="wf-block"><div class="wf-header"><div class="wf-title">② WF2 — Images</div><div style="display:flex;gap:6px"><span class="badge by">GPU</span><span class="badge bb">S3</span></div></div>
-          <div class="wf-desc">WF2a génère sur GPU (pod allumé). WF2b envoie vers WP (pod éteint OK via S3).</div>
-          <div class="wf-btns">
-            <button class="btn btn-y" onclick="runWF('wf2_run')">▶ Générer GPU</button>
+        <div class="wfb"><div class="sh"><div class="wft">② WF2 — Images</div><div class="sr"><span class="bdg by">GPU</span><span class="bdg bb">S3</span></div></div>
+          <div class="wfd">WF2a génère sur GPU. WF2b envoie vers WP (pod éteint OK).</div>
+          <div class="wfa">
+            <button class="btn btn-y" onclick="runWF('wf2_run')">▶ GPU</button>
             <button class="btn btn-b" onclick="runWF('wf2b_run')">⬆ Envoyer WP</button>
-            <button class="btn btn-r" onclick="runWF('wf2_retry_failed')">↩ Retry images</button>
+            <button class="btn btn-r" onclick="runWF('wf2_retry_failed')">↩ Retry</button>
           </div>
         </div>
-        <div class="wf-block"><div class="wf-header"><div class="wf-title">③ WF3 — Pinterest</div><span class="badge bp">Blotato</span></div>
-          <div class="wf-desc">WF3a génère les pins (6/article). WF3b publie via Blotato.</div>
-          <div class="wf-btns">
-            <button class="btn btn-p" onclick="runWF('wf3_run')">▶ Générer pins</button>
+        <div class="wfb"><div class="sh"><div class="wft">③ WF3 — Pinterest</div><span class="bdg bp">Blotato</span></div>
+          <div class="wfd">WF3a génère les pins (6/article). WF3b publie.</div>
+          <div class="wfa">
+            <button class="btn btn-p" onclick="runWF('wf3_run')">▶ Pins</button>
             <button class="btn btn-g" onclick="pubPins('slot')">📅 Programmer</button>
-            <button class="btn btn-y" onclick="pubPins('direct')">⚡ Publier maintenant</button>
+            <button class="btn btn-y" onclick="pubPins('direct')">⚡ Maintenant</button>
           </div>
         </div>
-        <div class="wf-block"><div class="wf-header"><div class="wf-title">⚡ Actions globales</div></div>
-          <div class="wf-btns">
-            <button class="btn btn-r" onclick="confirmRun('reset_failed','Reset TOUS les failed (texte+images) en pending ?')">⚠ Reset global</button>
-          </div>
+        <div class="wfb"><div class="wft" style="margin-bottom:10px">⚡ Global</div>
+          <div class="wfa"><button class="btn btn-r" onclick="confirmRun('reset_failed','Reset TOUS les failed ?')">⚠ Reset global</button></div>
         </div>
       </div>
 
       <!-- ═══ ÉCHECS ═══ -->
       <div class="panel" id="tab-failed">
-        <div class="ph"><div class="ph-t">Articles en échec</div>
-          <div style="display:flex;gap:8px">
+        <div class="ph"><div class="ph-t">Échecs</div>
+          <div class="sr">
             <button class="btn btn-r" onclick="retrySelected()">↩ Retry sélection</button>
-            <button class="btn btn-ghost" onclick="loadFailed()">↻ Refresh</button>
+            <button class="btn btn-ghost" onclick="loadFailed()">↻</button>
           </div>
         </div>
         <div class="card">
-          <div class="fbar">
-            <input class="finput" id="f-kw" placeholder="Filtrer keyword ou ID..." oninput="filterFailed()">
-            <select class="finput" id="f-site" onchange="filterFailed()"><option value="">Tous les sites</option></select>
-            <select class="finput" id="f-st" onchange="filterFailed()"><option value="">Tous statuts</option><option>failed</option><option>processing</option></select>
+          <div class="sr mb" style="gap:8px">
+            <input class="fi" id="f-kw" placeholder="Filtrer..." oninput="filterFailed()" style="flex:1;min-width:120px">
+            <select class="fi" id="f-site" onchange="filterFailed()" style="flex:0;min-width:110px"><option value="">Tous sites</option></select>
+            <select class="fi" id="f-st" onchange="filterFailed()" style="flex:0;min-width:100px"><option value="">Tous statuts</option><option>failed</option><option>processing</option></select>
           </div>
-          <table class="tbl">
-            <thead><tr><th><input type="checkbox" class="chk" id="chk-all" onchange="toggleAll(this)"></th>
-              <th>ID</th><th>Site</th><th>Keyword</th><th>Status</th><th>Img</th><th>Erreur</th><th></th>
-            </tr></thead>
-            <tbody id="failed-tbody"></tbody>
-          </table>
-          <div id="failed-empty" style="text-align:center;padding:32px;color:var(--muted);display:none">✅ Aucun échec</div>
+          <div style="overflow-x:auto">
+            <table class="tbl">
+              <thead><tr>
+                <th><input type="checkbox" class="chk" id="chk-all" onchange="toggleAll(this)"></th>
+                <th>ID</th><th>Site</th><th>Keyword</th><th>Status</th><th>Img</th><th>Erreur</th><th></th>
+              </tr></thead>
+              <tbody id="failed-tbody"></tbody>
+            </table>
+          </div>
+          <div id="failed-empty" style="text-align:center;padding:28px;color:var(--muted);display:none">✅ Aucun échec</div>
           <div id="failed-count" style="font-size:11px;color:var(--muted);margin-top:8px;text-align:right"></div>
         </div>
       </div>
@@ -376,31 +466,31 @@ select.finput{cursor:pointer;flex:0;min-width:130px}
       <!-- ═══ GRAPHIQUES ═══ -->
       <div class="panel" id="tab-charts">
         <div class="ph"><div class="ph-t">Graphiques</div></div>
-        <div class="g2f" style="margin-bottom:14px">
-          <div class="card"><div class="card-t">Publications — 30 derniers jours</div><div style="position:relative;height:200px"><canvas id="ch-daily"></canvas></div></div>
-          <div class="card"><div class="card-t">Progression par site</div><div style="position:relative;height:200px"><canvas id="ch-sites"></canvas></div></div>
+        <div class="g2f mb">
+          <div class="card"><div class="ct">Publications 30j</div><div style="position:relative;height:190px"><canvas id="ch-d"></canvas></div></div>
+          <div class="card"><div class="ct">Progression par site</div><div style="position:relative;height:190px"><canvas id="ch-s"></canvas></div></div>
         </div>
-        <div class="card"><div class="card-t">Images par site (col AA — count réel)</div><div style="position:relative;height:220px"><canvas id="ch-images"></canvas></div></div>
+        <div class="card"><div class="ct">Images par site (col AA)</div><div style="position:relative;height:210px"><canvas id="ch-i"></canvas></div></div>
       </div>
 
       <!-- ═══ SEMAINES ═══ -->
       <div class="panel" id="tab-weeks">
-        <div class="ph"><div class="ph-t">Avancement par semaine</div></div>
+        <div class="ph"><div class="ph-t">Semaines</div></div>
         <div class="card"><div id="weeks-list"></div></div>
       </div>
 
       <!-- ═══ PINTEREST ═══ -->
       <div class="panel" id="tab-pins">
         <div class="ph"><div class="ph-t">Pinterest</div></div>
-        <div class="g4" style="margin-bottom:14px">
-          <div class="card"><div class="card-t">Total</div><div class="bignum" style="color:var(--purple)" id="pin-total">—</div></div>
-          <div class="card"><div class="card-t">Postés</div><div class="bignum" style="color:var(--green)" id="pin-posted">—</div></div>
-          <div class="card"><div class="card-t">Programmés</div><div class="bignum" style="color:var(--yellow)" id="pin-sched">—</div></div>
-          <div class="card"><div class="card-t">Prêts</div><div class="bignum" style="color:var(--blue)" id="pin-done">—</div></div>
+        <div class="g4 mb">
+          <div class="card"><div class="ct">Total</div><div class="bignum" style="color:var(--purple)" id="pin-tot">—</div></div>
+          <div class="card"><div class="ct">Postés</div><div class="bignum" style="color:var(--green)" id="pin-p">—</div></div>
+          <div class="card"><div class="ct">Programmés</div><div class="bignum" style="color:var(--yellow)" id="pin-s">—</div></div>
+          <div class="card"><div class="ct">Prêts</div><div class="bignum" style="color:var(--blue)" id="pin-d">—</div></div>
         </div>
         <div class="g2">
-          <div class="card"><div class="card-t">Par statut</div><div id="pin-list"></div></div>
-          <div class="card"><div class="card-t" style="margin-bottom:12px">Actions</div>
+          <div class="card"><div class="ct">Par statut</div><div id="pin-list"></div></div>
+          <div class="card"><div class="ct mb" style="margin-bottom:10px">Actions</div>
             <div style="display:flex;flex-direction:column;gap:8px">
               <button class="btn btn-p btn-full" onclick="runWF('wf3_run')">▶ Générer pins (WF3a)</button>
               <button class="btn btn-g btn-full" onclick="pubPins('slot')">📅 Programmer Blotato</button>
@@ -413,325 +503,508 @@ select.finput{cursor:pointer;flex:0;min-width:130px}
       <!-- ═══ MES SITES ═══ -->
       <div class="panel" id="tab-sites-list">
         <div class="ph"><div class="ph-t">Mes sites</div>
-          <button class="btn btn-b" onclick="SN('add-site')">➕ Ajouter un site</button>
+          <button class="btn btn-b" onclick="SN('add-site')">➕ Nouveau site</button>
         </div>
         <div class="g3" id="sites-cards"></div>
       </div>
 
-      <!-- ═══ AJOUTER SITE ═══ -->
+      <!-- ═══ NOUVEAU SITE ═══ -->
       <div class="panel" id="tab-add-site">
-        <div class="ph"><div><div class="ph-t">Ajouter un nouveau site</div><div class="ph-s">Onboarding complet — site + keywords + planning + Pinterest</div></div></div>
-
-        <!-- Wizard steps -->
-        <div class="wizard-steps">
-          <div class="wstep active" id="ws-1"><div class="wstep-dot">1</div><div class="wstep-label">Infos site</div></div>
-          <div class="wstep" id="ws-2"><div class="wstep-dot">2</div><div class="wstep-label">Keywords</div></div>
-          <div class="wstep" id="ws-3"><div class="wstep-dot">3</div><div class="wstep-label">Titres H1</div></div>
-          <div class="wstep" id="ws-4"><div class="wstep-dot">4</div><div class="wstep-label">Planning</div></div>
-          <div class="wstep" id="ws-5"><div class="wstep-dot">5</div><div class="wstep-label">Pinterest</div></div>
-          <div class="wstep" id="ws-6"><div class="wstep-dot">✓</div><div class="wstep-label">Créer</div></div>
+        <div class="ph"><div><div class="ph-t">Nouveau site</div><div class="ph-s">Onboarding complet — 6 étapes</div></div></div>
+        <div class="wiz" id="wiz">
+          <div class="ws active" id="ws-1"><div class="wsd">1</div><div class="wsl">Réseau</div></div>
+          <div class="ws" id="ws-2"><div class="wsd">2</div><div class="wsl">Site</div></div>
+          <div class="ws" id="ws-3"><div class="wsd">3</div><div class="wsl">Keywords</div></div>
+          <div class="ws" id="ws-4"><div class="wsd">4</div><div class="wsl">H1</div></div>
+          <div class="ws" id="ws-5"><div class="wsd">5</div><div class="wsl">Planning</div></div>
+          <div class="ws" id="ws-6"><div class="wsd">6</div><div class="wsl">Pinterest</div></div>
+          <div class="ws" id="ws-7"><div class="wsd">✓</div><div class="wsl">Créer</div></div>
         </div>
 
-        <!-- Step 1 — Site info -->
-        <div class="step-panel on" id="sp-1">
+        <!-- STEP 1 — Réseau -->
+        <div class="sp on" id="sp-1">
           <div class="card">
-            <div class="card-t" style="margin-bottom:14px">Informations du site</div>
-            <div class="form-grid">
-              <div class="field"><label>Slug du site *</label><input id="ns-slug" placeholder="gulasch2" oninput="slugify()"></div>
-              <div class="field"><label>Domaine *</label><input id="ns-domain" placeholder="gulasch2.blog"></div>
-              <div class="field"><label>Type de site</label>
-                <select id="ns-type"><option value="hub">Hub (principal)</option><option value="primary" selected>Primary</option><option value="nano">Nano (niche)</option></select>
+            <div class="ct mb" style="margin-bottom:14px">Réseau cible</div>
+            <div class="field">
+              <label>Réseau / Sheet Google Sheets *</label>
+              <select class="fi" id="ns-network" onchange="onNetworkChange()">
+                <option value="current">Réseau actuel (Plan Production DE Recettes)</option>
+                <option value="new">➕ Nouveau réseau (nouvel ID de sheet)</option>
+              </select>
+            </div>
+            <div id="ns-network-custom" style="display:none">
+              <div class="field">
+                <label>ID du Google Sheet *</label>
+                <input class="fi" id="ns-sheet-id" placeholder="1DpUtO-WnNSCQaFELktYqO-...">
+                <div class="hint">Copier l'ID depuis l'URL Google Sheets</div>
               </div>
-              <div class="field"><label>Niche / Thématique *</label><input id="ns-niche" placeholder="Recettes de lasagne italienne"></div>
-              <div class="field"><label>Nom de l'auteur</label><input id="ns-author-name" placeholder="Maria Schneider"></div>
-              <div class="field"><label>Login auteur WordPress</label><input id="ns-author-login" placeholder="maria.schneider"></div>
-              <div class="field"><label>Ville (DE)</label><input id="ns-city" placeholder="München"></div>
-              <div class="field"><label>Années d'expérience</label><input id="ns-years" type="number" placeholder="12" min="1" max="50"></div>
-              <div class="field span2"><label>Spécialité culinaire</label><input id="ns-specialty" placeholder="Nudeln & Pasta Küche"></div>
-              <div class="field span2"><label>Phrase d'accueil</label><input id="ns-greeting" placeholder="Ciao, ich bin Maria."></div>
-              <div class="field"><label>Couleur palette (hex)</label><input id="ns-palette" placeholder="#5B2A4E" oninput="updateColors()"></div>
-              <div class="field"><label>Couleur accent (hex)</label><input id="ns-accent" placeholder="#C9A227" oninput="updateColors()"></div>
-              <div class="field"><label>Variable env n8n WP</label><input id="ns-wpenv" placeholder="WP_GULASCH2"></div>
-              <div class="field"><label>WP Username</label><input id="ns-wpuser" placeholder="admin"></div>
-              <div class="field span2"><label>WP App Password</label><input id="ns-wppass" placeholder="xxxx xxxx xxxx xxxx xxxx xxxx" autocomplete="off"></div>
-              <div class="field"><label>Maillage vers (hub)</label><input id="ns-maillage" placeholder="foodzauber.blog"></div>
-              <div class="field"><label>Source domaine</label><input id="ns-source" placeholder="foodzauber.blog"></div>
+              <div class="field">
+                <label>Nom du réseau</label>
+                <input class="fi" id="ns-net-name" placeholder="Recettes Espagne">
+              </div>
+            </div>
+            <div class="field">
+              <label>Langue du contenu</label>
+              <select class="fi" id="ns-lang">
+                <option value="de">🇩🇪 Allemand</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="en">🇬🇧 Anglais</option>
+                <option value="es">🇪🇸 Espagnol</option>
+                <option value="it">🇮🇹 Italien</option>
+                <option value="nl">🇳🇱 Néerlandais</option>
+                <option value="pt">🇧🇷 Portugais</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Niche / Thématique *</label>
+              <select class="fi" id="ns-niche-type" onchange="onNicheChange()">
+                <option value="recipes">🍳 Recettes / Cuisine</option>
+                <option value="fitness">💪 Fitness / Sport</option>
+                <option value="travel">✈️ Voyage</option>
+                <option value="finance">💰 Finance / Investissement</option>
+                <option value="beauty">💄 Beauté / Mode</option>
+                <option value="tech">💻 Tech / High-tech</option>
+                <option value="legal">⚖️ Juridique</option>
+                <option value="real-estate">🏠 Immobilier</option>
+                <option value="pets">🐾 Animaux</option>
+                <option value="other">📝 Autre (libre)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Description de la niche *</label>
+              <input class="fi" id="ns-niche-desc" placeholder="Recettes italiennes traditionnelles">
             </div>
             <div style="display:flex;justify-content:flex-end;margin-top:16px">
-              <button class="btn btn-b btn-lg" onclick="goStep(2)">Suivant → Keywords</button>
+              <button class="btn btn-b btn-lg" onclick="goStep(2)">Suivant →</button>
             </div>
           </div>
         </div>
 
-        <!-- Step 2 — Keywords -->
-        <div class="step-panel" id="sp-2">
+        <!-- STEP 2 — Site info -->
+        <div class="sp" id="sp-2">
           <div class="card">
-            <div class="card-t" style="margin-bottom:14px">Keywords</div>
-            <div style="display:flex;gap:8px;margin-bottom:12px">
-              <input class="finput" id="kw-input" placeholder="Ajouter un keyword (ex: lasagne rezept)..." style="flex:1" onkeydown="if(event.key==='Enter')addKw()">
+            <div class="ct mb" style="margin-bottom:14px">Informations du site</div>
+            <div class="fgrid">
+              <div class="field"><label>Slug *</label><input class="fi" id="ns-slug" placeholder="lasagne-de" oninput="slugify()"><div class="hint">Identifiant unique, minuscules, pas d'espaces</div></div>
+              <div class="field"><label>Domaine *</label><input class="fi" id="ns-domain" placeholder="lasagne-rezepte.de"></div>
+              <div class="field"><label>Type</label>
+                <select class="fi" id="ns-type"><option value="hub">Hub (principal)</option><option value="primary" selected>Primary</option><option value="nano">Nano (niche)</option></select></div>
+              <div class="field"><label>Nom de l'auteur</label><input class="fi" id="ns-author" placeholder="Maria Köhler"></div>
+              <div class="field"><label>Login auteur WP</label><input class="fi" id="ns-login" placeholder="maria.kohler"></div>
+              <div class="field"><label>Ville</label><input class="fi" id="ns-city" placeholder="München"></div>
+              <div class="field"><label>Expérience (ans)</label><input class="fi" id="ns-years" type="number" placeholder="8" min="1" max="50"></div>
+              <div class="field s2"><label>Spécialité</label><input class="fi" id="ns-specialty" placeholder="Pasta & Nudelgerichte"></div>
+              <div class="field s2"><label>Phrase d'accueil</label><input class="fi" id="ns-greeting" placeholder="Ciao, ich bin Maria."></div>
+              <div class="field"><label>Palette (hex)</label><input class="fi" id="ns-palette" placeholder="#5B2A4E" oninput="updateColors()"></div>
+              <div class="field"><label>Accent (hex)</label><input class="fi" id="ns-accent" placeholder="#C9A227" oninput="updateColors()"></div>
+              <div class="field"><label>Var env n8n WP</label><input class="fi" id="ns-wpenv" placeholder="WP_LASAGNE"></div>
+              <div class="field"><label>WP Username</label><input class="fi" id="ns-wpuser" placeholder="admin"></div>
+              <div class="field s2"><label>WP App Password</label><input class="fi" id="ns-wppass" placeholder="xxxx xxxx xxxx xxxx" autocomplete="off"></div>
+              <div class="field"><label>Maillage vers</label><input class="fi" id="ns-maillage" placeholder="foodzauber.blog"></div>
+              <div class="field"><label>Source domaine</label><input class="fi" id="ns-source" placeholder="foodzauber.blog"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:16px">
+              <button class="btn btn-ghost" onclick="goStep(1)">← Retour</button>
+              <button class="btn btn-b btn-lg" onclick="goStep(3)">Suivant →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3 — Keywords -->
+        <div class="sp" id="sp-3">
+          <div class="card">
+            <div class="ct mb" style="margin-bottom:14px">Keywords</div>
+            <div class="sr mb">
+              <input class="fi" id="kw-inp" placeholder="Ajouter keyword..." style="flex:1" onkeydown="if(event.key==='Enter'){addKw();event.preventDefault()}">
               <button class="btn btn-b" onclick="addKw()">+ Ajouter</button>
             </div>
-            <div style="margin-bottom:8px;font-size:11px;color:var(--muted)">
-              Colle plusieurs keywords séparés par des virgules ou des sauts de ligne, puis clique "Ajouter tout".
+            <div class="field">
+              <label>Paste en masse (un par ligne ou virgule séparé)</label>
+              <textarea class="fi" id="kw-bulk" placeholder="lasagne rezept&#10;lasagne bolognese&#10;lasagne selber machen" rows="4"></textarea>
             </div>
-            <div style="display:flex;gap:8px;margin-bottom:12px">
-              <textarea class="finput" id="kw-bulk" placeholder="lasagne rezept&#10;lasagne selber machen&#10;lasagne bolognese, lasagne klassisch" rows="3" style="flex:1;resize:vertical"></textarea>
-              <button class="btn btn-b" style="align-self:flex-end" onclick="addBulkKw()">Ajouter tout</button>
+            <div class="sr mb">
+              <button class="btn btn-b" onclick="addBulk()">Ajouter tout</button>
+              <button class="btn btn-ghost" onclick="KWS=[];renderKwList()">Vider</button>
+              <span style="font-size:11px;color:var(--muted);margin-left:4px" id="kw-count">0 keyword(s)</span>
             </div>
-            <div class="kw-list" id="kw-list"><div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Aucun keyword ajouté</div></div>
-            <div style="display:flex;justify-content:space-between;margin-top:14px">
-              <button class="btn btn-ghost" onclick="goStep(1)">← Retour</button>
-              <button class="btn btn-b btn-lg" onclick="goStep(3)" id="btn-to-step3">Suivant → Générer H1</button>
+            <!-- KW list with optional volume -->
+            <div id="kw-has-vol" style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px;color:var(--muted)">
+              <input type="checkbox" class="chk" id="kw-vol-toggle" onchange="toggleVolCol()">
+              <label for="kw-vol-toggle" style="cursor:pointer">Afficher colonne volume de recherche</label>
             </div>
-          </div>
-        </div>
-
-        <!-- Step 3 — Generate H1 -->
-        <div class="step-panel" id="sp-3">
-          <div class="card">
-            <div class="card-t" style="margin-bottom:14px">Génération des titres H1 avec DeepSeek</div>
-            <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:14px;font-size:12px;color:var(--muted)">
-              DeepSeek va générer un titre H1 unique et SEO-optimisé pour chaque keyword, en tenant compte de la persona du site et des mots réservés.
-            </div>
-            <div class="gen-progress" id="gen-progress" style="display:none">
-              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
-                <span id="gen-label">Génération en cours...</span>
-                <span id="gen-count">0/0</span>
-              </div>
-              <div class="gen-bar"><div class="gen-fill" id="gen-fill" style="width:0%"></div></div>
-            </div>
-            <div class="kw-list" id="kw-h1-list" style="margin-top:12px"></div>
+            <div class="kwl" id="kw-list"><div style="text-align:center;padding:16px;color:var(--hint);font-size:12px">Aucun keyword ajouté</div></div>
             <div style="display:flex;justify-content:space-between;margin-top:14px">
               <button class="btn btn-ghost" onclick="goStep(2)">← Retour</button>
-              <div style="display:flex;gap:8px">
-                <button class="btn btn-y" id="btn-gen-h1" onclick="generateH1s()">✨ Générer les H1</button>
-                <button class="btn btn-b btn-lg" onclick="goStep(4)" id="btn-to-step4" style="display:none">Suivant → Planning</button>
+              <button class="btn btn-b btn-lg" onclick="goStep(4)">Suivant → Générer H1</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4 — H1 generation -->
+        <div class="sp" id="sp-4">
+          <div class="card">
+            <div class="ct mb" style="margin-bottom:14px">Génération H1 — DeepSeek</div>
+            <div class="info-box mb">
+              DeepSeek va générer un titre H1 unique, SEO-optimisé, dans la langue sélectionnée (<strong id="h1-lang-label">—</strong>), pour chaque keyword en tenant compte de la niche et de la persona.
+            </div>
+            <div class="gprog" id="gprog" style="display:none">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                <span id="g-label">Génération...</span><span id="g-count">0/0</span>
+              </div>
+              <div class="gbar"><div class="gfill" id="g-fill" style="width:0%"></div></div>
+            </div>
+            <div class="kwl mt" id="kw-h1-list" style="margin-top:12px"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:8px">
+              <button class="btn btn-ghost" onclick="goStep(3)">← Retour</button>
+              <div class="sr">
+                <button class="btn btn-y" id="btn-gen" onclick="genH1s()">✨ Générer H1</button>
+                <button class="btn btn-b btn-lg" id="btn-s5" onclick="goStep(5)" style="display:none">Suivant →</button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Step 4 — Planning -->
-        <div class="step-panel" id="sp-4">
+        <!-- STEP 5 — Planning -->
+        <div class="sp" id="sp-5">
           <div class="card">
-            <div class="card-t" style="margin-bottom:14px">Planning de publication</div>
-            <div class="form-grid">
+            <div class="ct mb" style="margin-bottom:14px">Planning de publication</div>
+            <div class="fgrid">
               <div class="field"><label>Semaine de démarrage</label>
-                <select id="ns-week-start" onchange="calcPlanning()">
+                <select class="fi" id="ns-wk" onchange="calcPlan()">
                   <option value="1">S01</option><option value="2">S02</option><option value="3">S03</option>
                   <option value="4">S04</option><option value="5">S05</option><option value="6">S06</option>
                   <option value="7">S07</option><option value="8" selected>S08</option><option value="9">S09</option>
                   <option value="10">S10</option><option value="11">S11</option><option value="12">S12</option>
                 </select>
               </div>
-              <div class="field"><label>Articles par jour</label>
-                <select id="ns-art-day" onchange="calcPlanning()">
+              <div class="field"><label>Articles / jour</label>
+                <select class="fi" id="ns-apd" onchange="calcPlan()">
                   <option value="10">10 / jour</option><option value="15">15 / jour</option>
                   <option value="20" selected>20 / jour</option><option value="25">25 / jour</option>
                   <option value="30">30 / jour</option>
                 </select>
               </div>
-              <div class="field"><label>Heure début publication</label><input id="ns-time-start" type="time" value="06:00" onchange="calcPlanning()"></div>
-              <div class="field"><label>Heure fin publication</label><input id="ns-time-end" type="time" value="22:00" onchange="calcPlanning()"></div>
+              <div class="field"><label>Heure début</label><input class="fi" id="ns-ts" type="time" value="06:00" onchange="calcPlan()"></div>
+              <div class="field"><label>Heure fin</label><input class="fi" id="ns-te" type="time" value="22:00" onchange="calcPlan()"></div>
             </div>
-            <div class="preview-card" id="planning-preview" style="margin-top:10px">
-              <div class="preview-stat"><span>Keywords</span><span id="pr-kw">—</span></div>
-              <div class="preview-stat"><span>Articles/jour</span><span id="pr-day">—</span></div>
-              <div class="preview-stat"><span>Durée estimée</span><span id="pr-dur">—</span></div>
-              <div class="preview-stat"><span>Semaine démarrage</span><span id="pr-week">—</span></div>
-              <div class="preview-stat"><span>Fin estimée</span><span id="pr-end">—</span></div>
-            </div>
-            <div style="display:flex;justify-content:space-between;margin-top:14px">
-              <button class="btn btn-ghost" onclick="goStep(3)">← Retour</button>
-              <button class="btn btn-b btn-lg" onclick="goStep(5)">Suivant → Pinterest</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 5 — Pinterest -->
-        <div class="step-panel" id="sp-5">
-          <div class="card">
-            <div class="card-t" style="margin-bottom:14px">Compte Pinterest & Tableaux Blotato</div>
-            <div class="form-grid">
-              <div class="field"><label>ID compte Blotato</label><input id="ns-pin-account" placeholder="7325"></div>
-              <div class="field"><label>Couleur par défaut boards</label><input id="ns-pin-color" placeholder="#C9A227"></div>
-              <div class="field span2"><label>Tableaux Pinterest <small style="color:var(--muted)">(format: ID|Nom du tableau ; ID|Nom ; ...)</small></label>
-                <textarea id="ns-pin-boards" placeholder="1125125988098009402|Rezepte klassisch & butterzart ; 1125125988098009392|Suppen und Eintöpfe" rows="4" class="finput" style="width:100%;font-size:11px;font-family:monospace"></textarea>
-              </div>
+            <div class="card mt" style="background:var(--s2)">
+              <div class="prev-row"><span style="color:var(--muted)">Keywords</span><strong id="pr-kw">—</strong></div>
+              <div class="prev-row"><span style="color:var(--muted)">Articles/jour</span><strong id="pr-apd">—</strong></div>
+              <div class="prev-row"><span style="color:var(--muted)">Durée estimée</span><strong id="pr-dur">—</strong></div>
+              <div class="prev-row"><span style="color:var(--muted)">Semaine démarrage</span><strong id="pr-ws">—</strong></div>
+              <div class="prev-row"><span style="color:var(--muted)">Semaine fin</span><strong id="pr-we">—</strong></div>
             </div>
             <div style="display:flex;justify-content:space-between;margin-top:14px">
               <button class="btn btn-ghost" onclick="goStep(4)">← Retour</button>
-              <button class="btn btn-b btn-lg" onclick="goStep(6)">Suivant → Résumé</button>
+              <button class="btn btn-b btn-lg" onclick="goStep(6)">Suivant →</button>
             </div>
           </div>
         </div>
 
-        <!-- Step 6 — Summary & Create -->
-        <div class="step-panel" id="sp-6">
+        <!-- STEP 6 — Pinterest -->
+        <div class="sp" id="sp-6">
           <div class="card">
-            <div class="card-t" style="margin-bottom:14px">Récapitulatif — prêt à créer</div>
-            <div id="final-summary" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
-            <div style="background:rgba(88,166,255,.06);border:1px solid rgba(88,166,255,.2);border-radius:var(--r);padding:12px;font-size:12px;color:var(--muted);margin-bottom:16px">
-              Ce qui va être créé :<br>
-              ✦ Ligne dans l'onglet <strong>Sites</strong> du sheet Plan Production<br>
-              ✦ Nouvel onglet <strong id="new-tab-name">S??</strong> avec tous les articles planifiés<br>
-              ✦ Colonnes pré-remplies : ID, Site, Keyword, H1, Domain, Week, Day, Publish At, Silo...
+            <div class="ct mb" style="margin-bottom:14px">Pinterest & Blotato</div>
+            <div class="fgrid">
+              <div class="field"><label>ID compte Blotato</label><input class="fi" id="ns-pin-acc" placeholder="7325"></div>
+              <div class="field"><label>Couleur accent boards</label><input class="fi" id="ns-pin-col" placeholder="#C9A227"></div>
+              <div class="field s2">
+                <label>Tableaux <small style="color:var(--muted)">(format: ID|Nom ; ID|Nom ; ...)</small></label>
+                <textarea class="fi" id="ns-pin-boards" rows="4" style="font-family:monospace;font-size:11px" placeholder="1125988098009402|Rezepte klassisch ; 1125988098009392|Suppen und Eintöpfe"></textarea>
+              </div>
             </div>
-            <div style="display:flex;justify-content:space-between">
+            <div style="display:flex;justify-content:space-between;margin-top:14px">
               <button class="btn btn-ghost" onclick="goStep(5)">← Retour</button>
-              <button class="btn btn-g btn-lg" id="btn-create-site" onclick="createSite()">✅ Créer le site et les articles</button>
+              <button class="btn btn-b btn-lg" onclick="goStep(7)">Résumé →</button>
             </div>
           </div>
         </div>
 
+        <!-- STEP 7 — Summary & create -->
+        <div class="sp" id="sp-7">
+          <div class="card">
+            <div class="ct mb" style="margin-bottom:14px">Récapitulatif</div>
+            <div id="final-sum" style="margin-bottom:14px"></div>
+            <div class="info-box mb">
+              ✦ Ligne dans l'onglet <strong>Sites</strong><br>
+              ✦ Nouvel onglet <strong id="new-tab">S??</strong> avec tous les articles planifiés<br>
+              ✦ H1, Publish At, Week, Domain, Status pré-remplis
+            </div>
+            <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+              <button class="btn btn-ghost" onclick="goStep(6)">← Retour</button>
+              <button class="btn btn-g btn-lg" id="btn-create" onclick="createSite()">✅ Créer le site</button>
+            </div>
+          </div>
+        </div>
       </div><!-- /add-site -->
 
       <!-- ═══ AJOUTER KEYWORDS ═══ -->
-      <div class="panel" id="tab-add-keywords">
-        <div class="ph"><div class="ph-t">Ajouter des keywords</div><div class="ph-s">Ajouter des keywords à un site existant avec génération H1</div></div>
+      <div class="panel" id="tab-add-kw">
+        <div class="ph"><div class="ph-t">Ajouter keywords</div><div class="ph-s">À un site existant</div></div>
         <div class="card">
-          <div class="form-grid">
-            <div class="field span2"><label>Site cible</label>
-              <select id="ek-site" class="finput" style="width:100%"><option value="">Sélectionne un site...</option></select>
+          <div class="fgrid">
+            <div class="field s2"><label>Site cible *</label>
+              <select class="fi" id="ek-site"><option value="">Sélectionne un site...</option></select>
             </div>
             <div class="field"><label>Semaine cible</label>
-              <select id="ek-week"><option value="auto">Auto (dernière semaine dispo)</option>
+              <select class="fi" id="ek-wk">
+                <option value="auto">Auto (dernière sem. + 1)</option>
                 <option value="1">S01</option><option value="2">S02</option><option value="3">S03</option>
                 <option value="4">S04</option><option value="5">S05</option><option value="6">S06</option>
                 <option value="7">S07</option><option value="8">S08</option><option value="9">S09</option>
                 <option value="10">S10</option><option value="11">S11</option><option value="12">S12</option>
               </select>
             </div>
-            <div class="field"><label>Articles/jour</label>
-              <select id="ek-art-day"><option value="20" selected>20 / jour</option><option value="25">25</option><option value="30">30</option></select>
+            <div class="field"><label>Articles / jour</label>
+              <select class="fi" id="ek-apd"><option value="20" selected>20</option><option value="25">25</option><option value="30">30</option></select>
             </div>
           </div>
-          <div class="field"><label>Keywords <small style="color:var(--muted)">(un par ligne ou séparés par virgule)</small></label>
-            <textarea id="ek-kws" class="finput" rows="8" placeholder="lasagne rezept&#10;lasagne bolognese&#10;lasagne selber machen&#10;lasagne ohne fleisch" style="width:100%;font-family:monospace;font-size:12px"></textarea>
+          <div class="field">
+            <label>Keywords <small style="color:var(--hint)">(un par ligne ou séparés par virgule)</small></label>
+            <textarea class="fi" id="ek-kws" rows="8" style="font-family:monospace;font-size:12px" placeholder="lasagne rezept&#10;lasagne bolognese&#10;lasagne ohne fleisch&#10;lasagne selber machen"></textarea>
           </div>
-          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-            <button class="btn btn-y" onclick="genKwH1s()">✨ Générer les H1</button>
+          <div class="sr" style="justify-content:flex-end;gap:8px">
+            <button class="btn btn-y" onclick="genEkH1s()">✨ Générer H1</button>
             <button class="btn btn-b" onclick="addKwsToSite()">➕ Ajouter au sheet</button>
           </div>
-          <div id="ek-preview" style="margin-top:12px"></div>
+          <div id="ek-preview" class="mt"></div>
+        </div>
+      </div>
+
+      <!-- ═══ RÉSEAUX ═══ -->
+      <div class="panel" id="tab-networks">
+        <div class="ph"><div class="ph-t">Réseaux</div><div class="ph-s">Gérer les sheets Google Sheets</div></div>
+        <div class="card mb">
+          <div class="sh"><div class="sh-t">Réseaux configurés</div></div>
+          <div id="networks-list"></div>
+        </div>
+        <div class="card">
+          <div class="sh"><div class="sh-t">Ajouter un réseau</div></div>
+          <div class="fgrid">
+            <div class="field"><label>Nom du réseau *</label><input class="fi" id="new-net-name" placeholder="Recettes Espagne"></div>
+            <div class="field"><label>Emoji</label><input class="fi" id="new-net-emoji" placeholder="🇪🇸" maxlength="4"></div>
+            <div class="field s2"><label>ID Google Sheet *</label><input class="fi" id="new-net-id" placeholder="1DpUtO-WnNSCQaFELktYqO-geGuxxv0F-QE56jG1LemQ"></div>
+            <div class="field"><label>Langue par défaut</label>
+              <select class="fi" id="new-net-lang">
+                <option value="de">🇩🇪 Allemand</option><option value="fr">🇫🇷 Français</option>
+                <option value="en">🇬🇧 Anglais</option><option value="es">🇪🇸 Espagnol</option>
+                <option value="it">🇮🇹 Italien</option>
+              </select>
+            </div>
+            <div class="field"><label>Couleur (hex)</label><input class="fi" id="new-net-color" placeholder="#58a6ff"></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:8px">
+            <button class="btn btn-b" onclick="addNetwork()">➕ Ajouter</button>
+          </div>
         </div>
       </div>
 
       <!-- ═══ JOURNAL ═══ -->
       <div class="panel" id="tab-log">
-        <div class="ph"><div class="ph-t">Journal des actions</div>
+        <div class="ph"><div class="ph-t">Journal</div>
           <button class="btn btn-ghost" onclick="LOGS=[];renderLog()">🗑 Vider</button>
         </div>
-        <div class="card">
-          <div class="log-wrap" id="log-list">
-            <div class="log-empty">Aucune action. Lance un workflow depuis Contrôle.</div>
-          </div>
-        </div>
+        <div class="card"><div class="logw" id="log-list"><div style="text-align:center;padding:24px;color:var(--muted);font-size:12px">Aucune action.</div></div></div>
       </div>
 
     </main>
   </div>
 </div>
+
 <div id="toasts"></div>
 
 <script>
-// ══════════════════════════════════════════════════════════════════════════════
-//  CONFIG
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
+//  CONFIG & CONSTANTS
+// ══════════════════════════════════════════════════════════════════════════
 const AS_URL = 'https://script.google.com/macros/s/AKfycbyYEdIECXi6yUxWGQSFD6fWWAm7M93yPElUXx0wzrlgZp6VQMcelP3TAh92A9o7KhXQDw/exec';
-const DS_API = 'https://api.deepseek.com/v1/chat/completions';
-const DS_KEY = 'sk-452824a6d52f4cb29bdcf9a7cf56e187'; // appelé depuis le browser → clé visible; utilise Apps Script pour la prod
+const DS_KEY = ''; // Laisser vide → passe par Apps Script
 const REFRESH = 30000;
+
+// Networks config (persisted in localStorage)
+const DEFAULT_NETWORKS = [
+  { id:'de-recipes', name:'Recettes DE', emoji:'🇩🇪', sheetId:'1DpUtO-WnNSCQaFELktYqO-geGuxxv0F-QE56jG1LemQ', lang:'de', color:'#58a6ff' },
+  { id:'fr-recipes',  name:'Recettes FR', emoji:'🇫🇷', sheetId:'', lang:'fr', color:'#3fb950' },
+];
 
 const SITES_META = {
   foodzauber:'hub',kochliebe:'primary',rezeptflow:'primary',schnelllecker:'primary',
   rezeptnest:'primary',yumrezept:'primary',airfryer:'nano',plaetzchen:'nano',
   zimtschnecken:'nano',waffeln:'nano',kaesekuchen:'nano',gulasch:'nano',pfannkuchen:'nano'
 };
-const STATUS_COL = {
+const SCOL = {
   published:'#3fb950',scheduled:'#58a6ff',drafted:'#d29922',pending:'#484f58',
   failed:'#f85149',processing:'#d29922',generating:'#bc8cff',generated:'#58a6ff',
   uploading:'#39d353',done:'#3fb950',failed_gpu:'#f85149',failed_upload:'#db6d28',
   skip:'#444c56',quarantine:'#f85149'
 };
+const LANG_LABELS = {de:'Allemand',fr:'Français',en:'Anglais',es:'Espagnol',it:'Italien',nl:'Néerlandais',pt:'Portugais'};
+const NICHE_PROMPTS = {
+  recipes:'recette culinaire dans la langue cible',
+  fitness:'article fitness/sport',travel:'article de voyage',
+  finance:'article finance/investissement',beauty:'article beauté/mode',
+  tech:'article technologie',legal:'article juridique',
+  'real-estate':'article immobilier',pets:'article animaux de compagnie',
+  other:'article de blog'
+};
 
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 //  STATE
-// ══════════════════════════════════════════════════════════════════════════════
-let AUTH=null,DATA=null,CHART_DATA=null,FAILED_ALL=[],LOGS=[];
-let timer=null,chD=null,chS=null,chI=null;
-let KWS=[]; // keywords for new site wizard
-let NEW_SITE={}; // new site form data
+// ══════════════════════════════════════════════════════════════════════════
+let AUTH=null, DATA=null, CHART_DATA=null, FAILED_ALL=[], LOGS=[];
+let timer=null, chD=null, chS=null, chI=null;
+let KWS=[], showVol=false, curStep=1;
+let NETWORKS=[];
+let CUR_NET=null; // current network
+let EK_RESULTS=[];
 
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
+//  NETWORKS
+// ══════════════════════════════════════════════════════════════════════════
+function loadNetworks(){
+  try{ NETWORKS=JSON.parse(localStorage.getItem('rde_nets')||'null')||DEFAULT_NETWORKS; }
+  catch(e){ NETWORKS=DEFAULT_NETWORKS; }
+  CUR_NET=NETWORKS[0];
+  renderNetworkSelect();
+  renderNetworksList();
+}
+function saveNetworks(){ localStorage.setItem('rde_nets',JSON.stringify(NETWORKS)); }
+function renderNetworkSelect(){
+  const sel=$('net-select');
+  sel.innerHTML=NETWORKS.map(n=>`<option value="${n.id}">${n.emoji} ${n.name}</option>`).join('')
+    +'<option value="__new">➕ Nouveau réseau</option>';
+  if(CUR_NET) sel.value=CUR_NET.id;
+}
+function renderNetworksList(){
+  const el=$('networks-list');if(!el)return;
+  if(!NETWORKS.length){el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:8px">Aucun réseau configuré.</div>';return;}
+  el.innerHTML=NETWORKS.map((n,i)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:18px">${n.emoji}</span>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:13px">${n.name}</div>
+        <div style="font-size:11px;color:var(--muted);font-family:monospace">${n.sheetId?n.sheetId.slice(0,30)+'...':'ID non configuré'}</div>
+      </div>
+      <span class="bdg bb" style="background:rgba(88,166,255,.1)">${LANG_LABELS[n.lang]||n.lang}</span>
+      <span style="width:14px;height:14px;border-radius:50%;background:${n.color||'#58a6ff'};display:inline-block;flex-shrink:0"></span>
+      ${NETWORKS.length>1?`<button class="btn btn-ghost" style="padding:3px 8px;font-size:11px;color:var(--red)" onclick="removeNetwork(${i})">×</button>`:''}
+    </div>`).join('');
+}
+function switchNetwork(){
+  const val=$('net-select').value;
+  if(val==='__new'){SN('networks');return;}
+  CUR_NET=NETWORKS.find(n=>n.id===val)||NETWORKS[0];
+  const dot=$('net-dot');
+  if(dot)dot.style.background=CUR_NET.color||'var(--blue)';
+  loadData();
+  toast('Réseau: '+CUR_NET.emoji+' '+CUR_NET.name,'info');
+}
+function addNetwork(){
+  const name=$('new-net-name').value.trim();
+  const id=$('new-net-id').value.trim();
+  if(!name||!id){toast('Nom et ID requis','err');return;}
+  const netId='net-'+Date.now();
+  NETWORKS.push({
+    id:netId,name,emoji:$('new-net-emoji').value||'🌐',
+    sheetId:id,lang:$('new-net-lang').value,color:$('new-net-color').value||'#58a6ff'
+  });
+  saveNetworks();renderNetworkSelect();renderNetworksList();
+  $('new-net-name').value='';$('new-net-id').value='';$('new-net-emoji').value='';
+  toast('Réseau ajouté','ok');
+}
+function removeNetwork(i){
+  if(!confirm('Supprimer ce réseau ?'))return;
+  NETWORKS.splice(i,1);saveNetworks();renderNetworkSelect();renderNetworksList();
+}
+
+// ══════════════════════════════════════════════════════════════════════════
 //  AUTH
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 function doLogin(){
-  const u=El2('u').value.trim(),p=El2('pw').value;
-  const btn=El2('btnl'),err=El2('lerr');
+  const u=$('u').value.trim(),p=$('pw').value;
+  const btn=$('btnl'),err=$('lerr');
   if(!u||!p){err.textContent='Remplis les deux champs.';return;}
   btn.disabled=true;btn.innerHTML='<span class="spin"></span> Connexion…';err.textContent='';
   api({action:'stats',u,p}).then(d=>{
-    if(!d.ok) throw new Error(d.error||'Identifiants incorrects');
-    AUTH={u,p};
-    sessionStorage.setItem('rde',JSON.stringify(AUTH));
-    El2('login').style.display='none';
-    El2('app').style.display='block';
-    init();DATA=d;renderAll(d);
+    if(!d.ok)throw new Error(d.error||'Identifiants incorrects');
+    AUTH={u,p};sessionStorage.setItem('rde',JSON.stringify(AUTH));
+    $('login').style.display='none';
+    const app=$('app');app.style.display='flex';app.style.flexDirection='column';
+    loadNetworks();init();DATA=d;renderAll(d);
     loadFailed();loadPins();
     timer=setInterval(loadData,REFRESH);
   }).catch(e=>{err.textContent=e.message;btn.disabled=false;btn.textContent='Se connecter';});
 }
 function doLogout(){
   AUTH=null;sessionStorage.removeItem('rde');
-  clearInterval(timer);
-  El2('app').style.display='none';
-  El2('login').style.display='flex';
-  El2('pw').value='';
+  clearInterval(timer);$('app').style.display='none';$('login').style.display='flex';$('pw').value='';
 }
 (function(){
   const s=sessionStorage.getItem('rde');
-  if(s){try{AUTH=JSON.parse(s);El2('u').value=AUTH.u;}catch(e){}}
-  ['u','pw'].forEach(id=>El2(id).addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();}));
-  if(AUTH){El2('login').style.display='none';El2('app').style.display='block';init();loadData();loadFailed();loadPins();timer=setInterval(loadData,REFRESH);}
+  if(s){try{AUTH=JSON.parse(s);$('u').value=AUTH.u;}catch(e){}}
+  ['u','pw'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();}));
+  if(AUTH){
+    $('login').style.display='none';
+    const app=$('app');app.style.display='flex';app.style.flexDirection='column';
+    loadNetworks();init();loadData();loadFailed();loadPins();
+    timer=setInterval(loadData,REFRESH);
+  }
 })();
 
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
+//  SIDEBAR MOBILE
+// ══════════════════════════════════════════════════════════════════════════
+function toggleSidebar(){
+  const sb=$('sidebar'),ov=$('sidebar-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('open');
+}
+function closeSidebar(){
+  $('sidebar').classList.remove('open');
+  $('sidebar-overlay').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════════════════════════════════
 //  API
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 function api(params){
-  const qs=Object.entries(Object.assign({},AUTH||{},params)).map(([k,v])=>{
-    return k+'='+encodeURIComponent(typeof v==='object'?JSON.stringify(v):v);
-  }).join('&');
+  const netParams=CUR_NET?{net_id:CUR_NET.id,sheet_id:CUR_NET.sheetId}:{};
+  const all=Object.assign({},AUTH||{},netParams,params);
+  const qs=Object.entries(all).map(([k,v])=>k+'='+encodeURIComponent(typeof v==='object'?JSON.stringify(v):v)).join('&');
   return fetch(AS_URL+'?'+qs).then(r=>r.json());
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 //  INIT
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 function init(){
   initSiteChks();initWeekChks();
-  populateSiteSelects();
+  // Populate site selects
+  const sites=Object.keys(SITES_META);
+  ['ek-site'].forEach(id=>{
+    const sel=$(id);if(!sel)return;
+    sel.innerHTML='<option value="">Sélectionne un site...</option>'+sites.map(s=>`<option value="${s}">${s}</option>`).join('');
+  });
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 //  DATA
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 function loadData(){
   if(!AUTH)return;
-  const dot=El2('sdot');dot.className='dot y';
-  El2('ov-spin').style.display='inline-block';
+  const dot=$('sdot');dot.className='sdot y';
+  const sp=$('ov-spin');if(sp)sp.style.display='inline-block';
   api({action:'summary'}).then(d=>{
-    if(!d.ok) throw new Error(d.error);
+    if(!d.ok)throw new Error(d.error);
     DATA=d.stats;CHART_DATA={daily:d.daily,siteProg:d.siteProg};
     renderAll(d.stats,d.weeks);
     updateSiteChks(d.stats);updateWeekChks(d.weeks);
-    if(El2('tab-charts').classList.contains('on')) renderCharts();
-    dot.className='dot';
-    El2('rtime').textContent=new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    El2('ov-spin').style.display='none';
-    El2('ov-updated').textContent='Actualisé '+new Date().toLocaleTimeString('fr-FR');
-  }).catch(e=>{dot.className='dot r';toast('Erreur: '+e.message,'err');El2('ov-spin').style.display='none';});
+    if($('tab-charts').classList.contains('on'))renderCharts();
+    dot.className='sdot';
+    $('rtime').textContent=new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    if(sp)sp.style.display='none';
+    el('ov-ts','Actualisé '+new Date().toLocaleTimeString('fr-FR')+(CUR_NET?' · '+CUR_NET.emoji+' '+CUR_NET.name:''));
+  }).catch(e=>{dot.className='sdot r';toast('Erreur: '+e.message,'err');if(sp)sp.style.display='none';});
 }
 function loadFailed(){
   if(!AUTH)return;
@@ -742,79 +1015,71 @@ function loadPins(){
   api({action:'pins'}).then(d=>{if(d.ok)renderPins(d);}).catch(()=>{});
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 //  RENDER
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 const N=v=>(v||0).toLocaleString('fr-FR');
-function El2(id){return document.getElementById(id);}
-function El(id,v){const e=El2(id);if(e)e.textContent=v;}
-function bar(id,p){const e=El2(id);if(e)e.style.width=p+'%';}
+function $(id){return document.getElementById(id);}
+function el(id,v){const e=$(id);if(e)e.textContent=v;}
+function bar(id,p){const e=$(id);if(e)e.style.width=p+'%';}
 
 function renderAll(d,weeks){
   if(!d)return;
   const pub=(d.st&&d.st.published)||0,sched=(d.st&&d.st.scheduled)||0;
   const imgDone=d.imgDone||0,totalImg=d.totalImages||0;
-  const pins_total=Object.values(d.pin||{}).reduce((a,b)=>a+b,0);
-  const failed_all=(d.failedText||0)+(d.failedImg||0);
-  El('ov-total',N(d.total));El('ov-sites',Object.keys(SITES_META).length+(d.extraSites||0));
-  El('ov-pub',N(pub));El('ov-pub-pct',pct(pub+sched,d.total)+'% du total');
-  El('ov-img',N(totalImg));El('ov-img-sub',N(imgDone)+' articles complets');
-  El('ov-pins',N(pins_total));El('ov-pins-sub',(d.pin&&d.pin.posted||0)+' postés');
-  El('ov-gpu',N(d.gpu||0));El('ov-envoi',N(d.envoi||0));
-  El('ov-failed',N(failed_all));El('ov-failed-sub',(d.failedText||0)+' texte · '+(d.failedImg||0)+' img');
-  El('ov-vol',pct(d.volFait,d.volTotal)+'%');El('ov-vol-sub',N(d.volFait)+' / '+N(d.volTotal)+' /mois');
-  bar('ov-pub-bar',pct(pub+sched,d.total));bar('ov-img-bar',pct(imgDone,d.total));
-  statusList('st-content',d.st||{},d.total);statusList('st-img',d.img||{},d.total);
-  // failed badge
-  const nb=El2('nb-failed');if(nb){nb.textContent=failed_all>0?failed_all:'';nb.style.display=failed_all>0?'':'none';}
-  // site count badge
-  El('site-count-badge',(d.total||0).toLocaleString('fr-FR')+' articles');
-  if(d.sites)renderSitesCards(d.sites);
+  const pinTot=Object.values(d.pin||{}).reduce((a,b)=>a+b,0);
+  const failed=(d.failedText||0)+(d.failedImg||0);
+  el('ov-title','Vue d\'ensemble'+(CUR_NET?' — '+CUR_NET.emoji+' '+CUR_NET.name:''));
+  el('ov-total',N(d.total));el('ov-sub',Object.keys(SITES_META).length+' sites actifs');
+  el('ov-pub',N(pub));el('ov-pub-s',pct(pub+sched,d.total)+'% du total');
+  el('ov-img',N(totalImg));el('ov-img-s',N(imgDone)+' articles complets');
+  el('ov-pins',N(pinTot));el('ov-pins-s',(d.pin&&d.pin.posted||0)+' postés');
+  el('ov-gpu',N(d.gpu||0));el('ov-up',N(d.envoi||0));
+  el('ov-err',N(failed));el('ov-err-s',(d.failedText||0)+' texte · '+(d.failedImg||0)+' img');
+  el('ov-vol',pct(d.volFait,d.volTotal)+'%');el('ov-vol-s',N(d.volFait)+'/'+N(d.volTotal)+' /mois');
+  bar('pb-pub',pct(pub+sched,d.total));bar('pb-img',pct(imgDone,d.total));
+  stList('st-c',d.st||{},d.total);stList('st-i',d.img||{},d.total);
+  const nb=$('nb-failed');if(nb){nb.textContent=failed;nb.style.display=failed>0?'':'none';}
+  if(d.sites)renderSiteCards(d.sites);
   if(weeks)renderWeeks(weeks);
 }
-
-function statusList(id,obj,total){
-  El2(id).innerHTML=Object.entries(obj).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`
+function stList(id,obj,tot){
+  $(id).innerHTML=Object.entries(obj).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`
     <div class="srow">
-      <span class="sdot" style="background:${STATUS_COL[k]||'#444'}"></span>
+      <span class="sdotb" style="background:${SCOL[k]||'#444'}"></span>
       <span style="color:var(--muted);flex:1">${k}</span>
       <span class="scount">${N(v)}</span>
-      <span class="spct">${pct(v,total)}%</span>
+      <span class="spct">${pct(v,tot)}%</span>
     </div>`).join('');
 }
-
-function renderSitesCards(sites){
-  const container=El2('sites-cards');if(!container)return;
-  container.innerHTML=sites.map(s=>{
+function renderSiteCards(sites){
+  const c=$('sites-cards');if(!c)return;
+  c.innerHTML=sites.map(s=>{
     const tp=pct(s.texte,s.t);
-    const color=tp===100?'var(--green)':tp>50?'var(--blue)':tp>0?'var(--yellow)':'var(--hint)';
-    return `<div class="site-card">
-      <div class="site-card-header">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="site-dot" style="background:${color}"></span>
-          <div><div class="site-name">${s.nom}</div></div>
-        </div>
-        <span class="badge ${tp===100?'bg':tp>50?'bb':tp>0?'by':'br'}">${tp}%</span>
+    const col=tp===100?'var(--green)':tp>50?'var(--blue)':tp>0?'var(--yellow)':'var(--hint)';
+    return `<div class="sc">
+      <div class="sc-header">
+        <div><div class="sc-name">${s.nom}</div></div>
+        <span class="bdg ${tp===100?'bg':tp>50?'bb':tp>0?'by':'br'}">${tp}%</span>
       </div>
-      <div class="site-stats">
-        <div class="site-stat"><div class="v" style="color:var(--green)">${N(s.texte)}</div><div class="l">Publiés</div></div>
-        <div class="site-stat"><div class="v" style="color:var(--blue)">${N(s.imgCount||0)}</div><div class="l">Images</div></div>
-        <div class="site-stat"><div class="v" style="color:var(--purple)">${N(s.pins||0)}</div><div class="l">Pins</div></div>
-        <div class="site-stat"><div class="v">${N(s.t)}</div><div class="l">Total</div></div>
+      <div class="sc-stats">
+        <div class="sc-stat"><div class="v" style="color:var(--green)">${N(s.texte)}</div><div class="l">Publiés</div></div>
+        <div class="sc-stat"><div class="v" style="color:var(--blue)">${N(s.imgCount||0)}</div><div class="l">Images</div></div>
+        <div class="sc-stat"><div class="v" style="color:var(--purple)">${N(s.pins||0)}</div><div class="l">Pins</div></div>
+        <div class="sc-stat"><div class="v">${N(s.t)}</div><div class="l">Total</div></div>
       </div>
-      <div class="pbar"><div class="pfill" style="background:${color};width:${tp}%"></div></div>
-      ${(s.failed_text||0)+(s.failed_img||0)>0?`<div style="display:flex;gap:6px"><span class="badge br">${s.failed_text||0} texte</span><span class="badge by">${s.failed_img||0} img</span></div>`:''}
+      <div class="pbar mt"><div class="pfill" style="background:${col};width:${tp}%"></div></div>
+      ${(s.failed_text||0)+(s.failed_img||0)>0?`<div class="sr mt"><span class="bdg br">${s.failed_text||0} texte</span><span class="bdg by">${s.failed_img||0} img</span></div>`:''}
     </div>`;
   }).join('');
 }
-
 function renderWeeks(weeks){
-  El2('weeks-list').innerHTML=weeks.map(w=>{
+  $('weeks-list').innerHTML=weeks.map(w=>{
     const done=(w.published||0)+(w.scheduled||0)+(w.drafted||0);
     const p=pct(done,w.total);
     const c=p===100?'var(--green)':p>50?'var(--blue)':p>0?'var(--yellow)':'var(--s3)';
-    return `<div class="wk-row">
+    return `<div class="week-row">
       <div style="font-weight:700;color:var(--blue)">S${String(w.week).padStart(2,'0')}</div>
       <div><div class="pbar" style="margin:0"><div class="pfill" style="background:${c};width:${p}%"></div></div></div>
       <div style="font-size:11px;color:var(--muted);text-align:right">${done}/${w.total}</div>
@@ -822,116 +1087,111 @@ function renderWeeks(weeks){
     </div>`;
   }).join('');
 }
-
 function renderFailed(list){
-  const kw=El2('f-kw').value.toLowerCase(),site=El2('f-site').value,stat=El2('f-st').value;
+  const kw=$('f-kw').value.toLowerCase(),site=$('f-site').value,stat=$('f-st').value;
   const sites=[...new Set((list||[]).map(f=>f.site))].sort();
-  const sel=El2('f-site'),cur=sel.value;
-  sel.innerHTML='<option value="">Tous les sites</option>'+sites.map(s=>`<option value="${s}">${s}</option>`).join('');
+  const sel=$('f-site'),cur=sel.value;
+  sel.innerHTML='<option value="">Tous sites</option>'+sites.map(s=>`<option value="${s}">${s}</option>`).join('');
   sel.value=cur;
   let f=(list||[]).filter(i=>(!kw||i.keyword.toLowerCase().includes(kw)||i.id.toLowerCase().includes(kw))&&(!site||i.site===site)&&(!stat||i.status===stat));
-  const empty=El2('failed-empty'),cnt=El2('failed-count');
-  if(!f.length){El2('failed-tbody').innerHTML='';empty.style.display='block';cnt.textContent='';return;}
+  const empty=$('failed-empty'),cnt=$('failed-count');
+  if(!f.length){$('failed-tbody').innerHTML='';empty.style.display='block';cnt.textContent='';return;}
   empty.style.display='none';cnt.textContent=f.length+' affiché(s)';
-  El2('failed-tbody').innerHTML=f.map(i=>`<tr>
+  $('failed-tbody').innerHTML=f.map(i=>`<tr>
     <td><input type="checkbox" class="chk" value="${i.id}"></td>
     <td style="font-family:monospace;color:var(--muted);font-size:10px">${i.id}</td>
-    <td><span class="badge by">${i.site}</span></td>
-    <td style="max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${i.keyword}</td>
-    <td><span style="color:${STATUS_COL[i.status]||'var(--red)'}">${i.status}</span></td>
-    <td><span style="color:${STATUS_COL[i.img_status]||'var(--muted)'}">${i.img_status||'—'}</span></td>
-    <td class="err-clip" title="${i.error}">${i.error||'—'}</td>
-    <td><button class="btn btn-r" style="padding:3px 8px;font-size:11px" onclick="retrySingle('${i.id}')">↩</button></td>
+    <td><span class="bdg by">${i.site}</span></td>
+    <td style="max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${i.keyword}</td>
+    <td><span style="color:${SCOL[i.status]||'var(--red)'}">${i.status}</span></td>
+    <td style="font-size:11px;color:${SCOL[i.img_status]||'var(--muted)'}">${i.img_status||'—'}</td>
+    <td class="ec" title="${i.error}">${i.error||'—'}</td>
+    <td><button class="btn btn-r" style="padding:2px 7px;font-size:11px" onclick="retrySingle('${i.id}')">↩</button></td>
   </tr>`).join('');
 }
 function filterFailed(){renderFailed(FAILED_ALL);}
-
 function renderPins(d){
-  El('pin-total',N(d.total));El('pin-posted',N(d.byStatus.posted||0));
-  El('pin-sched',N(d.byStatus.scheduled||0));El('pin-done',N(d.byStatus.done||0));
-  statusList('pin-list',d.byStatus||{},d.total);
+  el('pin-tot',N(d.total));el('pin-p',N(d.byStatus.posted||0));
+  el('pin-s',N(d.byStatus.scheduled||0));el('pin-d',N(d.byStatus.done||0));
+  stList('pin-list',d.byStatus||{},d.total);
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 //  CHARTS
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 function renderCharts(){
   if(!CHART_DATA&&DATA)CHART_DATA={siteProg:DATA.sites};
   if(!CHART_DATA)return;
   const gc='rgba(255,255,255,.05)',tc='#8b949e';
-  Chart.defaults.color=tc;Chart.defaults.borderColor=gc;
   const tt={backgroundColor:'#1c2128',titleColor:'#e6edf3',bodyColor:tc};
+  Chart.defaults.color=tc;Chart.defaults.borderColor=gc;
   const sp=CHART_DATA.siteProg||DATA&&DATA.sites||[];
   const sn=sp.map(s=>s.nom);
   if(chD)chD.destroy();
   const daily=CHART_DATA.daily||[];
-  const c1=El2('ch-daily');
+  const c1=$('ch-d');
   if(c1)chD=new Chart(c1,{type:'bar',data:{
     labels:daily.map(d=>{const dt=new Date(d.date);return(dt.getMonth()+1)+'/'+dt.getDate();}),
     datasets:[{label:'Publiés',data:daily.map(d=>d.count),backgroundColor:'rgba(88,166,255,.7)',borderColor:'#58a6ff',borderWidth:1,borderRadius:3}]
   },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:tt},scales:{x:{grid:{color:gc},ticks:{maxTicksLimit:10,color:tc}},y:{grid:{color:gc},ticks:{color:tc},beginAtZero:true}}}});
   if(chS)chS.destroy();
-  const c2=El2('ch-sites');
+  const c2=$('ch-s');
   if(c2)chS=new Chart(c2,{type:'bar',data:{labels:sn,datasets:[
     {label:'Publiés',data:sp.map(s=>s.texte||s.published||0),backgroundColor:'rgba(63,185,80,.8)',borderRadius:3},
     {label:'Pending',data:sp.map(s=>Math.max(0,(s.t||s.total||0)-(s.texte||s.published||0))),backgroundColor:'rgba(48,54,61,.9)',borderRadius:3}
   ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,boxWidth:10}},tooltip:tt},scales:{x:{stacked:true,grid:{color:gc},ticks:{color:tc}},y:{stacked:true,grid:{color:gc},ticks:{color:tc}}}}});
   if(chI)chI.destroy();
-  const c3=El2('ch-images');
+  const c3=$('ch-i');
   if(c3)chI=new Chart(c3,{type:'bar',data:{labels:sn,datasets:[
-    {label:'Images totales (col AA)',data:sp.map(s=>s.imgCount||0),backgroundColor:'rgba(88,166,255,.75)',borderRadius:3},
+    {label:'Images (col AA)',data:sp.map(s=>s.imgCount||0),backgroundColor:'rgba(88,166,255,.75)',borderRadius:3},
     {label:'Articles done',data:sp.map(s=>s.imgDone||0),backgroundColor:'rgba(188,140,255,.6)',borderRadius:3}
   ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc,boxWidth:10}},tooltip:tt},scales:{x:{grid:{color:gc},ticks:{color:tc}},y:{grid:{color:gc},ticks:{color:tc},beginAtZero:true}}}});
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-//  SITE & WEEK CHECKBOXES
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
+//  CHECKBOXES
+// ══════════════════════════════════════════════════════════════════════════
 function initSiteChks(){
-  El2('site-chk-grid').innerHTML=Object.keys(SITES_META).map(s=>`
-    <div class="site-chk"><input type="checkbox" id="sc-${s}" value="${s}" checked>
+  $('site-chk-grid').innerHTML=Object.keys(SITES_META).map(s=>`
+    <div class="sch"><input type="checkbox" id="sc-${s}" value="${s}" checked>
     <label for="sc-${s}"><span class="sn">${s}</span><span class="sp" id="scp-${s}">—</span></label></div>`).join('');
 }
 function updateSiteChks(d){
   if(!d||!d.sites)return;
-  d.sites.forEach(s=>{const e=El2('scp-'+s.nom);if(e)e.textContent=pct(s.texte,s.t)+'% · '+N(s.texte)+'/'+N(s.t);});
+  d.sites.forEach(s=>{const e=$('scp-'+s.nom);if(e)e.textContent=pct(s.texte,s.t)+'%';});
 }
 function initWeekChks(){
-  El2('week-chk-grid').innerHTML=[1,2,3,4,5,6,7,8,9,10,11].map(w=>`
-    <div class="wk-chk"><input type="checkbox" id="wkc-${w}" value="${w}" checked>
-    <label for="wkc-${w}">S${String(w).padStart(2,'0')}</label></div>`).join('');
+  $('week-chk-grid').innerHTML=[1,2,3,4,5,6,7,8,9,10,11].map(w=>`
+    <div class="wch"><input type="checkbox" id="wk-${w}" value="${w}" checked>
+    <label for="wk-${w}">S${String(w).padStart(2,'0')}</label></div>`).join('');
 }
 function updateWeekChks(weeks){
   if(!weeks)return;
   weeks.forEach(w=>{
-    const l=document.querySelector(`label[for="wkc-${w.week}"]`);if(!l)return;
+    const l=document.querySelector(`label[for="wk-${w.week}"]`);if(!l)return;
     const done=(w.published||0)+(w.scheduled||0)+(w.drafted||0);
     const p=pct(done,w.total);
     l.style.color=p===100?'var(--green)':p>50?'var(--blue)':p>0?'var(--yellow)':'';
   });
 }
-function selS(m){Object.keys(SITES_META).forEach(s=>{const e=El2('sc-'+s);if(e)e.checked=m==='all'?true:m==='none'?false:m==='hub'?SITES_META[s]==='hub':SITES_META[s]==='nano';});}
-function selW(m){[1,2,3,4,5,6,7,8,9,10,11].forEach(w=>{const e=El2('wkc-'+w);if(e)e.checked=m!=='none';});}
-function getSites(){return[...document.querySelectorAll('#site-chk-grid input:checked')].map(e=>e.value);}
-function getWeeks(){return[...document.querySelectorAll('#week-chk-grid input:checked')].map(e=>parseInt(e.value));}
-function populateSiteSelects(){
-  const sites=Object.keys(SITES_META);
-  ['ek-site'].forEach(id=>{
-    const sel=El2(id);if(!sel)return;
-    sel.innerHTML='<option value="">Sélectionne un site...</option>'+sites.map(s=>`<option value="${s}">${s}</option>`).join('');
+function selS(m){
+  Object.keys(SITES_META).forEach(s=>{
+    const e=$('sc-'+s);if(!e)return;
+    e.checked=m==='all'?true:m==='none'?false:m==='hub'?SITES_META[s]==='hub':SITES_META[s]==='nano';
   });
 }
+function selW(m){[1,2,3,4,5,6,7,8,9,10,11].forEach(w=>{const e=$('wk-'+w);if(e)e.checked=m!=='none';});}
+function getSites(){return[...document.querySelectorAll('#site-chk-grid input:checked')].map(e=>e.value);}
+function getWeeks(){return[...document.querySelectorAll('#week-chk-grid input:checked')].map(e=>parseInt(e.value));}
 
-// ══════════════════════════════════════════════════════════════════════════════
-//  ACTIONS WF
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
+//  ACTIONS
+// ══════════════════════════════════════════════════════════════════════════
 function runWF(action,allSites){
   const sites=allSites?Object.keys(SITES_META):getSites();
   const weeks=getWeeks();
   if(!sites.length){toast('Sélectionne au moins un site','info');return;}
   const lbl=action.replace(/_/g,' ');
-  toast(`Lancement ${lbl} — ${allSites?'tous les sites':sites.length+' site(s)'}…`,'info');
-  addLog('run',`${lbl} → ${sites.length} site(s), sem. ${weeks.join(',')}`);
+  toast(`Lancement ${lbl}…`,'info');addLog('run',`${lbl} → ${sites.length} site(s)`);
   api({action,sites:JSON.stringify(sites),weeks:JSON.stringify(weeks)}).then(d=>{
     if(d.ok){toast(`✅ ${lbl} lancé`,'ok');addLog('ok',lbl+' accepté');setTimeout(loadData,4000);}
     else{toast(`❌ ${d.error||'Erreur'}`,'err');addLog('err',lbl+': '+(d.error||'Erreur'));}
@@ -939,292 +1199,283 @@ function runWF(action,allSites){
 }
 function confirmRun(action,msg){
   if(!confirm(msg))return;
-  addLog('warn',msg);
-  api({action}).then(d=>{if(d.ok){toast('✅ Fait','ok');addLog('ok','Reset effectué');setTimeout(loadData,3000);}else toast('❌ '+(d.error||'Erreur'),'err');}).catch(e=>toast('❌ '+e.message,'err'));
+  api({action}).then(d=>{if(d.ok){toast('✅ Fait','ok');setTimeout(loadData,3000);}else toast('❌ '+(d.error||'Erreur'),'err');}).catch(e=>toast('❌ '+e.message,'err'));
 }
 function retrySelected(){
   const ids=[...document.querySelectorAll('#failed-tbody .chk:checked')].map(c=>c.value);
   if(!ids.length){toast('Sélectionne des lignes','info');return;}
-  addLog('run','Retry '+ids.length+' article(s)');
   api({action:'wf1_selection',ids:JSON.stringify(ids)}).then(d=>{
-    if(d.ok){toast(`✅ ${ids.length} relancé(s)`,'ok');addLog('ok',ids.length+' relancé(s)');}
-    else toast('❌ '+(d.error||'Erreur'),'err');
+    if(d.ok)toast(`✅ ${ids.length} relancé(s)`,'ok');else toast('❌ '+(d.error||'Erreur'),'err');
   }).catch(e=>toast('❌ '+e.message,'err'));
 }
 function retrySingle(id){
-  addLog('run','Retry: '+id);
   api({action:'wf1_selection',ids:JSON.stringify([id])}).then(d=>{
     if(d.ok)toast('✅ '+id+' relancé','ok');else toast('❌ '+(d.error||'Erreur'),'err');
   }).catch(e=>toast('❌ '+e.message,'err'));
 }
 function pubPins(mode){
-  if(!confirm((mode==='direct'?'Publier MAINTENANT':'Programmer Blotato')+' — tous les pins done ?'))return;
+  if(!confirm((mode==='direct'?'Publier MAINTENANT':'Programmer Blotato')+'?'))return;
   api({action:'wf3_publish_pins',ids:'[]',mode}).then(d=>{
     if(d.ok)toast('✅ Lancé','ok');else toast('❌ '+(d.error||'Erreur'),'err');
   }).catch(e=>toast('❌ '+e.message,'err'));
 }
 function toggleAll(el){document.querySelectorAll('#failed-tbody .chk').forEach(c=>c.checked=el.checked);}
 
-// ══════════════════════════════════════════════════════════════════════════════
-//  WIZARD — AJOUTER UN SITE
-// ══════════════════════════════════════════════════════════════════════════════
-let currentStep=1;
+// ══════════════════════════════════════════════════════════════════════════
+//  WIZARD
+// ══════════════════════════════════════════════════════════════════════════
+const MAX_STEPS=7;
 function goStep(n){
-  if(n>1&&!validateStep(currentStep))return;
-  currentStep=n;
-  [1,2,3,4,5,6].forEach(i=>{
-    const ws=El2('ws-'+i),sp=El2('sp-'+i);
-    if(!ws||!sp)return;
-    ws.className='wstep'+(i<n?' done':i===n?' active':'');
-    sp.className='step-panel'+(i===n?' on':'');
-  });
-  if(n===4)calcPlanning();
-  if(n===3)renderKwH1List();
-  if(n===6)renderFinalSummary();
-  El2('new-tab-name').textContent=getNextTabName();
+  if(n>curStep&&!validateStep(curStep))return;
+  curStep=n;
+  for(let i=1;i<=MAX_STEPS;i++){
+    const ws=$('ws-'+i),sp=$('sp-'+i);
+    if(ws)ws.className='ws'+(i<n?' done':i===n?' active':'');
+    if(sp)sp.className='sp'+(i===n?' on':'');
+  }
+  if(n===4){renderKwH1List();el('h1-lang-label',LANG_LABELS[$('ns-lang').value]||$('ns-lang').value);}
+  if(n===5)calcPlan();
+  if(n===7)renderFinalSummary();
 }
 function validateStep(n){
-  if(n===1){
-    const slug=El2('ns-slug').value.trim(),domain=El2('ns-domain').value.trim(),niche=El2('ns-niche').value.trim();
-    if(!slug){toast('Remplis le slug du site','err');return false;}
-    if(!domain){toast('Remplis le domaine','err');return false;}
-    if(!niche){toast('Remplis la niche/thématique','err');return false;}
+  if(n===1&&$('ns-network').value==='new'&&!$('ns-sheet-id').value.trim()){toast('ID du sheet requis','err');return false;}
+  if(n===2){
+    if(!$('ns-slug').value.trim()){toast('Slug requis','err');return false;}
+    if(!$('ns-domain').value.trim()){toast('Domaine requis','err');return false;}
+    if(!$('ns-niche-desc').value.trim()){toast('Description de la niche requise','err');return false;}
   }
-  if(n===2&&KWS.length===0){toast('Ajoute au moins un keyword','err');return false;}
+  if(n===3&&KWS.length===0){toast('Ajoute au moins un keyword','err');return false;}
   return true;
 }
-function slugify(){const v=El2('ns-slug').value.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,20);El2('ns-slug').value=v;}
+function onNetworkChange(){
+  const v=$('ns-network').value;
+  $('ns-network-custom').style.display=v==='new'?'block':'none';
+}
+function onNicheChange(){
+  const niche=$('ns-niche-type').value;
+  const hints={
+    recipes:'Ex: Recettes de lasagne italiennes, cuisine du terroir...',
+    fitness:'Ex: Entraînement HIIT, musculation débutant...',
+    travel:'Ex: Voyages en Asie du Sud-Est, city-trips Europe...',
+    finance:'Ex: Investissement immobilier, ETF pour débutants...',
+    other:'Décris la thématique de ton site...'
+  };
+  const inp=$('ns-niche-desc');
+  if(inp)inp.placeholder=hints[niche]||'Décris la thématique...';
+}
+function slugify(){const v=$('ns-slug').value.toLowerCase().replace(/[^a-z0-9-]/g,'').slice(0,24);$('ns-slug').value=v;}
+function toggleVolCol(){showVol=$('kw-vol-toggle').checked;renderKwList();}
 function addKw(){
-  const inp=El2('kw-input');const val=inp.value.trim();
-  if(!val)return;
-  val.split(',').forEach(k=>{const kw=k.trim();if(kw&&!KWS.find(x=>x.kw===kw))KWS.push({kw,h1:'',status:'pending'});});
+  const inp=$('kw-inp');
+  inp.value.split(',').forEach(k=>{const kw=k.trim();if(kw&&!KWS.find(x=>x.kw===kw))KWS.push({kw,h1:'',vol:'',status:'pending'});});
   inp.value='';renderKwList();
 }
-function addBulkKw(){
-  const inp=El2('kw-bulk');
-  inp.value.split(/[\n,]+/).forEach(k=>{const kw=k.trim();if(kw&&!KWS.find(x=>x.kw===kw))KWS.push({kw,h1:'',status:'pending'});});
-  inp.value='';renderKwList();
+function addBulk(){
+  $('kw-bulk').value.split(/[\n,]+/).forEach(k=>{const kw=k.trim();if(kw&&!KWS.find(x=>x.kw===kw))KWS.push({kw,h1:'',vol:'',status:'pending'});});
+  $('kw-bulk').value='';renderKwList();
 }
 function renderKwList(){
-  const el=El2('kw-list');
-  if(!KWS.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Aucun keyword ajouté</div>';return;}
-  el.innerHTML=KWS.map((k,i)=>`
-    <div class="kw-item">
-      <span style="color:var(--muted);font-size:10px;width:24px;flex-shrink:0">${i+1}.</span>
+  el('kw-count',KWS.length+' keyword(s)');
+  const el2=$('kw-list');if(!el2)return;
+  if(!KWS.length){el2.innerHTML='<div style="text-align:center;padding:16px;color:var(--hint);font-size:12px">Aucun keyword</div>';return;}
+  el2.innerHTML=KWS.map((k,i)=>`
+    <div class="kwi">
+      <span class="kwidx">${i+1}.</span>
       <input type="text" value="${k.kw}" onchange="KWS[${i}].kw=this.value">
-      <span class="kw-del" onclick="KWS.splice(${i},1);renderKwList()">×</span>
+      ${showVol?`<input type="text" value="${k.vol||''}" placeholder="vol" style="width:50px;background:var(--s2);border:1px solid var(--border);border-radius:4px;color:var(--muted);padding:2px 4px;font-size:10px" onchange="KWS[${i}].vol=this.value">`:''}
+      <span class="kwdel" onclick="KWS.splice(${i},1);renderKwList()">×</span>
     </div>`).join('');
 }
 function renderKwH1List(){
-  const el=El2('kw-h1-list');
-  if(!KWS.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted)">Aucun keyword</div>';return;}
-  el.innerHTML=KWS.map((k,i)=>`
-    <div class="kw-item ${k.status==='done'?'done':k.status==='generating'?'generating':''}">
-      <span style="color:var(--muted);font-size:10px;width:24px;flex-shrink:0">${i+1}.</span>
-      <span style="flex:1;font-size:12px">${k.kw}</span>
-      <span class="kw-h1">${k.status==='done'?k.h1:k.status==='generating'?'Génération...':'—'}</span>
+  const el2=$('kw-h1-list');if(!el2)return;
+  if(!KWS.length){el2.innerHTML='<div style="text-align:center;padding:16px;color:var(--hint)">Aucun keyword</div>';return;}
+  el2.innerHTML=KWS.map((k,i)=>`
+    <div class="kwi ${k.status}">
+      <span class="kwidx">${i+1}.</span>
+      <span style="flex:1;font-size:12px">${k.kw}${k.vol?` <span style="color:var(--hint);font-size:10px">(${k.vol})</span>`:''}</span>
+      <span class="h1t">${k.status==='done'?k.h1:k.status==='generating'?'⏳ Génération...':k.status==='err'?'❌ Erreur':'—'}</span>
     </div>`).join('');
 }
-async function generateH1s(){
+async function genH1s(){
   if(!KWS.length){toast('Aucun keyword','err');return;}
-  const site=El2('ns-slug').value||'rezept';
-  const niche=El2('ns-niche').value||'Rezepte';
-  const specialty=El2('ns-specialty').value||'deutsche Küche';
-  El2('gen-progress').style.display='block';
-  El2('btn-gen-h1').disabled=true;
-  const total=KWS.length;let done=0;
+  const lang=$('ns-lang').value;
+  const niche=$('ns-niche-desc').value||$('ns-niche-type').value;
+  const site=$('ns-slug').value||'site';
+  const specialty=$('ns-specialty').value||'';
+  const nicheType=$('ns-niche-type').value;
+  $('gprog').style.display='block';$('btn-gen').disabled=true;
+  const total=KWS.length;
   for(let i=0;i<KWS.length;i++){
     KWS[i].status='generating';renderKwH1List();
-    El2('gen-label').textContent='Génération H1: '+KWS[i].kw;
-    El2('gen-count').textContent=(i+1)+'/'+total;
-    bar('gen-fill',Math.round((i+1)/total*100));
-    try{
-      const h1=await generateOneH1(KWS[i].kw,site,niche,specialty);
-      KWS[i].h1=h1;KWS[i].status='done';
-    }catch(e){KWS[i].h1='ERREUR: '+e.message;KWS[i].status='done';}
-    done++;renderKwH1List();
-    await new Promise(r=>setTimeout(r,300));
+    el('g-label','Génération: '+KWS[i].kw);el('g-count',(i+1)+'/'+total);
+    bar('g-fill',Math.round((i+1)/total*100));
+    try{KWS[i].h1=await genOneH1(KWS[i].kw,site,lang,niche,specialty,nicheType);KWS[i].status='done';}
+    catch(e){KWS[i].h1='ERREUR';KWS[i].status='err';}
+    renderKwH1List();
+    await new Promise(r=>setTimeout(r,350));
   }
-  El2('gen-label').textContent='✅ Terminé — '+done+' titres générés';
-  El2('btn-gen-h1').disabled=false;
-  El2('btn-to-step4').style.display='inline-flex';
-  toast('✅ '+done+' titres H1 générés','ok');
+  el('g-label','✅ '+KWS.filter(k=>k.status==='done').length+'/'+total+' générés');
+  $('btn-gen').disabled=false;$('btn-s5').style.display='inline-flex';
+  toast('✅ H1 générés','ok');
 }
-async function generateOneH1(keyword,site,niche,specialty){
-  // Si pas de clé DeepSeek dans le browser, passe par Apps Script
-  if(DS_KEY&&DS_KEY!=='REMPLACE_PAR_TON_DEEPSEEK_API_KEY'){
-    const resp=await fetch(DS_API,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+DS_KEY},
-      body:JSON.stringify({
-        model:'deepseek-chat',max_tokens:80,temperature:0.7,
-        messages:[{role:'user',content:`Tu génères un titre H1 SEO unique pour un article de recette.
-Site: ${site} — Niche: ${niche} — Spécialité: ${specialty}
-Keyword cible: "${keyword}"
-Règles: 
-- En allemand
-- Max 70 caractères
-- Original, pas "Das beste", "Einfaches", "Schnelles"
-- Doit contenir le keyword ou une variation naturelle
-- Style: concret, appetissant
-Réponds UNIQUEMENT avec le titre H1, sans guillemets, sans explication.`}]
-      })
+async function genOneH1(kw,site,lang,niche,specialty,nicheType){
+  const langLabel=LANG_LABELS[lang]||lang;
+  const nicheLabel=NICHE_PROMPTS[nicheType]||niche;
+  const prompt=`Tu génères un titre H1 SEO unique pour un ${nicheLabel}.
+Site: ${site} — Niche: ${niche}${specialty?' — Spécialité: '+specialty:''}
+Keyword cible: "${kw}"
+Langue: ${langLabel}
+Règles:
+- En ${langLabel}, max 70 caractères
+- Titre original et accrocheur, pas générique
+- Contient le keyword ou une variation naturelle
+- Adapté à la niche "${niche}"
+Réponds UNIQUEMENT avec le titre H1, sans guillemets ni explication.`;
+  if(DS_KEY&&DS_KEY.length>10){
+    const resp=await fetch('https://api.deepseek.com/v1/chat/completions',{
+      method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+DS_KEY},
+      body:JSON.stringify({model:'deepseek-chat',max_tokens:80,temperature:0.7,messages:[{role:'user',content:prompt}]})
     });
-    const data=await resp.json();
-    return data.choices[0].message.content.trim();
+    const data=await resp.json();return data.choices[0].message.content.trim();
   }else{
-    // Passer par Apps Script (clé stockée côté serveur)
-    const d=await api({action:'gen_h1',keyword,site,niche,specialty});
-    if(!d.ok)throw new Error(d.error||'Erreur génération H1');
-    return d.h1;
+    const d=await api({action:'gen_h1',keyword:kw,site,lang,niche,specialty,niche_type:nicheType});
+    if(!d.ok)throw new Error(d.error||'Erreur H1');return d.h1;
   }
 }
-function calcPlanning(){
-  const n=KWS.length,artDay=parseInt(El2('ns-art-day').value)||20;
-  const weekStart=parseInt(El2('ns-week-start').value)||1;
-  const days=Math.ceil(n/artDay);
-  const weeks=Math.ceil(days/7);
-  El('pr-kw',N(n));El('pr-day',artDay);
-  El('pr-dur',days+' jours (~'+weeks+' semaine(s))');
-  El('pr-week','S'+String(weekStart).padStart(2,'0'));
-  El('pr-end','S'+String(Math.min(12,weekStart+weeks-1)).padStart(2,'0'));
+function calcPlan(){
+  const n=KWS.length,apd=parseInt($('ns-apd').value)||20,ws=parseInt($('ns-wk').value)||1;
+  const days=Math.ceil(n/apd),weeks=Math.ceil(days/7);
+  el('pr-kw',N(n));el('pr-apd',apd);
+  el('pr-dur',days+' jours (~'+weeks+' sem.)');
+  el('pr-ws','S'+String(ws).padStart(2,'0'));
+  el('pr-we','S'+String(Math.min(12,ws+weeks-1)).padStart(2,'0'));
 }
-function getNextTabName(){return 'S'+(14).toString().padStart(2,'0');}
 function renderFinalSummary(){
-  const s={
-    slug:El2('ns-slug').value,domain:El2('ns-domain').value,type:El2('ns-type').value,
-    niche:El2('ns-niche').value,author:El2('ns-author-name').value,
-    keywords:KWS.length,h1Done:KWS.filter(k=>k.status==='done').length,
-    artDay:El2('ns-art-day').value,weekStart:El2('ns-week-start').value,
-    pinAccount:El2('ns-pin-account').value
+  const d={
+    slug:$('ns-slug').value,domain:$('ns-domain').value,
+    lang:LANG_LABELS[$('ns-lang').value]||$('ns-lang').value,
+    niche:$('ns-niche-desc').value,type:$('ns-type').value,
+    kw:KWS.length,h1done:KWS.filter(k=>k.status==='done').length,
+    apd:$('ns-apd').value,ws:$('ns-wk').value,
+    pin:$('ns-pin-acc').value||'—'
   };
-  El2('final-summary').innerHTML=Object.entries({
-    'Slug':s.slug,'Domaine':s.domain,'Type':s.type,'Niche':s.niche,
-    'Auteur':s.author||'—','Keywords':s.keywords,'Titres H1':s.h1Done+'/'+s.keywords,
-    'Articles/jour':s.artDay,'Semaine démarrage':'S'+s.weekStart,'Pinterest':s.pinAccount||'—'
-  }).map(([k,v])=>`<div class="preview-stat"><span style="color:var(--muted)">${k}</span><strong>${v}</strong></div>`).join('');
+  $('final-sum').innerHTML=Object.entries({
+    'Slug':d.slug,'Domaine':d.domain,'Langue':d.lang,'Niche':d.niche,
+    'Type':d.type,'Keywords':d.kw,'H1 générés':d.h1done+'/'+d.kw,
+    'Articles/jour':d.apd,'Semaine démarrage':'S'+d.ws,'Pinterest':d.pin
+  }).map(([k,v])=>`<div class="prev-row"><span style="color:var(--muted)">${k}</span><strong>${v}</strong></div>`).join('');
+  el('new-tab','S'+(14).toString().padStart(2,'0'));
 }
 async function createSite(){
-  const btn=El2('btn-create-site');
-  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Création en cours...';
+  const btn=$('btn-create');btn.disabled=true;btn.innerHTML='<span class="spin"></span> Création...';
+  // Determine target sheet
+  const netType=$('ns-network').value;
+  const targetSheetId=netType==='new'?$('ns-sheet-id').value.trim():(CUR_NET?CUR_NET.sheetId:'');
   const payload={
     action:'create_site',
-    slug:El2('ns-slug').value.trim(),
-    domain:El2('ns-domain').value.trim(),
-    type:El2('ns-type').value,
-    niche:El2('ns-niche').value.trim(),
-    author_name:El2('ns-author-name').value.trim(),
-    author_login:El2('ns-author-login').value.trim(),
-    city:El2('ns-city').value.trim(),
-    years:El2('ns-years').value||'5',
-    specialty:El2('ns-specialty').value.trim(),
-    greeting:El2('ns-greeting').value.trim(),
-    palette:El2('ns-palette').value.trim(),
-    accent:El2('ns-accent').value.trim(),
-    wp_env_var:El2('ns-wpenv').value.trim(),
-    wp_user:El2('ns-wpuser').value.trim(),
-    wp_pass:El2('ns-wppass').value.trim(),
-    maillage:El2('ns-maillage').value.trim()||'foodzauber.blog',
-    source:El2('ns-source').value.trim()||'foodzauber.blog',
-    pin_account:El2('ns-pin-account').value.trim(),
-    pin_boards:El2('ns-pin-boards').value.trim(),
-    week_start:El2('ns-week-start').value,
-    art_per_day:El2('ns-art-day').value,
-    time_start:El2('ns-time-start').value,
-    time_end:El2('ns-time-end').value,
-    keywords:JSON.stringify(KWS.map(k=>({kw:k.kw,h1:k.h1}))),
+    target_sheet_id:targetSheetId,
+    slug:$('ns-slug').value.trim(),domain:$('ns-domain').value.trim(),
+    type:$('ns-type').value,lang:$('ns-lang').value,
+    niche:$('ns-niche-desc').value.trim(),niche_type:$('ns-niche-type').value,
+    author_name:$('ns-author').value.trim(),author_login:$('ns-login').value.trim(),
+    city:$('ns-city').value.trim(),years:$('ns-years').value||'5',
+    specialty:$('ns-specialty').value.trim(),greeting:$('ns-greeting').value.trim(),
+    palette:$('ns-palette').value.trim(),accent:$('ns-accent').value.trim(),
+    wp_env_var:$('ns-wpenv').value.trim(),wp_user:$('ns-wpuser').value.trim(),
+    wp_pass:$('ns-wppass').value.trim(),
+    maillage:$('ns-maillage').value.trim(),source:$('ns-source').value.trim(),
+    pin_account:$('ns-pin-acc').value.trim(),pin_boards:$('ns-pin-boards').value.trim(),
+    week_start:$('ns-wk').value,art_per_day:$('ns-apd').value,
+    time_start:$('ns-ts').value,time_end:$('ns-te').value,
+    keywords:JSON.stringify(KWS.map(k=>({kw:k.kw,h1:k.h1,vol:k.vol||''}))),
   };
-  addLog('run','Création site: '+payload.slug+' ('+KWS.length+' articles)');
+  addLog('run','Création site: '+payload.slug);
   api(payload).then(d=>{
     if(d.ok){
-      toast('✅ Site '+payload.slug+' créé avec '+KWS.length+' articles','ok');
-      addLog('ok','Site créé: '+payload.slug+' → onglet '+d.tab_name);
-      KWS=[];currentStep=1;
+      toast('✅ Site '+payload.slug+' créé ('+KWS.length+' articles)','ok');
+      addLog('ok','Site créé: '+payload.slug+' → '+d.tab_name);
+      KWS=[];curStep=1;
       setTimeout(()=>{SN('sites-list');loadData();},1500);
-    }else{
-      toast('❌ '+(d.error||'Erreur'),'err');
-      addLog('err','Création site: '+(d.error||'Erreur'));
-    }
-    btn.disabled=false;btn.innerHTML='✅ Créer le site et les articles';
-  }).catch(e=>{
-    toast('❌ '+e.message,'err');addLog('err',e.message);
-    btn.disabled=false;btn.innerHTML='✅ Créer le site et les articles';
-  });
+    }else{toast('❌ '+(d.error||'Erreur'),'err');addLog('err',d.error||'Erreur');}
+    btn.disabled=false;btn.textContent='✅ Créer le site';
+  }).catch(e=>{toast('❌ '+e.message,'err');btn.disabled=false;btn.textContent='✅ Créer le site';});
 }
 
-// ── Ajouter keywords à un site existant ──
-async function genKwH1s(){
-  const site=El2('ek-site').value;
+// ── Add keywords to existing site ──
+async function genEkH1s(){
+  const site=$('ek-site').value;
   if(!site){toast('Sélectionne un site','err');return;}
-  const kws=El2('ek-kws').value.split(/[\n,]+/).map(k=>k.trim()).filter(Boolean);
+  const kws=$('ek-kws').value.split(/[\n,]+/).map(k=>k.trim()).filter(Boolean);
   if(!kws.length){toast('Ajoute des keywords','err');return;}
-  const preview=El2('ek-preview');
-  preview.innerHTML='<div style="color:var(--muted);font-size:12px"><span class="spin"></span> Génération des H1...</div>';
+  const prev=$('ek-preview');
+  prev.innerHTML='<div style="color:var(--muted);font-size:12px"><span class="spin"></span> Génération H1...</div>';
+  const lang=CUR_NET?CUR_NET.lang:'de';
   const results=[];
   for(const kw of kws){
-    try{const h1=await generateOneH1(kw,site,'','');results.push({kw,h1});}
+    try{const h1=await genOneH1(kw,site,lang,'','','recipes');results.push({kw,h1});}
     catch(e){results.push({kw,h1:'ERREUR'});}
-    await new Promise(r=>setTimeout(r,300));
+    await new Promise(r=>setTimeout(r,350));
   }
-  preview.innerHTML=`<div class="kw-list" style="margin-top:8px">${results.map(r=>`
-    <div class="kw-item done">
+  EK_RESULTS=results;
+  prev.innerHTML=`<div class="kwl">${results.map(r=>`
+    <div class="kwi done">
       <span style="flex:1;font-size:12px">${r.kw}</span>
-      <span class="kw-h1" style="font-style:normal;color:var(--text)">${r.h1}</span>
+      <span class="h1t" style="font-style:normal;color:var(--text)">${r.h1}</span>
     </div>`).join('')}</div>
-    <div style="margin-top:10px;font-size:11px;color:var(--muted)">${results.length} keywords prêts. Clique "Ajouter au sheet" pour les insérer.</div>`;
-  preview._data=results;
+    <div style="margin-top:8px;font-size:11px;color:var(--muted)">${results.length} keywords prêts → clique "Ajouter au sheet"</div>`;
   toast('✅ '+results.length+' H1 générés','ok');
 }
 function addKwsToSite(){
-  const site=El2('ek-site').value,week=El2('ek-week').value,artDay=El2('ek-art-day').value;
-  const preview=El2('ek-preview');
-  if(!preview._data||!preview._data.length){toast('Génère les H1 d\'abord','err');return;}
+  const site=$('ek-site').value,week=$('ek-wk').value,apd=$('ek-apd').value;
+  if(!EK_RESULTS.length){toast('Génère les H1 d\'abord','err');return;}
   if(!site){toast('Sélectionne un site','err');return;}
-  addLog('run','Add '+preview._data.length+' kws to '+site);
-  api({action:'add_keywords',site,week,art_per_day:artDay,keywords:JSON.stringify(preview._data)}).then(d=>{
-    if(d.ok){toast('✅ '+preview._data.length+' articles ajoutés à '+site,'ok');addLog('ok',d.message||'Keywords ajoutés');preview._data=null;El2('ek-kws').value='';El2('ek-preview').innerHTML='';setTimeout(loadData,2000);}
-    else{toast('❌ '+(d.error||'Erreur'),'err');}
+  addLog('run','Add '+EK_RESULTS.length+' kws → '+site);
+  api({action:'add_keywords',site,week,art_per_day:apd,keywords:JSON.stringify(EK_RESULTS)}).then(d=>{
+    if(d.ok){toast('✅ '+EK_RESULTS.length+' articles ajoutés à '+site,'ok');addLog('ok',d.message||'OK');EK_RESULTS=[];$('ek-kws').value='';$('ek-preview').innerHTML='';setTimeout(loadData,2000);}
+    else toast('❌ '+(d.error||'Erreur'),'err');
   }).catch(e=>toast('❌ '+e.message,'err'));
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 //  LOG
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 function addLog(type,msg){
   LOGS.unshift({type,msg,time:new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})});
   if(LOGS.length>100)LOGS.pop();
-  if(El2('tab-log').classList.contains('on'))renderLog();
+  if($('tab-log').classList.contains('on'))renderLog();
 }
 function renderLog(){
-  const el=El2('log-list');
-  if(!LOGS.length){el.innerHTML='<div class="log-empty">Aucune action.</div>';return;}
-  el.innerHTML=LOGS.map(e=>`<div class="logitem ${e.type}"><span class="log-time">${e.time}</span><span>${e.msg}</span></div>`).join('');
+  const el=$('log-list');
+  if(!LOGS.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Aucune action.</div>';return;}
+  el.innerHTML=LOGS.map(e=>`<div class="li ${e.type}"><span class="lt">${e.time}</span><span class="lmsg">${e.msg}</span></div>`).join('');
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-//  NAV
-// ══════════════════════════════════════════════════════════════════════════════
-const PANELS=['overview','control','failed','charts','weeks','pins','sites-list','add-site','add-keywords','log'];
+// ══════════════════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════════════════════════════
+const PANELS=['overview','control','failed','charts','weeks','pins','sites-list','add-site','add-kw','networks','log'];
 function SN(name){
   PANELS.forEach(p=>{
-    const tab=El2('tab-'+p),ni=El2('ni-'+p);
-    if(tab)tab.className='panel'+(p===name?' on':'');
+    const t=$('tab-'+p),ni=$('ni-'+p);
+    if(t)t.className='panel'+(p===name?' on':'');
     if(ni)ni.className='nav-item'+(p===name?' on':'');
   });
   if(name==='failed')loadFailed();
   if(name==='pins')loadPins();
   if(name==='charts')renderCharts();
   if(name==='log')renderLog();
-  if(name==='add-site'){KWS=[];currentStep=1;goStep(1);}
+  if(name==='networks')renderNetworksList();
+  if(name==='add-site'){KWS=[];curStep=1;goStep(1);}
+  closeSidebar();// auto close on mobile
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 //  TOAST
-// ══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 function toast(msg,type){
-  const w=El2('toasts'),el=document.createElement('div');
-  el.className='toast '+(type||'info');el.textContent=msg;
-  w.appendChild(el);setTimeout(()=>el.remove(),4500);
+  const w=$('toasts'),e=document.createElement('div');
+  e.className='toast '+(type||'info');e.textContent=msg;
+  w.appendChild(e);setTimeout(()=>e.remove(),4500);
 }
 </script>
 </body>
