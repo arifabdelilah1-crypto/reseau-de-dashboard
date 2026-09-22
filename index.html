@@ -865,6 +865,10 @@ select.fi{cursor:pointer;appearance:none;
 <div id="toasts"></div>
 
 <script>
+// ── DOM helpers — defined first so IIFE can use them ──────────────────────
+function $(id){return document.getElementById(id);}
+function el(id,v){const e=$(id);if(e)e.textContent=v;}
+
 // ══════════════════════════════════════════════════════════════════════════
 //  CONFIG & CONSTANTS
 // ══════════════════════════════════════════════════════════════════════════
@@ -1081,8 +1085,6 @@ function loadNoPins(){
 // ══════════════════════════════════════════════════════════════════════════
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 const N=v=>(v||0).toLocaleString('fr-FR');
-function $(id){return document.getElementById(id);}
-function el(id,v){const e=$(id);if(e)e.textContent=v;}
 function bar(id,p){const e=$(id);if(e)e.style.width=p+'%';}
 
 function renderAll(d,weeks){
