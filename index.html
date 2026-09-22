@@ -865,6 +865,15 @@ select.fi{cursor:pointer;appearance:none;
 <div id="toasts"></div>
 
 <script>
+// ── Global error catcher ────────────────────────────────────────────────────
+window.onerror = function(msg,src,line,col,err){
+  console.error('JS Error:', msg, 'line:', line, err);
+  // Ensure login button always works
+  const btn=document.getElementById('btnl');
+  if(btn&&btn.disabled) btn.disabled=false;
+  return false;
+};
+
 // ── DOM helpers — defined first so IIFE can use them ──────────────────────
 function $(id){return document.getElementById(id);}
 function el(id,v){const e=$(id);if(e)e.textContent=v;}
@@ -872,7 +881,7 @@ function el(id,v){const e=$(id);if(e)e.textContent=v;}
 // ══════════════════════════════════════════════════════════════════════════
 //  CONFIG & CONSTANTS
 // ══════════════════════════════════════════════════════════════════════════
-const AS_URL = 'https://script.google.com/macros/s/AKfycbyYEdIECXi6yUxWGQSFD6fWWAm7M93yPElUXx0wzrlgZp6VQMcelP3TAh92A9o7KhXQDw/exec';
+const AS_URL = 'https://script.google.com/macros/s/REMPLACE_PAR_TON_URL/exec';
 const DS_KEY = ''; // Laisser vide → passe par Apps Script
 const REFRESH = 30000;
 
@@ -931,9 +940,9 @@ function renderNetworkSelect(){
   if(CUR_NET) sel.value=CUR_NET.id;
 }
 function renderNetworksList(){
-  const el=$('networks-list');if(!el)return;
-  if(!NETWORKS.length){el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:8px">Aucun réseau configuré.</div>';return;}
-  el.innerHTML=NETWORKS.map((n,i)=>`
+  const elNode=$('networks-list');if(!elNode)return;
+  if(!NETWORKS.length){elNode.innerHTML='<div style="color:var(--muted);font-size:12px;padding:8px">Aucun réseau configuré.</div>';return;}
+  elNode.innerHTML=NETWORKS.map((n,i)=>`
     <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
       <span style="font-size:18px">${n.emoji}</span>
       <div style="flex:1">
@@ -995,14 +1004,24 @@ function doLogout(){
   clearInterval(timer);$('app').style.display='none';$('login').style.display='flex';$('pw').value='';
 }
 (function(){
-  const s=sessionStorage.getItem('rde');
-  if(s){try{AUTH=JSON.parse(s);$('u').value=AUTH.u;}catch(e){}}
-  ['u','pw'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();}));
-  if(AUTH){
-    $('login').style.display='none';
-    const app=$('app');app.style.display='flex';app.style.flexDirection='column';
-    loadNetworks();init();loadData();loadFailed();loadPins();
-    timer=setInterval(loadData,REFRESH);
+  try {
+    const s=sessionStorage.getItem('rde');
+    if(s){try{AUTH=JSON.parse(s);$('u').value=AUTH.u;}catch(e){}}
+    ['u','pw'].forEach(id=>{
+      const inp=$(id);
+      if(inp) inp.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+    });
+    if(AUTH){
+      $('login').style.display='none';
+      const app=$('app');app.style.display='flex';app.style.flexDirection='column';
+      loadNetworks();init();loadData();loadFailed();loadPins();
+      timer=setInterval(loadData,REFRESH);
+    }
+  } catch(err) {
+    console.error('Init error:', err);
+    // Show login anyway even if init crashes
+    const btn=document.getElementById('btnl');
+    if(btn) btn.disabled=false;
   }
 })();
 
@@ -1570,9 +1589,9 @@ function addLog(type,msg){
   if($('tab-log').classList.contains('on'))renderLog();
 }
 function renderLog(){
-  const el=$('log-list');
-  if(!LOGS.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Aucune action.</div>';return;}
-  el.innerHTML=LOGS.map(e=>`<div class="li ${e.type}"><span class="lt">${e.time}</span><span class="lmsg">${e.msg}</span></div>`).join('');
+  const elLog=$('log-list');
+  if(!LOGS.length){elLog.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Aucune action.</div>';return;}
+  elLog.innerHTML=LOGS.map(e=>`<div class="li ${e.type}"><span class="lt">${e.time}</span><span class="lmsg">${e.msg}</span></div>`).join('');
 }
 
 // ══════════════════════════════════════════════════════════════════════════
