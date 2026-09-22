@@ -412,7 +412,9 @@ select.fi{cursor:pointer;appearance:none;
             <button class="btn btn-g" onclick="runWF('wf1_run')">▶ Lancer WF1</button>
             <button class="btn btn-r" onclick="runWF('wf1_retry_failed')">↩ Retry failed</button>
             <button class="btn btn-ghost" onclick="runWF('wf1_run',true)">▶ Tout lancer</button>
+            <button class="btn btn-y" onclick="runDiag()">🔍 Diagnostic erreurs</button>
           </div>
+          <div id="diag-result" style="display:none;margin-top:12px;background:var(--s3);border-radius:var(--r);padding:12px;font-size:12px"></div>
         </div>
         <div class="wfb"><div class="sh"><div class="wft">② WF2 — Images</div><div class="sr"><span class="bdg by">GPU</span><span class="bdg bb">S3</span></div></div>
           <div class="wfd">WF2a génère sur GPU. WF2b envoie vers WP (pod éteint OK).</div>
@@ -481,22 +483,71 @@ select.fi{cursor:pointer;appearance:none;
 
       <!-- ═══ PINTEREST ═══ -->
       <div class="panel" id="tab-pins">
-        <div class="ph"><div class="ph-t">Pinterest</div></div>
+        <div class="ph">
+          <div class="ph-t">Pinterest</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-ghost" onclick="loadPins();loadNoPins()">↻ Refresh</button>
+          </div>
+        </div>
+
+        <!-- KPIs -->
         <div class="g4 mb">
-          <div class="card"><div class="ct">Total</div><div class="bignum" style="color:var(--purple)" id="pin-tot">—</div></div>
+          <div class="card"><div class="ct">Total pins</div><div class="bignum" style="color:var(--purple)" id="pin-tot">—</div></div>
           <div class="card"><div class="ct">Postés</div><div class="bignum" style="color:var(--green)" id="pin-p">—</div></div>
           <div class="card"><div class="ct">Programmés</div><div class="bignum" style="color:var(--yellow)" id="pin-s">—</div></div>
-          <div class="card"><div class="ct">Prêts</div><div class="bignum" style="color:var(--blue)" id="pin-d">—</div></div>
+          <div class="card"><div class="ct">Prêts (done)</div><div class="bignum" style="color:var(--blue)" id="pin-d">—</div></div>
+          <div class="card"><div class="ct">Sans pins</div><div class="bignum" style="color:var(--red)" id="pin-missing">—</div><div class="sub">articles publiés</div></div>
+          <div class="card"><div class="ct">Par statut</div><div id="pin-list" style="margin-top:4px"></div></div>
         </div>
-        <div class="g2">
-          <div class="card"><div class="ct">Par statut</div><div id="pin-list"></div></div>
-          <div class="card"><div class="ct mb" style="margin-bottom:10px">Actions</div>
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <button class="btn btn-p btn-full" onclick="runWF('wf3_run')">▶ Générer pins (WF3a)</button>
-              <button class="btn btn-g btn-full" onclick="pubPins('slot')">📅 Programmer Blotato</button>
-              <button class="btn btn-y btn-full" onclick="pubPins('direct')">⚡ Publier maintenant</button>
+
+        <!-- Actions rapides -->
+        <div class="wfb mb">
+          <div class="wft" style="margin-bottom:10px">Actions globales</div>
+          <div class="wfa">
+            <button class="btn btn-p" onclick="runWF('wf3_run')">▶ Générer pins WF3a</button>
+            <button class="btn btn-g" onclick="pubPins('slot')">📅 Programmer Blotato</button>
+            <button class="btn btn-y" onclick="pubPins('direct')">⚡ Publier maintenant</button>
+          </div>
+        </div>
+
+        <!-- Articles publiés sans pins -->
+        <div class="card">
+          <div class="sh">
+            <div>
+              <div class="sh-t">Articles publiés sans pins</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Sélectionne les articles puis génère leurs pins</div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn btn-ghost" style="font-size:11px;padding:4px 9px" onclick="selNoPins('all')">Tout sélect.</button>
+              <button class="btn btn-ghost" style="font-size:11px;padding:4px 9px" onclick="selNoPins('none')">Désélect.</button>
+              <button class="btn btn-p" onclick="genPinsSelection()">▶ Générer pins (sélection)</button>
             </div>
           </div>
+          <!-- Filter bar -->
+          <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+            <select class="fi" id="np-site" onchange="filterNoPins()" style="flex:0;min-width:130px">
+              <option value="">Tous les sites</option>
+            </select>
+            <input class="fi" id="np-kw" placeholder="Filtrer keyword..." oninput="filterNoPins()" style="flex:1;min-width:130px">
+            <span style="font-size:11px;color:var(--muted);align-self:center" id="np-count"></span>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="tbl">
+              <thead><tr>
+                <th><input type="checkbox" class="chk" id="np-chk-all" onchange="selNoPins(this.checked?'all':'none')"></th>
+                <th>ID</th><th>Site</th><th>Keyword</th><th>WP Post ID</th><th>Status img</th><th>Semaine</th>
+              </tr></thead>
+              <tbody id="np-tbody"></tbody>
+            </table>
+          </div>
+          <div id="np-empty" style="text-align:center;padding:28px;color:var(--muted);font-size:12px;display:none">
+            ✅ Tous les articles ont des pins
+          </div>
+        </div>
+
+        <!-- Info backup Sheets -->
+        <div class="info-box mt" style="margin-top:12px">
+          💡 <strong>Méthode backup Google Sheets :</strong> Dans le sheet Master, sélectionne les cellules de la colonne <code>Pin Status</code> → Menu <em>Réseau DE</em> → <em>Générer pins pour la sélection</em>. Les deux méthodes fonctionnent en parallèle.
         </div>
       </div>
 
@@ -853,7 +904,7 @@ const NICHE_PROMPTS = {
 // ══════════════════════════════════════════════════════════════════════════
 let AUTH=null, DATA=null, CHART_DATA=null, FAILED_ALL=[], LOGS=[];
 let timer=null, chD=null, chS=null, chI=null;
-let KWS=[], showVol=false, curStep=1;
+let KWS=[], showVol=false, curStep=1, NO_PINS=[], NO_PINS_FILTERED=[];
 let NETWORKS=[];
 let CUR_NET=null; // current network
 let EK_RESULTS=[];
@@ -1013,6 +1064,16 @@ function loadFailed(){
 function loadPins(){
   if(!AUTH)return;
   api({action:'pins'}).then(d=>{if(d.ok)renderPins(d);}).catch(()=>{});
+}
+function loadNoPins(){
+  if(!AUTH)return;
+  api({action:'no_pins'}).then(d=>{
+    if(d.ok){
+      NO_PINS=d.articles||[];
+      el('pin-missing',N(NO_PINS.length));
+      renderNoPins(NO_PINS);
+    }
+  }).catch(()=>{});
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -1401,6 +1462,68 @@ async function createSite(){
   }).catch(e=>{toast('❌ '+e.message,'err');btn.disabled=false;btn.textContent='✅ Créer le site';});
 }
 
+// ══════════════════════════════════════════════════════════════════════════
+//  PINTEREST — Articles sans pins
+// ══════════════════════════════════════════════════════════════════════════
+function renderNoPins(list){
+  // Populate site filter
+  const sites=[...new Set(list.map(a=>a.site))].sort();
+  const sel=$('np-site');if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Tous les sites</option>'+sites.map(s=>`<option value="${s}">${s}</option>`).join('');
+  sel.value=cur;
+  filterNoPins();
+}
+function filterNoPins(){
+  const site=$('np-site').value;
+  const kw=($('np-kw').value||'').toLowerCase();
+  NO_PINS_FILTERED=NO_PINS.filter(a=>
+    (!site||a.site===site)&&
+    (!kw||a.keyword.toLowerCase().includes(kw)||a.id.toLowerCase().includes(kw))
+  );
+  const tbody=$('np-tbody'),empty=$('np-empty'),cnt=$('np-count');
+  if(!NO_PINS_FILTERED.length){
+    if(tbody)tbody.innerHTML='';
+    if(empty)empty.style.display='block';
+    if(cnt)cnt.textContent='';
+    return;
+  }
+  if(empty)empty.style.display='none';
+  if(cnt)cnt.textContent=NO_PINS_FILTERED.length+' article(s)';
+  if(tbody)tbody.innerHTML=NO_PINS_FILTERED.map(a=>`<tr>
+    <td><input type="checkbox" class="chk np-chk" value="${a.id}"></td>
+    <td style="font-family:monospace;font-size:10px;color:var(--muted)">${a.id}</td>
+    <td><span class="bdg by">${a.site}</span></td>
+    <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.keyword}</td>
+    <td style="font-size:11px;color:var(--muted)">${a.wp_post_id||'—'}</td>
+    <td style="font-size:11px;color:${SCOL[a.img_status]||'var(--muted)'}">${a.img_status||'—'}</td>
+    <td style="font-size:11px;color:var(--muted)">S${String(a.week||'?').padStart(2,'0')}</td>
+  </tr>`).join('');
+}
+function selNoPins(mode){
+  document.querySelectorAll('.np-chk').forEach(c=>{
+    c.checked=mode==='all'?true:mode==='none'?false:!c.checked;
+  });
+  const all=$('np-chk-all');if(all)all.checked=mode==='all';
+}
+function genPinsSelection(){
+  const ids=[...document.querySelectorAll('.np-chk:checked')].map(c=>c.value);
+  if(!ids.length){toast('Sélectionne au moins un article','info');return;}
+  if(!confirm(`Générer les pins pour ${ids.length} article(s) ?`))return;
+  addLog('run',`Génération pins: ${ids.length} article(s) sélectionnés`);
+  toast(`Génération pins: ${ids.length} article(s)…`,'info');
+  // Envoie les IDs à WF3a via Apps Script
+  api({action:'wf3_run_selection',ids:JSON.stringify(ids)}).then(d=>{
+    if(d.ok){
+      toast(`✅ WF3a lancé pour ${ids.length} article(s)`,'ok');
+      addLog('ok','WF3a lancé — '+ids.length+' articles');
+      setTimeout(()=>{loadPins();loadNoPins();},5000);
+    }else{
+      toast('❌ '+(d.error||'Erreur'),'err');
+      addLog('err','WF3a: '+(d.error||'Erreur'));
+    }
+  }).catch(e=>{toast('❌ '+e.message,'err');addLog('err',e.message);});
+}
 // ── Add keywords to existing site ──
 async function genEkH1s(){
   const site=$('ek-site').value;
@@ -1461,12 +1584,54 @@ function SN(name){
     if(ni)ni.className='nav-item'+(p===name?' on':'');
   });
   if(name==='failed')loadFailed();
-  if(name==='pins')loadPins();
+  if(name==='pins'){loadPins();loadNoPins();}
   if(name==='charts')renderCharts();
   if(name==='log')renderLog();
   if(name==='networks')renderNetworksList();
   if(name==='add-site'){KWS=[];curStep=1;goStep(1);}
   closeSidebar();// auto close on mobile
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  WF1 DIAGNOSTIC
+// ══════════════════════════════════════════════════════════════════════════
+function runDiag(){
+  const box=$('diag-result');
+  box.style.display='block';
+  box.innerHTML='<span class="spin"></span> Analyse des erreurs en cours...';
+  addLog('run','Diagnostic WF1');
+  api({action:'wf1_diagnostic'}).then(d=>{
+    if(!d.ok){box.innerHTML='<span style="color:var(--red)">❌ '+( d.error||'Erreur')+'</span>';return;}
+    const groups=d.error_groups||[];
+    let html='<div style="margin-bottom:10px">';
+    html+=`<span style="color:var(--red);font-weight:600">${d.failed} failed</span>`;
+    html+=` · <span style="color:var(--yellow)">${d.processing} processing</span>`;
+    html+='</div>';
+    if(d.recommendation&&d.recommendation!=='Aucun failed'){
+      html+=`<div style="background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.25);border-radius:6px;padding:10px;margin-bottom:10px;color:var(--yellow);line-height:1.5">`;
+      html+=`<strong>💡 Recommandation :</strong><br>${d.recommendation}</div>`;
+    }
+    if(groups.length){
+      html+='<div style="font-weight:600;margin-bottom:6px;color:var(--muted)">Groupes d'erreurs :</div>';
+      html+=groups.slice(0,5).map(g=>`
+        <div style="border:1px solid var(--border);border-radius:6px;padding:8px;margin-bottom:6px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-family:monospace;font-size:11px;color:var(--red);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${g.error}</span>
+            <span class="bdg br" style="margin-left:8px;flex-shrink:0">${g.count}</span>
+          </div>
+          <div style="font-size:10px;color:var(--muted)">
+            Exemples: ${g.examples.map(e=>`<span class="bdg by">${e.site}</span> ${e.keyword}`).join(' · ')}
+          </div>
+        </div>`).join('');
+    }else{
+      html+='<div style="color:var(--green)">✅ Aucun article en échec.</div>';
+    }
+    box.innerHTML=html;
+    addLog('ok',`Diag: ${d.failed} failed, ${groups.length} groupe(s) d'erreurs`);
+  }).catch(e=>{
+    box.innerHTML='<span style="color:var(--red)">❌ '+e.message+'</span>';
+    addLog('err','Diagnostic: '+e.message);
+  });
 }
 
 // ══════════════════════════════════════════════════════════════════════════
