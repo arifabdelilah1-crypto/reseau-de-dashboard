@@ -175,6 +175,34 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 .info-box{background:rgba(88,166,255,.06);border:1px solid rgba(88,166,255,.2);border-radius:var(--r);padding:12px;font-size:12px;color:var(--muted);line-height:1.6}
 .week-row{display:grid;grid-template-columns:52px 1fr 72px 52px;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid rgba(48,54,61,.6)}
 .week-row:last-child{border-bottom:none}
+/* Pinterest KPI panel */
+.kpi-hero{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.kpi-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kpi-color,var(--blue))}
+.kpi-val{font-size:26px;font-weight:800;line-height:1;letter-spacing:-1px;color:var(--kpi-color,var(--text))}
+.kpi-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px;font-weight:600}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:16px}
+.slot-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:10px}
+.slot-bar{height:6px;background:var(--s3);border-radius:3px;margin-top:6px;overflow:hidden}
+.slot-fill{height:100%;border-radius:3px;transition:width .6s}
+.slot-site{font-weight:700;font-size:12px;margin-bottom:4px}
+.slot-nums{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.popup-box{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:28px;width:100%;max-width:440px;box-shadow:0 24px 64px rgba(0,0,0,.5)}
+.popup-title{font-size:16px;font-weight:700;margin-bottom:18px}
+.popup-close{float:right;cursor:pointer;color:var(--muted);font-size:18px;line-height:1}
+.popup-close:hover{color:var(--text)}
+.heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.hm-cell{height:28px;border-radius:3px;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted);cursor:default;position:relative}
+.hm-cell:hover::after{content:attr(title);position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:#1c2128;border:1px solid var(--border);border-radius:5px;padding:4px 8px;font-size:10px;color:var(--text);white-space:nowrap;z-index:10}
+.site-table{width:100%;border-collapse:collapse;font-size:12px}
+.site-table th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.site-table td{padding:8px 10px;border-bottom:1px solid rgba(48,54,61,.5);vertical-align:middle}
+.site-table tr:hover td{background:rgba(255,255,255,.02)}
+.slot-pct{display:inline-block;width:50px;height:5px;background:var(--s3);border-radius:3px;overflow:hidden;vertical-align:middle;margin-left:6px}
+.slot-pct-fill{height:100%;border-radius:3px}
+.cost-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.2);border-radius:4px;padding:2px 7px;font-size:10px;color:var(--green);font-weight:600}
 @media(max-width:768px){
   :root{--sidebar:260px}
   .sidebar{position:fixed;top:54px;left:0;bottom:0;transform:translateX(-100%);box-shadow:4px 0 24px rgba(0,0,0,.4)}
@@ -231,6 +259,7 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
       <div class="ni" onclick="SN('charts')" id="ni-charts"><span class="ico">📈</span>Graphiques</div>
       <div class="ni" onclick="SN('weeks')" id="ni-weeks"><span class="ico">📅</span>Semaines</div>
       <div class="ni" onclick="SN('pins')" id="ni-pins"><span class="ico">📌</span>Pinterest</div>
+      <div class="ni" onclick="SN('pinterest-kpi')" id="ni-pinterest-kpi"><span class="ico">🎯</span>Pinterest KPIs</div>
       <div class="nsec">Sites</div>
       <div class="ni" onclick="SN('sites-list')" id="ni-sites-list"><span class="ico">🌐</span>Mes sites</div>
       <div class="ni" onclick="SN('add-site')" id="ni-add-site"><span class="ico">➕</span>Nouveau site</div>
@@ -642,6 +671,126 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
           </div>
           <div style="display:flex;justify-content:flex-end;margin-top:8px"><button class="btn btn-b" onclick="addNetwork()">➕ Ajouter</button></div>
         </div>
+      </div>
+
+      <!-- PINTEREST KPI -->
+      <div class="panel" id="tab-pinterest-kpi">
+        <div class="ph">
+          <div><div class="ph-t">Pinterest KPIs</div><div class="ph-s" id="pkpi-ts">—</div></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-ghost" onclick="loadPinterestKPI()">↻ Refresh</button>
+            <button class="btn btn-b" onclick="showPopupWF5()">▶ Générer pins</button>
+            <button class="btn btn-ghost" onclick="showPopupCout()">⚙ Coût GPU</button>
+          </div>
+        </div>
+
+        <!-- KPI HERO -->
+        <div class="kpi-hero" id="pkpi-cards">
+          <div class="kpi-card" style="--kpi-color:var(--blue)"><div class="kpi-lbl">Slots utilisés</div><div class="kpi-val" id="pk-slots-used">—</div><div class="kpi-sub">sur 200 total Blotato</div></div>
+          <div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-lbl">Pins aujourd'hui</div><div class="kpi-val" id="pk-today">—</div><div class="kpi-sub" id="pk-today-max">/ 130 max (13×10)</div></div>
+          <div class="kpi-card" style="--kpi-color:var(--purple)"><div class="kpi-lbl">Articles couverts</div><div class="kpi-val" id="pk-covered">—</div><div class="kpi-sub">ce mois / ~1300</div></div>
+          <div class="kpi-card" style="--kpi-color:var(--yellow)"><div class="kpi-lbl">Pins schedulés</div><div class="kpi-val" id="pk-scheduled">—</div><div class="kpi-sub">en attente publication</div></div>
+          <div class="kpi-card" style="--kpi-color:var(--teal)"><div class="kpi-lbl">Pins publiés</div><div class="kpi-val" id="pk-published">—</div><div class="kpi-sub">ce mois</div></div>
+          <div class="kpi-card" style="--kpi-color:var(--red)"><div class="kpi-lbl">Coût GPU</div><div class="kpi-val" id="pk-cost">—</div><div class="kpi-sub">MAD ce mois <span id="pk-cost-per">@ 1.2 MAD/pin</span></div></div>
+          <div class="kpi-card" style="--kpi-color:var(--blue)"><div class="kpi-lbl">Projection fin mois</div><div class="kpi-val" id="pk-proj">—</div><div class="kpi-sub">pins publiés estimés</div></div>
+          <div class="kpi-card" style="--kpi-color:var(--yellow)"><div class="kpi-lbl">Slots libres</div><div class="kpi-val" id="pk-free">—</div><div class="kpi-sub">disponibles maintenant</div></div>
+        </div>
+
+        <!-- BARRE GLOBALE -->
+        <div class="card mb">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-size:12px;font-weight:600">Queue Blotato globale</div>
+            <span id="pk-queue-pct" class="bdg bb">—%</span>
+          </div>
+          <div class="pbar"><div class="pfill" id="pk-queue-bar" style="background:var(--blue)"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px">
+            <span id="pk-queue-used">—</span><span>Limite : 200 slots Starter</span>
+          </div>
+        </div>
+
+        <!-- SLOTS PAR SITE -->
+        <div class="card mb">
+          <div class="sh"><div class="sh-t">Slots par compte Pinterest</div><span id="pk-slots-ts" style="font-size:11px;color:var(--muted)">—</span></div>
+          <div class="slot-grid" id="pk-slots-grid">
+            <div style="color:var(--muted);font-size:12px;padding:10px">Chargement...</div>
+          </div>
+        </div>
+
+        <!-- TABLE PAR SITE -->
+        <div class="card mb">
+          <div class="sh"><div class="sh-t">Performance par site — mois en cours</div></div>
+          <div style="overflow-x:auto">
+            <table class="site-table" id="pk-site-table">
+              <thead><tr>
+                <th>Site</th><th>Schedulés</th><th>Publiés</th><th>Pending</th>
+                <th>Slots dispo</th><th>Couverture</th><th>Statut</th>
+              </tr></thead>
+              <tbody id="pk-site-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">Chargement...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- HEATMAP 30 JOURS -->
+        <div class="card mb">
+          <div class="sh"><div class="sh-t">Heatmap 30 jours</div><div style="display:flex;gap:10px;font-size:10px;color:var(--muted)"><span>🟥 Vide</span><span>🟨 Partiel</span><span>🟩 Plein</span></div></div>
+          <div class="heatmap" id="pk-heatmap"></div>
+          <div style="display:flex;gap:4px;margin-top:8px;flex-wrap:wrap" id="pk-heatmap-labels"></div>
+        </div>
+
+        <!-- POPUP WF5 -->
+        <div class="popup-overlay" id="popup-wf5" style="display:none" onclick="if(event.target===this)closePopupWF5()">
+          <div class="popup-box">
+            <span class="popup-close" onclick="closePopupWF5()">×</span>
+            <div class="popup-title">▶ Générer pins Pinterest</div>
+            <div class="field">
+              <label>URL du Pod RunPod *</label>
+              <input class="fi" id="pop-pod-url" placeholder="https://xxxxxxxx-8000.proxy.runpod.net/" style="font-family:monospace;font-size:11px">
+              <div style="font-size:10px;color:var(--muted);margin-top:3px">Nouvelle URL à chaque démarrage du pod</div>
+            </div>
+            <div class="field">
+              <label>Sites à traiter</label>
+              <div id="pop-sites-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:5px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:10px"></div>
+              <div style="display:flex;gap:6px;margin-top:6px">
+                <button class="btn btn-ghost" style="padding:3px 8px;font-size:11px" onclick="selPopSites('all')">Tous</button>
+                <button class="btn btn-ghost" style="padding:3px 8px;font-size:11px" onclick="selPopSites('none')">Aucun</button>
+              </div>
+            </div>
+            <div class="field">
+              <label>Pins par article</label>
+              <select class="fi" id="pop-nb-pins">
+                <option value="5">5 pins</option>
+                <option value="10" selected>10 pins</option>
+                <option value="15">15 pins</option>
+                <option value="20">20 pins</option>
+              </select>
+            </div>
+            <div style="background:var(--s2);border-radius:var(--r);padding:10px;font-size:11px;color:var(--muted);margin-bottom:14px">
+              💡 L'URL sera sauvegardée pour cette session. Le workflow va générer les images en 1000×1500 et les programmer sur Blotato.
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end">
+              <button class="btn btn-ghost" onclick="closePopupWF5()">Annuler</button>
+              <button class="btn btn-g btn-lg" id="pop-run-btn" onclick="runWF5FromDashboard()">▶ Lancer WF5</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- POPUP COÛT -->
+        <div class="popup-overlay" id="popup-cout" style="display:none" onclick="if(event.target===this)closePopupCout()">
+          <div class="popup-box" style="max-width:340px">
+            <span class="popup-close" onclick="closePopupCout()">×</span>
+            <div class="popup-title">⚙ Paramètres coût GPU</div>
+            <div class="field">
+              <label>Coût par pin (MAD)</label>
+              <input class="fi" id="pop-cout-val" type="number" step="0.1" value="1.2" placeholder="1.2">
+              <div style="font-size:10px;color:var(--muted);margin-top:3px">Pod RunPod ~1$/h ÷ ~83 pins/h ≈ 1.2 MAD/pin</div>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
+              <button class="btn btn-ghost" onclick="closePopupCout()">Annuler</button>
+              <button class="btn btn-b" onclick="saveCoutGPU()">Sauvegarder</button>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- JOURNAL -->
@@ -1371,7 +1520,7 @@ function renderLog() {
 }
 
 // ─── NAV ──────────────────────────────────────────────────────────────────────
-var PANELS = ['overview','control','failed','charts','weeks','pins','sites-list','add-site','add-kw','networks','log'];
+var PANELS = ['overview','control','failed','charts','weeks','pins','pinterest-kpi','sites-list','add-site','add-kw','networks','log'];
 function SN(name) {
   PANELS.forEach(function(p) {
     var t = g('tab-' + p), ni = g('ni-' + p);
@@ -1380,6 +1529,7 @@ function SN(name) {
   });
   if (name === 'failed') loadFailed();
   if (name === 'pins') { loadPins(); loadNoPins(); }
+  if (name === 'pinterest-kpi') loadPinterestKPI();
   if (name === 'charts') renderCharts();
   if (name === 'log') renderLog();
   if (name === 'networks') renderNetworksList();
@@ -1410,6 +1560,191 @@ function showToast(msg, type) {
   setTimeout(function() { if (e.parentNode) e.parentNode.removeChild(e); }, 4500);
 }
 
+// ─── PINTEREST KPI ────────────────────────────────────────────────────────────
+var PINTEREST_KPI_DATA = null;
+var SLOTS_DATA = null;
+var COUT_PAR_PIN = 1.2;
+var POD_URL_CACHE = '';
+var SITES_ACCOUNTS = {
+  foodzauber:'7144',kochliebe:'7122',rezeptflow:'7142',schnelllecker:'7149',
+  rezeptnest:'7118',yumrezept:'7143',airfryer:'7643',plaetzchen:'7117',
+  zimtschnecken:'7324',waffeln:'9599',kaesekuchen:'7228',gulasch:'7325',pfannkuchen:'7841'
+};
+
+function loadPinterestKPI() {
+  setText('pkpi-ts', 'Chargement...');
+  // Load PinBulk stats
+  callAPI({ action: 'pinbulk_stats' }).then(function(d) {
+    if (!d.ok) return;
+    PINTEREST_KPI_DATA = d;
+    renderPinterestKPI(d);
+  }).catch(function() {});
+  // Load Blotato slots
+  callAPI({ action: 'blotato_slots' }).then(function(d) {
+    if (!d.ok) return;
+    SLOTS_DATA = d.slots;
+    renderSlotsGrid(d.slots);
+    renderSiteTable(PINTEREST_KPI_DATA, d.slots);
+    setText('pk-slots-ts', 'Actualisé ' + new Date().toLocaleTimeString('fr-FR'));
+  }).catch(function() {});
+  // Get saved pod URL
+  callAPI({ action: 'get_pod_url' }).then(function(d) {
+    if (d.ok && d.pod_url) { POD_URL_CACHE = d.pod_url; var inp = g('pop-pod-url'); if (inp) inp.value = d.pod_url; }
+  }).catch(function() {});
+}
+
+function renderPinterestKPI(d) {
+  var total = d.total || 0;
+  var sched = d.scheduled || 0;
+  var pub   = d.published || 0;
+  var pend  = d.pending || 0;
+  var cout  = d.cout_total || 0;
+  // Count slots used
+  var slotsUsed = 0;
+  var slotsFree = 0;
+  if (SLOTS_DATA) {
+    Object.values(SLOTS_DATA).forEach(function(s) { slotsUsed += s.scheduled||0; slotsFree += s.disponibles||0; });
+  }
+  // Articles covered = scheduled + published in PinBulk
+  var covered = 0;
+  var parSite = d.par_site || {};
+  Object.values(parSite).forEach(function(s) { if ((s.scheduled||0)+(s.published||0) > 0) covered++; });
+
+  setText('pk-slots-used', N(slotsUsed));
+  setText('pk-today', N(pub));
+  setText('pk-covered', N(covered));
+  setText('pk-scheduled', N(sched));
+  setText('pk-published', N(pub));
+  setText('pk-cost', N(Math.round(cout)) + ' MAD');
+  setText('pk-cost-per', '@ ' + COUT_PAR_PIN + ' MAD/pin');
+  setText('pk-free', N(slotsFree));
+  // Projection
+  var today = new Date().getDate();
+  var daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth()+1, 0).getDate();
+  var proj = today > 0 ? Math.round(pub / today * daysInMonth) : 0;
+  setText('pk-proj', N(proj));
+  // Queue bar
+  var qPct = Math.round(slotsUsed / 200 * 100);
+  setText('pk-queue-used', slotsUsed + ' / 200 slots utilisés');
+  setText('pk-queue-pct', qPct + '%');
+  setBar('pk-queue-bar', Math.min(100, qPct));
+  g('pk-queue-bar').style.background = qPct > 90 ? 'var(--red)' : qPct > 70 ? 'var(--yellow)' : 'var(--green)';
+  setText('pkpi-ts', 'Actualisé ' + new Date().toLocaleTimeString('fr-FR'));
+  renderSiteTable(d, SLOTS_DATA);
+  renderHeatmap();
+}
+
+function renderSlotsGrid(slots) {
+  var grid = g('pk-slots-grid'); if (!grid) return;
+  grid.innerHTML = Object.entries(slots || {}).map(function(kv) {
+    var site = kv[0], s = kv[1];
+    var sched = s.scheduled || 0;
+    var dispo = s.disponibles || 0;
+    var pct   = Math.round(sched / 10 * 100);
+    var col   = pct >= 100 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+    return '<div class="slot-card">'
+      + '<div class="slot-site">' + site + '</div>'
+      + '<div class="slot-nums"><span style="color:var(--blue)">' + sched + ' schedulés</span><span style="color:var(--green)">' + dispo + ' libres</span></div>'
+      + '<div class="slot-bar"><div class="slot-fill" style="width:' + pct + '%;background:' + col + '"></div></div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderSiteTable(d, slots) {
+  var tbody = g('pk-site-tbody'); if (!tbody) return;
+  var parSite = (d && d.par_site) || {};
+  var allSites = Object.keys(SITES_ACCOUNTS);
+  tbody.innerHTML = allSites.map(function(site) {
+    var s = parSite[site] || { pending:0, scheduled:0, published:0, total:0 };
+    var sl = (slots && slots[site]) || { scheduled:0, disponibles:10 };
+    var slotPct = Math.round(sl.scheduled / 10 * 100);
+    var coverPct = Math.round(((s.scheduled||0)+(s.published||0)) / 100 * 100);
+    var statut = slotPct >= 100 ? '<span class="bdg bg">🟢 Plein</span>'
+               : slotPct >= 50  ? '<span class="bdg by">🟡 Partiel</span>'
+               : '<span class="bdg br">🔴 Vide</span>';
+    return '<tr>'
+      + '<td style="font-weight:600">' + site + '</td>'
+      + '<td style="color:var(--blue)">' + N(s.scheduled||0) + '</td>'
+      + '<td style="color:var(--green)">' + N(s.published||0) + '</td>'
+      + '<td style="color:var(--muted)">' + N(s.pending||0) + '</td>'
+      + '<td>' + sl.disponibles + '/10'
+      + '<span class="slot-pct"><span class="slot-pct-fill" style="width:' + slotPct + '%;background:' + (slotPct>=100?'var(--green)':slotPct>=50?'var(--yellow)':'var(--red)') + '"></span></span></td>'
+      + '<td>' + coverPct + '%</td>'
+      + '<td>' + statut + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+function renderHeatmap() {
+  var hm = g('pk-heatmap'); if (!hm) return;
+  var cells = [];
+  var today = new Date();
+  for (var i = 29; i >= 0; i--) {
+    var d = new Date(today.getTime() - i * 86400000);
+    var label = (d.getMonth()+1) + '/' + d.getDate();
+    // Without real daily data, show empty cells
+    var pct = 0;
+    var col = pct >= 100 ? '#3fb950' : pct >= 50 ? '#d29922' : pct > 0 ? '#1f6feb' : '#21262d';
+    cells.push('<div class="hm-cell" style="background:' + col + '" title="' + label + ' — ' + pct + ' pins">' + d.getDate() + '</div>');
+  }
+  hm.innerHTML = cells.join('');
+}
+
+// ─── POPUP WF5 ─────────────────────────────────────────────────────────────
+function showPopupWF5() {
+  // Populate sites checkboxes
+  var grid = g('pop-sites-grid'); if (!grid) return;
+  grid.innerHTML = Object.keys(SITES_ACCOUNTS).map(function(s) {
+    return '<div style="display:flex;align-items:center;gap:5px">'
+      + '<input type="checkbox" class="chk pop-site-chk" id="psc-'+s+'" value="'+s+'" checked>'
+      + '<label for="psc-'+s+'" style="font-size:11px;cursor:pointer">'+s+'</label></div>';
+  }).join('');
+  // Pre-fill pod URL
+  var inp = g('pop-pod-url');
+  if (inp && POD_URL_CACHE) inp.value = POD_URL_CACHE;
+  g('popup-wf5').style.display = 'flex';
+}
+function closePopupWF5() { g('popup-wf5').style.display = 'none'; }
+function selPopSites(mode) {
+  document.querySelectorAll('.pop-site-chk').forEach(function(c) { c.checked = mode === 'all'; });
+}
+function runWF5FromDashboard() {
+  var podUrl = (g('pop-pod-url') || {}).value || '';
+  var sites = [];
+  document.querySelectorAll('.pop-site-chk:checked').forEach(function(c) { sites.push(c.value); });
+  var nbPins = (g('pop-nb-pins') || {}).value || '10';
+  if (!podUrl || !podUrl.startsWith('http')) { showToast('Saisis une URL de pod valide', 'err'); return; }
+  if (!sites.length) { showToast('Sélectionne au moins un site', 'err'); return; }
+  var btn = g('pop-run-btn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Lancement...';
+  POD_URL_CACHE = podUrl;
+  callAPI({ action: 'run_wf5', pod_url: podUrl, sites: JSON.stringify(sites), nb_pins: nbPins }).then(function(d) {
+    if (d.ok) {
+      showToast('✅ WF5 lancé pour ' + sites.length + ' site(s)', 'ok');
+      addLog('ok', 'WF5 lancé — ' + sites.length + ' sites, ' + nbPins + ' pins/article');
+      closePopupWF5();
+    } else {
+      showToast('❌ ' + (d.error || 'Erreur'), 'err');
+    }
+    btn.disabled = false; btn.textContent = '▶ Lancer WF5';
+  }).catch(function(e) {
+    showToast('❌ ' + e.message, 'err');
+    btn.disabled = false; btn.textContent = '▶ Lancer WF5';
+  });
+}
+// ─── POPUP COÛT ────────────────────────────────────────────────────────────
+function showPopupCout() { var inp = g('pop-cout-val'); if (inp) inp.value = COUT_PAR_PIN; g('popup-cout').style.display = 'flex'; }
+function closePopupCout() { g('popup-cout').style.display = 'none'; }
+function saveCoutGPU() {
+  var val = parseFloat((g('pop-cout-val') || {}).value || '1.2');
+  if (isNaN(val) || val <= 0) { showToast('Valeur invalide', 'err'); return; }
+  COUT_PAR_PIN = val;
+  localStorage.setItem('cout_par_pin', val);
+  showToast('Coût GPU mis à jour : ' + val + ' MAD/pin', 'ok');
+  closePopupCout();
+  if (PINTEREST_KPI_DATA) renderPinterestKPI(PINTEREST_KPI_DATA);
+}
+
 // ─── BOOT (runs last, after all functions defined) ────────────────────────────
 window.addEventListener('load', function() {
   // Restore session if exists
@@ -1422,6 +1757,7 @@ window.addEventListener('load', function() {
     } catch(e) { sessionStorage.removeItem('rde'); }
   }
   // Enter key on login
+  COUT_PAR_PIN = parseFloat(localStorage.getItem('cout_par_pin') || '1.2') || 1.2;
   var pw = g('pw'); if (pw) pw.addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
   var uu = g('u');  if (uu) uu.addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
   // Auto-login if session exists
