@@ -1705,7 +1705,6 @@ function runWF5FromDashboard() {
   if (!sites.length) { showToast('Sélectionne au moins un site', 'err'); return; }
   var btn = g('pop-run-btn');
   btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Lancement...';
-  // Appel via GAS (proxy server-side → pas de CORS)
   callAPI({ action: 'run_wf5', sites: JSON.stringify(sites), nb_pins: parseInt(nbPins) || 2 })
     .then(function(d) {
       if (d.ok) {
@@ -1724,7 +1723,8 @@ function runWF5FromDashboard() {
       btn.disabled = false; btn.textContent = '▶ Lancer WF5';
     });
 }
-// ─── POPUP COÛT ────────────────────────────────────────────────────────────
+  
+  // ─── POPUP COÛT ────────────────────────────────────────────────────────────
 function showPopupCout() { var inp = g('pop-cout-val'); if (inp) inp.value = COUT_PAR_PIN; g('popup-cout').style.display = 'flex'; }
 function closePopupCout() { g('popup-cout').style.display = 'none'; }
 function saveCoutGPU() {
