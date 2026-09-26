@@ -1705,17 +1705,28 @@ function runWF5FromDashboard() {
   if (!sites.length) { showToast('Sélectionne au moins un site', 'err'); return; }
   var btn = g('pop-run-btn');
   btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Lancement...';
-  callAPI({ action: 'run_wf5', sites: JSON.stringify(sites), nb_pins: nbPins }).then(function(d) {
-    if (d.ok) {
-      showToast('✅ WF5 lancé pour ' + sites.length + ' site(s)', 'ok');
-      addLog('ok', 'WF5 lancé — ' + sites.length + ' sites, ' + nbPins + ' pins/article (PinBulk pending)');
-      closePopupWF5();
-    } else {
-      showToast('❌ ' + (d.error || 'Erreur WF5'), 'err');
-    }
+  // Appel direct au webhook n8n WF5 (bypass GAS — plus fiable)
+  var WF5_WEBHOOK = 'https://n8n.homerecipe.casa/webhook/wf5-pinterest-massif';
+  var payload = { sites: sites, nb_pins: parseInt(nbPins) || 2, source: 'dashboard' };
+  fetch(WF5_WEBHOOK, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(function(r) {
+    // n8n webhook répond 200 même si le body n'est pas JSON → on accepte les deux
+    if (r.ok) return r.text().then(function(t) { try { return JSON.parse(t); } catch(e) { return { ok: true }; } });
+    return r.text().then(function(t) { throw new Error('n8n HTTP ' + r.status + ': ' + t.slice(0, 120)); });
+  })
+  .then(function(d) {
+    showToast('✅ WF5 lancé pour ' + sites.length + ' site(s)', 'ok');
+    addLog('ok', 'WF5 lancé — ' + sites.length + ' sites, ' + nbPins + ' pins/article (PinBulk pending)');
+    closePopupWF5();
     btn.disabled = false; btn.textContent = '▶ Lancer WF5';
-  }).catch(function(e) {
+  })
+  .catch(function(e) {
     showToast('❌ ' + e.message, 'err');
+    addLog('err', 'WF5 erreur: ' + e.message);
     btn.disabled = false; btn.textContent = '▶ Lancer WF5';
   });
 }
