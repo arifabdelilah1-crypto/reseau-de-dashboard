@@ -741,12 +741,7 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
         <div class="popup-overlay" id="popup-wf5" style="display:none" onclick="if(event.target===this)closePopupWF5()">
           <div class="popup-box">
             <span class="popup-close" onclick="closePopupWF5()">×</span>
-            <div class="popup-title">▶ Générer pins Pinterest</div>
-            <div class="field">
-              <label>URL du Pod RunPod *</label>
-              <input class="fi" id="pop-pod-url" placeholder="https://xxxxxxxx-8000.proxy.runpod.net/" style="font-family:monospace;font-size:11px">
-              <div style="font-size:10px;color:var(--muted);margin-top:3px">Nouvelle URL à chaque démarrage du pod</div>
-            </div>
+            <div class="popup-title">📌 Générer pins Pinterest</div>
             <div class="field">
               <label>Sites à traiter</label>
               <div id="pop-sites-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:5px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:10px"></div>
@@ -756,16 +751,17 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
               </div>
             </div>
             <div class="field">
-              <label>Pins par article</label>
+              <label>Pins par article (max depuis PinBulk pending)</label>
               <select class="fi" id="pop-nb-pins">
+                <option value="1">1 pin</option>
+                <option value="2" selected>2 pins</option>
+                <option value="3">3 pins</option>
                 <option value="5">5 pins</option>
-                <option value="10" selected>10 pins</option>
-                <option value="15">15 pins</option>
-                <option value="20">20 pins</option>
+                <option value="10">10 pins</option>
               </select>
             </div>
             <div style="background:var(--s2);border-radius:var(--r);padding:10px;font-size:11px;color:var(--muted);margin-bottom:14px">
-              💡 L'URL sera sauvegardée pour cette session. Le workflow va générer les images en 1000×1500 et les programmer sur Blotato.
+              💡 WF5 lit les lignes <strong>pending</strong> dans PinBulk, génère les images via templates HTML (VDS), puis programme sur Blotato. Aucun GPU nécessaire.
             </div>
             <div style="display:flex;gap:8px;justify-content:flex-end">
               <button class="btn btn-ghost" onclick="closePopupWF5()">Annuler</button>
@@ -782,7 +778,7 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
             <div class="field">
               <label>Coût par pin (MAD)</label>
               <input class="fi" id="pop-cout-val" type="number" step="0.1" value="1.2" placeholder="1.2">
-              <div style="font-size:10px;color:var(--muted);margin-top:3px">Pod RunPod ~1$/h ÷ ~83 pins/h ≈ 1.2 MAD/pin</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:3px">VDS HTML templates (interne) ≈ 0.3 MAD/pin</div>
             </div>
             <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
               <button class="btn btn-ghost" onclick="closePopupCout()">Annuler</button>
@@ -1564,7 +1560,7 @@ function showToast(msg, type) {
 var PINTEREST_KPI_DATA = null;
 var SLOTS_DATA = null;
 var COUT_PAR_PIN = 1.2;
-var POD_URL_CACHE = '';
+// POD_URL_CACHE removed (no GPU)
 var SITES_ACCOUNTS = {
   foodzauber:'7144',kochliebe:'7122',rezeptflow:'7142',schnelllecker:'7149',
   rezeptnest:'7118',yumrezept:'7143',airfryer:'7643',plaetzchen:'7117',
@@ -1586,10 +1582,6 @@ function loadPinterestKPI() {
     renderSlotsGrid(d.slots);
     renderSiteTable(PINTEREST_KPI_DATA, d.slots);
     setText('pk-slots-ts', 'Actualisé ' + new Date().toLocaleTimeString('fr-FR'));
-  }).catch(function() {});
-  // Get saved pod URL
-  callAPI({ action: 'get_pod_url' }).then(function(d) {
-    if (d.ok && d.pod_url) { POD_URL_CACHE = d.pod_url; var inp = g('pop-pod-url'); if (inp) inp.value = d.pod_url; }
   }).catch(function() {});
 }
 
@@ -1700,8 +1692,6 @@ function showPopupWF5() {
       + '<label for="psc-'+s+'" style="font-size:11px;cursor:pointer">'+s+'</label></div>';
   }).join('');
   // Pre-fill pod URL
-  var inp = g('pop-pod-url');
-  if (inp && POD_URL_CACHE) inp.value = POD_URL_CACHE;
   g('popup-wf5').style.display = 'flex';
 }
 function closePopupWF5() { g('popup-wf5').style.display = 'none'; }
@@ -1709,22 +1699,19 @@ function selPopSites(mode) {
   document.querySelectorAll('.pop-site-chk').forEach(function(c) { c.checked = mode === 'all'; });
 }
 function runWF5FromDashboard() {
-  var podUrl = (g('pop-pod-url') || {}).value || '';
   var sites = [];
   document.querySelectorAll('.pop-site-chk:checked').forEach(function(c) { sites.push(c.value); });
-  var nbPins = (g('pop-nb-pins') || {}).value || '10';
-  if (!podUrl || !podUrl.startsWith('http')) { showToast('Saisis une URL de pod valide', 'err'); return; }
+  var nbPins = (g('pop-nb-pins') || {}).value || '2';
   if (!sites.length) { showToast('Sélectionne au moins un site', 'err'); return; }
   var btn = g('pop-run-btn');
   btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Lancement...';
-  POD_URL_CACHE = podUrl;
-  callAPI({ action: 'run_wf5', pod_url: podUrl, sites: JSON.stringify(sites), nb_pins: nbPins }).then(function(d) {
+  callAPI({ action: 'run_wf5', sites: JSON.stringify(sites), nb_pins: nbPins }).then(function(d) {
     if (d.ok) {
       showToast('✅ WF5 lancé pour ' + sites.length + ' site(s)', 'ok');
-      addLog('ok', 'WF5 lancé — ' + sites.length + ' sites, ' + nbPins + ' pins/article');
+      addLog('ok', 'WF5 lancé — ' + sites.length + ' sites, ' + nbPins + ' pins/article (PinBulk pending)');
       closePopupWF5();
     } else {
-      showToast('❌ ' + (d.error || 'Erreur'), 'err');
+      showToast('❌ ' + (d.error || 'Erreur WF5'), 'err');
     }
     btn.disabled = false; btn.textContent = '▶ Lancer WF5';
   }).catch(function(e) {
