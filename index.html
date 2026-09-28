@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Réseau DE</title>
+<title>Réseau DE — Pilotage</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{--bg:#0d1117;--s1:#161b22;--s2:#21262d;--s3:#2d333b;--border:#30363d;--border2:#444c56;--text:#e6edf3;--muted:#8b949e;--hint:#484f58;--green:#3fb950;--blue:#58a6ff;--yellow:#d29922;--red:#f85149;--purple:#bc8cff;--teal:#39d353;--r:8px;--r2:12px;--font:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -214,6 +214,34 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
   .rtime{display:none}
 }
 @media(max-width:480px){.g4{grid-template-columns:1fr 1fr}}
+
+/* ── v3 ─────────────────────────────────────────── */
+.mt{margin-top:14px}.mt6{margin-top:8px}.mb6{margin-bottom:8px}
+.tile .bignum{font-size:24px}
+.chw{position:relative;height:240px}.chw.tall{height:380px}
+.lgd{display:flex;gap:12px;flex-wrap:wrap}.li2{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.li2 i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tbl .r{text-align:right;white-space:nowrap}.tbl .c{text-align:center}.tbl .b{font-weight:700}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;white-space:nowrap}
+.hint{color:var(--hint)}
+.mbar{height:4px;background:var(--s3);border-radius:2px;overflow:hidden;margin-top:4px;min-width:60px}.mbar i{display:block;height:100%;border-radius:2px}
+.splitbar{display:flex;height:14px;border-radius:4px;overflow:hidden;gap:2px;margin-bottom:10px;background:var(--s1)}
+.splitbar span{display:block;height:100%}
+.heat td.hc{min-width:34px;padding:6px 4px;font-weight:600;font-size:11px;border:2px solid var(--s1)}
+.heat th.c{font-size:10px;padding:6px 4px}.heat sup{font-size:9px;margin-left:2px;opacity:.85}
+.g2f{align-items:start}
+.autobox{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px}
+@media(max-width:480px){.rtime{display:none}.logo{font-size:13px}.ns{max-width:118px}.topbar{gap:8px;padding:0 10px}.tbr{gap:6px}}
+.fs{width:auto;min-width:150px;padding:6px 9px;font-size:12px}
+.bxs{padding:3px 8px;font-size:11px}
+.btn-ghost.on{color:var(--blue);border-color:var(--blue)}
+.empty{padding:22px;text-align:center;color:var(--muted);font-size:12px}.empty.err{color:var(--red)}
+.warn{color:var(--yellow);margin-top:6px}.ok{color:var(--green)}
+.podrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}.podrow .fi{flex:1;min-width:220px;font-family:ui-monospace,Menlo,monospace;font-size:12px}
+.diag{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:10px}
+.tbl a{color:var(--blue);text-decoration:none}.tbl a:hover{text-decoration:underline}
+@media(max-width:900px){.g2f{grid-template-columns:1fr}.chw{height:200px}.chw.tall{height:320px}}
 </style>
 </head>
 <body>
@@ -253,201 +281,239 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
     <nav class="sidebar" id="sidebar">
       <div class="nsec">Production</div>
-      <div class="ni on" onclick="SN('overview')" id="ni-overview"><span class="ico">📊</span>Vue d'ensemble</div>
-      <div class="ni" onclick="SN('control')" id="ni-control"><span class="ico">⚙️</span>Contrôle WF</div>
+      <div class="ni on" onclick="SN('kpi')" id="ni-kpi"><span class="ico">📊</span>KPI &amp; coûts</div>
+      <div class="ni" onclick="SN('articles')" id="ni-articles"><span class="ico">📝</span>Articles · WF1</div>
+      <div class="ni" onclick="SN('images')" id="ni-images"><span class="ico">🖼️</span>Images · WF2</div>
+      <div class="ni" onclick="SN('pinterest')" id="ni-pinterest"><span class="ico">📌</span>Pinterest</div>
+      <div class="ni" onclick="SN('planning')" id="ni-planning"><span class="ico">📅</span>Planning Blotato</div>
       <div class="ni" onclick="SN('failed')" id="ni-failed"><span class="ico">⚠️</span>Échecs<span class="nbadge" id="nb-failed" style="display:none">0</span></div>
-      <div class="ni" onclick="SN('charts')" id="ni-charts"><span class="ico">📈</span>Graphiques</div>
-      <div class="ni" onclick="SN('weeks')" id="ni-weeks"><span class="ico">📅</span>Semaines</div>
-      <div class="ni" onclick="SN('pins')" id="ni-pins"><span class="ico">📌</span>Pinterest</div>
-      <div class="ni" onclick="SN('pinterest-kpi')" id="ni-pinterest-kpi"><span class="ico">🎯</span>Pinterest KPIs</div>
       <div class="nsec">Sites</div>
-      <div class="ni" onclick="SN('sites-list')" id="ni-sites-list"><span class="ico">🌐</span>Mes sites</div>
       <div class="ni" onclick="SN('add-site')" id="ni-add-site"><span class="ico">➕</span>Nouveau site</div>
       <div class="ni" onclick="SN('add-kw')" id="ni-add-kw"><span class="ico">🔑</span>Ajouter keywords</div>
       <div class="nsec">Système</div>
+      <div class="ni" onclick="SN('costs-cfg')" id="ni-costs-cfg"><span class="ico">💰</span>Coûts unitaires</div>
       <div class="ni" onclick="SN('networks')" id="ni-networks"><span class="ico">🔗</span>Réseaux</div>
       <div class="ni" onclick="SN('log')" id="ni-log"><span class="ico">📋</span>Journal</div>
     </nav>
     <main class="content" id="main-content">
-
-      <!-- OVERVIEW -->
-      <div class="panel on" id="tab-overview">
+      <!-- ═══════════════ KPI & COÛTS ═══════════════ -->
+      <div class="panel on" id="tab-kpi">
         <div class="ph">
-          <div><div class="ph-t" id="ov-title">Vue d'ensemble</div><div class="ph-s" id="ov-ts">—</div></div>
-          <button class="btn btn-ghost" onclick="loadData()"><span class="spin" id="ov-spin" style="display:none"></span> Actualiser</button>
+          <div><div class="ph-t">KPI &amp; coûts</div><div class="ph-s" id="kpi-ts">Chargement…</div></div>
+          <button class="btn btn-ghost" onclick="SN('costs-cfg')">⚙ Coûts unitaires</button>
         </div>
-        <div class="g4 mb">
-          <div class="card"><div class="ct">Total</div><div class="bignum" style="color:var(--blue)" id="ov-total">—</div><div class="sub" id="ov-sub">—</div></div>
-          <div class="card"><div class="ct">Publiés</div><div class="bignum" style="color:var(--green)" id="ov-pub">—</div><div class="sub" id="ov-pub-s">—</div><div class="pbar"><div class="pfill" id="pb-pub" style="background:var(--green)"></div></div></div>
-          <div class="card"><div class="ct">Images</div><div class="bignum" style="color:var(--blue)" id="ov-img">—</div><div class="sub" id="ov-img-s">—</div><div class="pbar"><div class="pfill" id="pb-img" style="background:var(--blue)"></div></div></div>
-          <div class="card"><div class="ct">Pins</div><div class="bignum" style="color:var(--purple)" id="ov-pins">—</div><div class="sub" id="ov-pins-s">—</div></div>
-          <div class="card"><div class="ct">Volume</div><div class="bignum" style="color:var(--teal)" id="ov-vol">—</div><div class="sub" id="ov-vol-s">—</div></div>
-          <div class="card"><div class="ct">GPU</div><div class="bignum" style="color:var(--yellow)" id="ov-gpu">—</div><div class="sub">en génération</div></div>
-          <div class="card"><div class="ct">Envoi WP</div><div class="bignum" style="color:var(--teal)" id="ov-up">—</div><div class="sub">en transfert</div></div>
-          <div class="card"><div class="ct">Échecs</div><div class="bignum" style="color:var(--red)" id="ov-err">—</div><div class="sub" id="ov-err-s">—</div></div>
+        <div class="g4" id="kpi-tiles"></div>
+
+        <div class="g2f mt">
+          <div class="card">
+            <div class="sh"><div class="sh-t">Coût par jour (30 jours)</div><div class="lgd" id="lg-cost"></div></div>
+            <div class="chw"><canvas id="ch-cost"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="sh"><div class="sh-t">Répartition du coût total</div></div>
+            <div id="cost-split"></div>
+          </div>
         </div>
-        <div class="g2">
-          <div class="card"><div class="ct">Statut contenu</div><div id="st-c"></div></div>
-          <div class="card"><div class="ct">Statut images</div><div id="st-i"></div></div>
+
+        <div class="card mt">
+          <div class="sh"><div class="sh-t">Pipeline par site</div><div class="ph-s">articles → images → pins</div></div>
+          <div class="tw"><table class="tbl" id="tbl-pipeline"></table></div>
         </div>
       </div>
 
-      <!-- CONTRÔLE -->
-      <div class="panel" id="tab-control">
-        <div class="ph"><div class="ph-t">Contrôle workflows</div></div>
-        <div class="card mb">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-            <div class="ct" style="margin:0">Sites</div>
-            <div class="sr">
-              <button class="btn btn-ghost" style="padding:3px 9px;font-size:11px" onclick="selS('all')">Tous</button>
-              <button class="btn btn-ghost" style="padding:3px 9px;font-size:11px" onclick="selS('none')">Aucun</button>
-              <button class="btn btn-ghost" style="padding:3px 9px;font-size:11px" onclick="selS('hub')">Hub</button>
-              <button class="btn btn-ghost" style="padding:3px 9px;font-size:11px" onclick="selS('nano')">Nano</button>
+      <!-- ═══════════════ COÛTS UNITAIRES ═══════════════ -->
+      <div class="panel" id="tab-costs-cfg">
+        <div class="ph"><div><div class="ph-t">Coûts unitaires</div><div class="ph-s">Enregistrés dans Apps Script, appliqués à tout l'historique</div></div></div>
+        <div class="card" style="max-width:460px">
+          <div class="field"><label>Article généré (MAD)</label><input class="fi" id="c-article" type="number" step="0.01" min="0"></div>
+          <div class="field"><label>Image générée (MAD)</label><input class="fi" id="c-image" type="number" step="0.01" min="0"></div>
+          <div class="field"><label>Pin généré (MAD)</label><input class="fi" id="c-pin" type="number" step="0.01" min="0"></div>
+          <button class="btn btn-b btn-lg" onclick="saveCosts()">Enregistrer</button>
+          <div class="sub" style="margin-top:10px">Article = chaque génération WF1 (ligne avec « Generated At »). Image = somme de la colonne AA « Images ». Pin = chaque ligne de l'onglet Pins.</div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ ARTICLES (WF1) ═══════════════ -->
+      <div class="panel" id="tab-articles">
+        <div class="ph"><div><div class="ph-t">Articles — WF1</div><div class="ph-s">Génération des textes et publication WordPress</div></div></div>
+        <div class="g4" id="art-tiles"></div>
+
+        <div class="g2f mt">
+          <div class="card">
+            <div class="sh"><div class="sh-t">Articles générés par jour</div></div>
+            <div class="chw"><canvas id="ch-art"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="sh"><div class="sh-t">Lancer WF1</div></div>
+            <div class="ct">Sites</div><div class="sg" id="art-sites"></div>
+            <div class="sr mt6"><button class="btn btn-ghost" onclick="selAll('art-sites',true)">Tous</button><button class="btn btn-ghost" onclick="selAll('art-sites',false)">Aucun</button></div>
+            <div class="ct mt">Semaines</div><div class="wg" id="art-weeks"></div>
+            <div class="wfa mt">
+              <button class="btn btn-g" onclick="runWF('wf1_run','art-sites','art-weeks')">▶ Générer les pending</button>
+              <button class="btn btn-y" onclick="runWF('wf1_retry_failed','art-sites','art-weeks')">↻ Relancer les échecs</button>
+              <button class="btn btn-ghost" onclick="runDiag()">🩺 Diagnostic</button>
+            </div>
+            <div id="diag-out" class="mt6"></div>
+          </div>
+        </div>
+
+        <div class="card mt">
+          <div class="sh"><div class="sh-t">Par site</div></div>
+          <div class="tw"><table class="tbl" id="tbl-art-site"></table></div>
+        </div>
+        <div class="card mt">
+          <div class="sh"><div class="sh-t">Par semaine</div></div>
+          <div class="tw"><table class="tbl" id="tbl-art-week"></table></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ IMAGES (WF2a / WF2b) ═══════════════ -->
+      <div class="panel" id="tab-images">
+        <div class="ph"><div><div class="ph-t">Images — WF2a / WF2b</div><div class="ph-s">WF2a génère sur le pod RunPod · WF2b téléverse dans WordPress</div></div></div>
+
+        <div class="card pod">
+          <div class="sh"><div class="sh-t">🖥 Pod RunPod</div><span class="bdg" id="pod-state">—</span></div>
+          <div class="podrow">
+            <input class="fi" id="pod-url" placeholder="https://xxxxxxxx-8000.proxy.runpod.net">
+            <button class="btn btn-b" onclick="savePod()">Enregistrer</button>
+            <button class="btn btn-ghost" onclick="testPod()">Tester</button>
+          </div>
+          <div class="sub" id="pod-info">—</div>
+          <div class="sub warn">n8n ne lit pas cette valeur : après un redéploiement, colle aussi l'URL dans <b>gpu_url</b> du nœud « Réglages » de WF2a.</div>
+          <div id="pod-test" class="mt6"></div>
+        </div>
+
+        <div class="g4 mt" id="img-tiles"></div>
+
+        <div class="g2f mt">
+          <div class="card">
+            <div class="sh"><div class="sh-t">Images téléversées par jour</div></div>
+            <div class="chw"><canvas id="ch-img"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="sh"><div class="sh-t">Lancer</div></div>
+            <div class="ct">Sites</div><div class="sg" id="img-sites"></div>
+            <div class="sr mt6"><button class="btn btn-ghost" onclick="selAll('img-sites',true)">Tous</button><button class="btn btn-ghost" onclick="selAll('img-sites',false)">Aucun</button></div>
+            <div class="wfa mt">
+              <button class="btn btn-p" onclick="runWF('wf2_run','img-sites')">▶ WF2a — générer</button>
+              <button class="btn btn-b" onclick="runWF('wf2b_run','img-sites')">⬆ WF2b — téléverser</button>
+              <button class="btn btn-y" onclick="runWF('wf2_retry_failed','img-sites')">↻ Relancer les échecs</button>
             </div>
           </div>
-          <div class="sg" id="site-chk-grid"></div>
         </div>
-        <div class="card mb">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-            <div class="ct" style="margin:0">Semaines</div>
-            <div class="sr">
-              <button class="btn btn-ghost" style="padding:3px 9px;font-size:11px" onclick="selW('all')">Toutes</button>
-              <button class="btn btn-ghost" style="padding:3px 9px;font-size:11px" onclick="selW('none')">Aucune</button>
-            </div>
-          </div>
-          <div class="wg" id="week-chk-grid"></div>
-        </div>
-        <div class="wfb">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div class="wft">① WF1 — Contenu</div><span class="bdg bb">DeepSeek</span></div>
-          <div class="wfd">Génère les articles pour la sélection. Articles pending avec Publish At &gt; 48h.</div>
-          <div class="wfa">
-            <button class="btn btn-g" onclick="runWF('wf1_run')">▶ Lancer WF1</button>
-            <button class="btn btn-r" onclick="runWF('wf1_retry_failed')">↩ Retry failed</button>
-            <button class="btn btn-ghost" onclick="runWF('wf1_run',true)">▶ Tout lancer</button>
-            <button class="btn btn-y" onclick="runDiag()">🔍 Diagnostic</button>
-          </div>
-          <div id="diag-result" style="display:none;margin-top:12px;background:var(--s3);border-radius:var(--r);padding:12px;font-size:12px"></div>
-        </div>
-        <div class="wfb">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div class="wft">② WF2 — Images</div><div class="sr"><span class="bdg by">GPU</span><span class="bdg bb">S3</span></div></div>
-          <div class="wfd">WF2a génère sur GPU. WF2b envoie vers WP.</div>
-          <div class="wfa">
-            <button class="btn btn-y" onclick="runWF('wf2_run')">▶ GPU</button>
-            <button class="btn btn-b" onclick="runWF('wf2b_run')">⬆ Envoyer WP</button>
-            <button class="btn btn-r" onclick="runWF('wf2_retry_failed')">↩ Retry</button>
-          </div>
-        </div>
-        <div class="wfb">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div class="wft">③ WF3 — Pinterest</div><span class="bdg bp">Blotato</span></div>
-          <div class="wfd">WF3a génère les pins. WF3b publie.</div>
-          <div class="wfa">
-            <button class="btn btn-p" onclick="runWF('wf3_run')">▶ Pins</button>
-            <button class="btn btn-g" onclick="pubPins('slot')">📅 Programmer</button>
-            <button class="btn btn-y" onclick="pubPins('direct')">⚡ Maintenant</button>
-          </div>
-        </div>
-        <div class="wfb"><div class="wft" style="margin-bottom:10px">⚡ Global</div>
-          <div class="wfa"><button class="btn btn-r" onclick="confirmRun('reset_failed','Reset TOUS les failed ?')">⚠ Reset global</button></div>
+
+        <div class="card mt">
+          <div class="sh"><div class="sh-t">Par site</div></div>
+          <div class="tw"><table class="tbl" id="tbl-img-site"></table></div>
         </div>
       </div>
 
-      <!-- ÉCHECS -->
-      <div class="panel" id="tab-failed">
-        <div class="ph"><div class="ph-t">Échecs</div>
-          <div class="sr"><button class="btn btn-r" onclick="retrySelected()">↩ Retry sélection</button><button class="btn btn-ghost" onclick="loadFailed()">↻</button></div>
+      <!-- ═══════════════ PINTEREST ═══════════════ -->
+      <div class="panel" id="tab-pinterest">
+        <div class="ph">
+          <div><div class="ph-t">Pinterest</div><div class="ph-s">WF3a génère les pins (Pins = done) · WF3b les envoie à Blotato (scheduled) · date passée = en ligne</div></div>
+          <button class="btn btn-b" onclick="SN('planning')">📅 Planifier</button>
         </div>
-        <div class="card">
-          <div class="fbar">
-            <input class="fi" id="f-kw" placeholder="Filtrer..." oninput="filterFailed()" style="flex:1;min-width:120px">
-            <select class="fi" id="f-site" onchange="filterFailed()" style="flex:0;min-width:110px"><option value="">Tous sites</option></select>
-            <select class="fi" id="f-st" onchange="filterFailed()" style="flex:0;min-width:100px"><option value="">Tous statuts</option><option>failed</option><option>processing</option></select>
-          </div>
-          <div style="overflow-x:auto">
-            <table class="tbl">
-              <thead><tr>
-                <th><input type="checkbox" class="chk" id="chk-all" onchange="toggleAll(this)"></th>
-                <th>ID</th><th>Site</th><th>Keyword</th><th>Status</th><th>Img</th><th>Erreur</th><th></th>
-              </tr></thead>
-              <tbody id="failed-tbody"></tbody>
-            </table>
-          </div>
-          <div id="failed-empty" style="text-align:center;padding:28px;color:var(--muted);display:none">✅ Aucun échec</div>
-          <div id="failed-count" style="font-size:11px;color:var(--muted);margin-top:8px;text-align:right"></div>
-        </div>
-      </div>
+        <div class="g4" id="pin-tiles"></div>
 
-      <!-- GRAPHIQUES -->
-      <div class="panel" id="tab-charts">
-        <div class="ph"><div class="ph-t">Graphiques</div></div>
-        <div class="g2f mb">
-          <div class="card"><div class="ct">Publications 30j</div><div style="position:relative;height:190px"><canvas id="ch-d"></canvas></div></div>
-          <div class="card"><div class="ct">Progression par site</div><div style="position:relative;height:190px"><canvas id="ch-s"></canvas></div></div>
+        <div class="card mt">
+          <div class="sh"><div class="sh-t">État des pins par site</div><div class="lgd" id="lg-pins"></div></div>
+          <div class="chw tall"><canvas id="ch-pins"></canvas></div>
         </div>
-        <div class="card"><div class="ct">Images par site (col AA)</div><div style="position:relative;height:210px"><canvas id="ch-i"></canvas></div></div>
-      </div>
 
-      <!-- SEMAINES -->
-      <div class="panel" id="tab-weeks">
-        <div class="ph"><div class="ph-t">Semaines</div></div>
-        <div class="card"><div id="weeks-list"></div></div>
-      </div>
+        <div class="card mt">
+          <div class="sh"><div class="sh-t">Par site</div><div class="ph-s">Stock = pins en attente ÷ <span id="perday-lbl">3</span> pins/jour</div></div>
+          <div class="tw"><table class="tbl" id="tbl-pin-site"></table></div>
+        </div>
 
-      <!-- PINTEREST -->
-      <div class="panel" id="tab-pins">
-        <div class="ph"><div class="ph-t">Pinterest</div>
-          <div class="sr"><button class="btn btn-ghost" onclick="loadPins();loadNoPins()">↻ Refresh</button></div>
-        </div>
-        <div class="g4 mb">
-          <div class="card"><div class="ct">Total pins</div><div class="bignum" style="color:var(--purple)" id="pin-tot">—</div></div>
-          <div class="card"><div class="ct">Postés</div><div class="bignum" style="color:var(--green)" id="pin-p">—</div></div>
-          <div class="card"><div class="ct">Programmés</div><div class="bignum" style="color:var(--yellow)" id="pin-s">—</div></div>
-          <div class="card"><div class="ct">Prêts</div><div class="bignum" style="color:var(--blue)" id="pin-d">—</div></div>
-          <div class="card"><div class="ct">Sans pins</div><div class="bignum" style="color:var(--red)" id="pin-missing">—</div><div class="sub">articles publiés</div></div>
-          <div class="card"><div class="ct">Par statut</div><div id="pin-list" style="margin-top:4px"></div></div>
-        </div>
-        <div class="wfb mb">
-          <div class="wft" style="margin-bottom:10px">Actions globales</div>
-          <div class="wfa">
-            <button class="btn btn-p" onclick="runWF('wf3_run')">▶ Générer pins WF3a</button>
-            <button class="btn btn-g" onclick="pubPins('slot')">📅 Programmer Blotato</button>
-            <button class="btn btn-y" onclick="pubPins('direct')">⚡ Publier maintenant</button>
-          </div>
-        </div>
-        <div class="card">
+        <div class="card mt">
           <div class="sh">
-            <div><div class="sh-t">Articles publiés sans pins</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Sélectionne puis génère</div></div>
+            <div class="sh-t">Par article</div>
             <div class="sr">
-              <button class="btn btn-ghost" style="font-size:11px;padding:4px 9px" onclick="selNoPins('all')">Tout sélect.</button>
-              <button class="btn btn-ghost" style="font-size:11px;padding:4px 9px" onclick="selNoPins('none')">Désélect.</button>
-              <button class="btn btn-p" onclick="genPinsSelection()">▶ Générer (sélection)</button>
+              <select class="fi fs" id="pa-site" onchange="renderArticles()"></select>
+              <select class="fi fs" id="pa-filter" onchange="renderArticles()">
+                <option value="">Tous</option>
+                <option value="nopins">Publiés sans pins</option>
+                <option value="waiting">Avec pins en attente</option>
+                <option value="sent">Déjà envoyés</option>
+                <option value="error">Avec erreurs</option>
+              </select>
+              <input class="fi fs" id="pa-q" placeholder="Recherche keyword / ID" oninput="renderArticles()">
             </div>
           </div>
-          <div class="fbar">
-            <select class="fi" id="np-site" onchange="filterNoPins()" style="flex:0;min-width:130px"><option value="">Tous les sites</option></select>
-            <input class="fi" id="np-kw" placeholder="Filtrer keyword..." oninput="filterNoPins()" style="flex:1">
-            <span style="font-size:11px;color:var(--muted);align-self:center" id="np-count"></span>
+          <div class="sr mb6">
+            <button class="btn btn-g" onclick="genPinsSelection()">📌 WF3a — générer les pins de la sélection</button>
+            <span class="sub" id="pa-count"></span>
           </div>
-          <div style="overflow-x:auto">
-            <table class="tbl">
-              <thead><tr>
-                <th><input type="checkbox" class="chk" id="np-chk-all" onchange="selNoPins(this.checked?'all':'none')"></th>
-                <th>ID</th><th>Site</th><th>Keyword</th><th>WP Post ID</th><th>Img</th><th>Sem.</th>
-              </tr></thead>
-              <tbody id="np-tbody"></tbody>
-            </table>
-          </div>
-          <div id="np-empty" style="text-align:center;padding:28px;color:var(--muted);font-size:12px;display:none">✅ Tous les articles ont des pins</div>
+          <div class="tw"><table class="tbl" id="tbl-art-pins"></table></div>
+          <div class="sr mt6"><button class="btn btn-ghost" id="pa-more" onclick="PA_LIMIT+=100;renderArticles()">Afficher plus</button></div>
         </div>
-        <div class="info-box mt">💡 <strong>Méthode Sheets :</strong> Dans Master, sélectionne les cellules col <code>Pin Status</code> → Menu <em>Réseau DE</em> → <em>Générer pins pour la sélection</em>.</div>
       </div>
 
-      <!-- MES SITES -->
-      <div class="panel" id="tab-sites-list">
-        <div class="ph"><div class="ph-t">Mes sites</div><button class="btn btn-b" onclick="SN('add-site')">➕ Nouveau site</button></div>
-        <div class="g3" id="sites-cards"></div>
+      <!-- ═══════════════ PLANNING ═══════════════ -->
+      <div class="panel" id="tab-planning">
+        <div class="ph"><div><div class="ph-t">Planning Blotato</div><div class="ph-s">N pins par jour et par compte · jamais le même article deux fois le même jour sur un compte · heures aléatoires</div></div></div>
+
+        <div class="g2f">
+          <div class="card">
+            <div class="ct">Sites / comptes</div><div class="sg" id="pl-sites"></div>
+            <div class="sr mt6"><button class="btn btn-ghost" onclick="selAll('pl-sites',true)">Tous</button><button class="btn btn-ghost" onclick="selAll('pl-sites',false)">Aucun</button></div>
+            <div class="fgrid mt">
+              <div class="field"><label>Début</label><input class="fi" id="pl-start" type="date"></div>
+              <div class="field"><label>Nombre de jours</label><input class="fi" id="pl-days" type="number" min="1" max="60" value="7"></div>
+              <div class="field"><label>Pins / jour / compte</label><input class="fi" id="pl-perday" type="number" min="1" max="25" value="3"></div>
+              <div class="field"><label>Écart minimum (min)</label><input class="fi" id="pl-gap" type="number" min="5" value="45"></div>
+              <div class="field"><label>De (heure)</label><input class="fi" id="pl-hs" type="number" min="0" max="23" value="7"></div>
+              <div class="field"><label>À (heure)</label><input class="fi" id="pl-he" type="number" min="1" max="24" value="22"></div>
+              <div class="field"><label>Éviter le même article pendant (jours)</label><input class="fi" id="pl-avoid" type="number" min="0" max="30" value="2"></div>
+              <div class="field"><label>Fuseau du public</label>
+                <select class="fi" id="pl-tz"><option>Europe/Berlin</option><option>Europe/Paris</option><option>Africa/Casablanca</option><option>UTC</option></select></div>
+            </div>
+            <div class="wfa">
+              <button class="btn btn-b" onclick="planPins(true)">👁 Aperçu</button>
+              <button class="btn btn-g" id="pl-apply" onclick="planPins(false)" disabled>✔ Appliquer ce planning</button>
+            </div>
+            <div class="autobox mt">
+              <div class="sh" style="margin:0"><div class="sh-t">Envoi automatique</div><span class="bdg" id="auto-state">—</span></div>
+              <div class="sub" id="auto-last">—</div>
+              <div class="wfa mt6">
+                <button class="btn btn-g" id="auto-on" onclick="autoSet(true)">▶ Activer (toutes les 10 min)</button>
+                <button class="btn btn-ghost" id="auto-off" onclick="autoSet(false)">⏸ Désactiver</button>
+                <button class="btn btn-p" onclick="sendPlanned()">🚀 Envoyer maintenant les pins dus</button>
+              </div>
+            </div>
+            <div class="wfa mt">
+              <button class="btn btn-r" onclick="unplan()">✖ Annuler les planifications non envoyées</button>
+            </div>
+            <div class="sub mt6">« Appliquer » écrit l'heure dans la colonne <b>Planifié pour</b> de l'onglet Pins. Toutes les 10 min, Apps Script appelle ton <b>WF3b existant</b> (mode direct) avec les pins dont l'heure est arrivée : ils partent sur Pinterest à ±10 min de l'heure prévue. Rien à changer dans n8n. Un pin non envoyé 6 h après son heure est « expiré » et redevient disponible pour le planning.</div>
+          </div>
+          <div class="card">
+            <div class="sh"><div class="sh-t">Aperçu</div><span class="sub" id="pl-sum"></span></div>
+            <div id="pl-out"><div class="empty">Choisis les réglages puis « Aperçu ».</div></div>
+          </div>
+        </div>
+
+        <div class="card mt">
+          <div class="sh"><div class="sh-t">Calendrier des 14 prochains jours</div><div class="ph-s">pins planifiés + programmés + publiés, par site</div></div>
+          <div class="tw"><table class="tbl heat" id="tbl-cal"></table></div>
+          <div id="dupes-box" class="mt6"></div>
+        </div>
       </div>
 
-      <!-- NOUVEAU SITE -->
+      <!-- ═══════════════ ÉCHECS ═══════════════ -->
+      <div class="panel" id="tab-failed">
+        <div class="ph"><div><div class="ph-t">Échecs</div><div class="ph-s">Articles, images et pins en erreur</div></div>
+          <button class="btn btn-y" onclick="resetFailed()">↻ Remettre tous les échecs en pending</button></div>
+        <div class="sr mb6">
+          <button class="btn btn-ghost on" id="fx-art" onclick="FX='art';renderFailed()">Articles</button>
+          <button class="btn btn-ghost" id="fx-img" onclick="FX='img';renderFailed()">Images</button>
+          <button class="btn btn-ghost" id="fx-pin" onclick="FX='pin';renderFailed()">Pins</button>
+        </div>
+        <div class="card"><div class="tw"><table class="tbl" id="tbl-failed"></table></div></div>
+      </div>
+
+
+      <!-- ADD-SITE (v2, conservé) -->
       <div class="panel" id="tab-add-site">
         <div class="ph"><div><div class="ph-t">Nouveau site</div><div class="ph-s">Onboarding complet — 7 étapes</div></div></div>
         <div class="wiz" id="wiz">
@@ -624,7 +690,7 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
         </div></div>
       </div>
 
-      <!-- AJOUTER KW -->
+      <!-- ADD-KW (v2, conservé) -->
       <div class="panel" id="tab-add-kw">
         <div class="ph"><div class="ph-t">Ajouter keywords</div><div class="ph-s">À un site existant</div></div>
         <div class="card">
@@ -654,7 +720,7 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
         </div>
       </div>
 
-      <!-- RÉSEAUX -->
+      <!-- NETWORKS (v2, conservé) -->
       <div class="panel" id="tab-networks">
         <div class="ph"><div class="ph-t">Réseaux</div></div>
         <div class="card mb"><div class="sh"><div class="sh-t">Réseaux configurés</div></div><div id="networks-list"></div></div>
@@ -673,123 +739,7 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
         </div>
       </div>
 
-      <!-- PINTEREST KPI -->
-      <div class="panel" id="tab-pinterest-kpi">
-        <div class="ph">
-          <div><div class="ph-t">Pinterest KPIs</div><div class="ph-s" id="pkpi-ts">—</div></div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button class="btn btn-ghost" onclick="loadPinterestKPI()">↻ Refresh</button>
-            <button class="btn btn-b" onclick="showPopupWF5()">▶ Générer pins</button>
-            <button class="btn btn-ghost" onclick="showPopupCout()">⚙ Coût GPU</button>
-          </div>
-        </div>
-
-        <!-- KPI HERO -->
-        <div class="kpi-hero" id="pkpi-cards">
-          <div class="kpi-card" style="--kpi-color:var(--blue)"><div class="kpi-lbl">Slots utilisés</div><div class="kpi-val" id="pk-slots-used">—</div><div class="kpi-sub">sur 200 total Blotato</div></div>
-          <div class="kpi-card" style="--kpi-color:var(--green)"><div class="kpi-lbl">Pins aujourd'hui</div><div class="kpi-val" id="pk-today">—</div><div class="kpi-sub" id="pk-today-max">/ 130 max (13×10)</div></div>
-          <div class="kpi-card" style="--kpi-color:var(--purple)"><div class="kpi-lbl">Articles couverts</div><div class="kpi-val" id="pk-covered">—</div><div class="kpi-sub">ce mois / ~1300</div></div>
-          <div class="kpi-card" style="--kpi-color:var(--yellow)"><div class="kpi-lbl">Pins schedulés</div><div class="kpi-val" id="pk-scheduled">—</div><div class="kpi-sub">en attente publication</div></div>
-          <div class="kpi-card" style="--kpi-color:var(--teal)"><div class="kpi-lbl">Pins publiés</div><div class="kpi-val" id="pk-published">—</div><div class="kpi-sub">ce mois</div></div>
-          <div class="kpi-card" style="--kpi-color:var(--red)"><div class="kpi-lbl">Coût GPU</div><div class="kpi-val" id="pk-cost">—</div><div class="kpi-sub">MAD ce mois <span id="pk-cost-per">@ 1.2 MAD/pin</span></div></div>
-          <div class="kpi-card" style="--kpi-color:var(--blue)"><div class="kpi-lbl">Projection fin mois</div><div class="kpi-val" id="pk-proj">—</div><div class="kpi-sub">pins publiés estimés</div></div>
-          <div class="kpi-card" style="--kpi-color:var(--yellow)"><div class="kpi-lbl">Slots libres</div><div class="kpi-val" id="pk-free">—</div><div class="kpi-sub">disponibles maintenant</div></div>
-        </div>
-
-        <!-- BARRE GLOBALE -->
-        <div class="card mb">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <div style="font-size:12px;font-weight:600">Queue Blotato globale</div>
-            <span id="pk-queue-pct" class="bdg bb">—%</span>
-          </div>
-          <div class="pbar"><div class="pfill" id="pk-queue-bar" style="background:var(--blue)"></div></div>
-          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px">
-            <span id="pk-queue-used">—</span><span>Limite : 200 slots Starter</span>
-          </div>
-        </div>
-
-        <!-- SLOTS PAR SITE -->
-        <div class="card mb">
-          <div class="sh"><div class="sh-t">Slots par compte Pinterest</div><span id="pk-slots-ts" style="font-size:11px;color:var(--muted)">—</span></div>
-          <div class="slot-grid" id="pk-slots-grid">
-            <div style="color:var(--muted);font-size:12px;padding:10px">Chargement...</div>
-          </div>
-        </div>
-
-        <!-- TABLE PAR SITE -->
-        <div class="card mb">
-          <div class="sh"><div class="sh-t">Performance par site — mois en cours</div></div>
-          <div style="overflow-x:auto">
-            <table class="site-table" id="pk-site-table">
-              <thead><tr>
-                <th>Site</th><th>Schedulés</th><th>Publiés</th><th>Pending</th>
-                <th>Slots dispo</th><th>Couverture</th><th>Statut</th>
-              </tr></thead>
-              <tbody id="pk-site-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">Chargement...</td></tr></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- HEATMAP 30 JOURS -->
-        <div class="card mb">
-          <div class="sh"><div class="sh-t">Heatmap 30 jours</div><div style="display:flex;gap:10px;font-size:10px;color:var(--muted)"><span>🟥 Vide</span><span>🟨 Partiel</span><span>🟩 Plein</span></div></div>
-          <div class="heatmap" id="pk-heatmap"></div>
-          <div style="display:flex;gap:4px;margin-top:8px;flex-wrap:wrap" id="pk-heatmap-labels"></div>
-        </div>
-
-        <!-- POPUP WF5 -->
-        <div class="popup-overlay" id="popup-wf5" style="display:none" onclick="if(event.target===this)closePopupWF5()">
-          <div class="popup-box">
-            <span class="popup-close" onclick="closePopupWF5()">×</span>
-            <div class="popup-title">📌 Générer pins Pinterest</div>
-            <div class="field">
-              <label>Sites à traiter</label>
-              <div id="pop-sites-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:5px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:10px"></div>
-              <div style="display:flex;gap:6px;margin-top:6px">
-                <button class="btn btn-ghost" style="padding:3px 8px;font-size:11px" onclick="selPopSites('all')">Tous</button>
-                <button class="btn btn-ghost" style="padding:3px 8px;font-size:11px" onclick="selPopSites('none')">Aucun</button>
-              </div>
-            </div>
-            <div class="field">
-              <label>Pins par article (max depuis PinBulk pending)</label>
-              <select class="fi" id="pop-nb-pins">
-                <option value="1">1 pin</option>
-                <option value="2" selected>2 pins</option>
-                <option value="3">3 pins</option>
-                <option value="5">5 pins</option>
-                <option value="10">10 pins</option>
-              </select>
-            </div>
-            <div style="background:var(--s2);border-radius:var(--r);padding:10px;font-size:11px;color:var(--muted);margin-bottom:14px">
-              💡 WF5 lit les lignes <strong>pending</strong> dans PinBulk, génère les images via templates HTML (VDS), puis programme sur Blotato. Aucun GPU nécessaire.
-            </div>
-            <div style="display:flex;gap:8px;justify-content:flex-end">
-              <button class="btn btn-ghost" onclick="closePopupWF5()">Annuler</button>
-              <button class="btn btn-g btn-lg" id="pop-run-btn" onclick="runWF5FromDashboard()">▶ Lancer WF5</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- POPUP COÛT -->
-        <div class="popup-overlay" id="popup-cout" style="display:none" onclick="if(event.target===this)closePopupCout()">
-          <div class="popup-box" style="max-width:340px">
-            <span class="popup-close" onclick="closePopupCout()">×</span>
-            <div class="popup-title">⚙ Paramètres coût GPU</div>
-            <div class="field">
-              <label>Coût par pin (MAD)</label>
-              <input class="fi" id="pop-cout-val" type="number" step="0.1" value="1.2" placeholder="1.2">
-              <div style="font-size:10px;color:var(--muted);margin-top:3px">VDS HTML templates (interne) ≈ 0.3 MAD/pin</div>
-            </div>
-            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
-              <button class="btn btn-ghost" onclick="closePopupCout()">Annuler</button>
-              <button class="btn btn-b" onclick="saveCoutGPU()">Sauvegarder</button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- JOURNAL -->
+      <!-- LOG (v2, conservé) -->
       <div class="panel" id="tab-log">
         <div class="ph"><div class="ph-t">Journal</div><button class="btn btn-ghost" onclick="LOGS=[];renderLog()">🗑 Vider</button></div>
         <div class="card"><div class="logw" id="log-list"><div style="text-align:center;padding:24px;color:var(--muted);font-size:12px">Aucune action.</div></div></div>
@@ -800,10 +750,11 @@ select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xm
 </div>
 <div id="toasts"></div>
 <script>
+
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 var AS_URL = 'https://script.google.com/macros/s/AKfycbyYEdIECXi6yUxWGQSFD6fWWAm7M93yPElUXx0wzrlgZp6VQMcelP3TAh92A9o7KhXQDw/exec';
 var DS_KEY = ''; // Clé retirée — H1 passe par Apps Script (côté serveur)
-var REFRESH = 30000;
+var REFRESH = 120000;   // « dash » lit Master + Pins : 2 min suffisent
 
 // ─── CONSTANTS ───────────────────────────────────────────────────────────────
 var DEFAULT_NETWORKS = [
@@ -892,39 +843,7 @@ function removeNetwork(i) {
 }
 
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
-function doLogin() {
-  var u = g('u').value.trim();
-  var p = g('pw').value;
-  var btn = g('btnl');
-  var err = g('lerr');
-  if (!u || !p) { err.textContent = 'Remplis les deux champs.'; return; }
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span> Connexion...';
-  err.textContent = '';
-  callAPI({ action: 'stats', u: u, p: p })
-    .then(function(d) {
-      if (!d.ok) throw new Error(d.error || 'Identifiants incorrects');
-      AUTH = { u: u, p: p };
-      sessionStorage.setItem('rde', JSON.stringify(AUTH));
-      g('login').style.display = 'none';
-      var app = g('app'); app.style.display = 'flex'; app.style.flexDirection = 'column';
-      loadNetworks(); initUI();
-      DATA = d; renderAll(d);
-      loadFailed(); loadPins();
-      timer = setInterval(loadData, REFRESH);
-    })
-    .catch(function(e) {
-      err.textContent = e.message;
-      btn.disabled = false;
-      btn.textContent = 'Se connecter';
-    });
-}
-function doLogout() {
-  AUTH = null; sessionStorage.removeItem('rde'); clearInterval(timer);
-  g('app').style.display = 'none'; g('login').style.display = 'flex'; g('pw').value = '';
-}
 
-// ─── API ──────────────────────────────────────────────────────────────────────
 function callAPI(params) {
   var netP = CUR_NET ? { net_id: CUR_NET.id, sheet_id: CUR_NET.sheetId } : {};
   var all = {};
@@ -945,354 +864,6 @@ function callAPI(params) {
     .then(function(r) { return r.json(); });
 }
 
-// ─── INIT UI ──────────────────────────────────────────────────────────────────
-function initUI() {
-  // Site checkboxes
-  var sg = g('site-chk-grid');
-  if (sg) {
-    sg.innerHTML = Object.keys(SITES_META).map(function(s) {
-      return '<div class="sch"><input type="checkbox" id="sc-' + s + '" value="' + s + '" checked>'
-        + '<label for="sc-' + s + '"><span class="sn">' + s + '</span><span class="sp" id="scp-' + s + '">—</span></label></div>';
-    }).join('');
-  }
-  // Week checkboxes
-  var wg = g('week-chk-grid');
-  if (wg) {
-    wg.innerHTML = [1,2,3,4,5,6,7,8,9,10,11].map(function(w) {
-      return '<div class="wch"><input type="checkbox" id="wk-' + w + '" value="' + w + '" checked>'
-        + '<label for="wk-' + w + '">S' + String(w).padStart(2, '0') + '</label></div>';
-    }).join('');
-  }
-  // Site select for add-kw
-  var ekSite = g('ek-site');
-  if (ekSite) {
-    ekSite.innerHTML = '<option value="">Sélectionne un site...</option>'
-      + Object.keys(SITES_META).map(function(s) { return '<option value="' + s + '">' + s + '</option>'; }).join('');
-  }
-}
-
-// ─── DATA LOADING ─────────────────────────────────────────────────────────────
-function loadData() {
-  if (!AUTH) return;
-  var dot = g('sdot'); if (dot) dot.className = 'sdot y';
-  var sp = g('ov-spin'); if (sp) sp.style.display = 'inline-block';
-  callAPI({ action: 'summary' })
-    .then(function(d) {
-      if (!d.ok) throw new Error(d.error);
-      DATA = d.stats; CHART_DATA = { daily: d.daily, siteProg: d.siteProg };
-      renderAll(d.stats, d.weeks);
-      updateSiteChks(d.stats); updateWeekChks(d.weeks);
-      var ct = g('tab-charts'); if (ct && ct.classList.contains('on')) renderCharts();
-      if (dot) dot.className = 'sdot';
-      setText('rtime', new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
-      if (sp) sp.style.display = 'none';
-      setText('ov-ts', 'Actualisé ' + new Date().toLocaleTimeString('fr-FR') + (CUR_NET ? ' · ' + CUR_NET.emoji + ' ' + CUR_NET.name : ''));
-    })
-    .catch(function(e) { if (dot) dot.className = 'sdot r'; showToast('Erreur: ' + e.message, 'err'); if (sp) sp.style.display = 'none'; });
-}
-function loadFailed() {
-  if (!AUTH) return;
-  callAPI({ action: 'failed' }).then(function(d) { if (d.ok) { FAILED_ALL = d.failed; renderFailed(d.failed); } }).catch(function() {});
-}
-function loadPins() {
-  if (!AUTH) return;
-  callAPI({ action: 'pins' }).then(function(d) { if (d.ok) renderPins(d); }).catch(function() {});
-}
-function loadNoPins() {
-  if (!AUTH) return;
-  callAPI({ action: 'no_pins' }).then(function(d) {
-    if (d.ok) { NO_PINS = d.articles || []; setText('pin-missing', N(NO_PINS.length)); renderNoPins(NO_PINS); }
-  }).catch(function() {});
-}
-
-// ─── RENDER ───────────────────────────────────────────────────────────────────
-function pct(a, b) { return b ? Math.round(a / b * 100) : 0; }
-function N(v) { return (v || 0).toLocaleString('fr-FR'); }
-
-function renderAll(d, weeks) {
-  if (!d) return;
-  var pub = (d.st && d.st.published) || 0, sched = (d.st && d.st.scheduled) || 0;
-  var imgDone = d.imgDone || 0, totalImg = d.totalImages || 0;
-  var pinTot = 0; var pin = d.pin || {};
-  for (var k in pin) { if (pin.hasOwnProperty(k)) pinTot += pin[k]; }
-  var failed = (d.failedText || 0) + (d.failedImg || 0);
-  setText('ov-title', 'Vue d\'ensemble' + (CUR_NET ? ' — ' + CUR_NET.emoji + ' ' + CUR_NET.name : ''));
-  setText('ov-total', N(d.total)); setText('ov-sub', Object.keys(SITES_META).length + ' sites actifs');
-  setText('ov-pub', N(pub)); setText('ov-pub-s', pct(pub + sched, d.total) + '% du total');
-  setText('ov-img', N(totalImg)); setText('ov-img-s', N(imgDone) + ' articles complets');
-  setText('ov-pins', N(pinTot)); setText('ov-pins-s', (d.pin && d.pin.posted || 0) + ' postés');
-  setText('ov-gpu', N(d.gpu || 0)); setText('ov-up', N(d.envoi || 0));
-  setText('ov-err', N(failed)); setText('ov-err-s', (d.failedText || 0) + ' texte · ' + (d.failedImg || 0) + ' img');
-  setText('ov-vol', pct(d.volFait, d.volTotal) + '%'); setText('ov-vol-s', N(d.volFait) + '/' + N(d.volTotal) + ' /mois');
-  setBar('pb-pub', pct(pub + sched, d.total)); setBar('pb-img', pct(imgDone, d.total));
-  stList('st-c', d.st || {}, d.total); stList('st-i', d.img || {}, d.total);
-  var nb = g('nb-failed'); if (nb) { nb.textContent = failed; nb.style.display = failed > 0 ? '' : 'none'; }
-  if (d.sites) renderSiteCards(d.sites);
-  if (weeks) renderWeeks(weeks);
-}
-
-function stList(id, obj, tot) {
-  var e = g(id); if (!e) return;
-  var entries = [];
-  for (var k in obj) { if (obj.hasOwnProperty(k)) entries.push([k, obj[k]]); }
-  entries.sort(function(a, b) { return b[1] - a[1]; });
-  e.innerHTML = entries.map(function(kv) {
-    return '<div class="srow"><span class="sdotb" style="background:' + (SCOL[kv[0]] || '#444') + '"></span>'
-      + '<span style="color:var(--muted);flex:1">' + kv[0] + '</span>'
-      + '<span class="scount">' + N(kv[1]) + '</span>'
-      + '<span class="spct">' + pct(kv[1], tot) + '%</span></div>';
-  }).join('');
-}
-
-function renderSiteCards(sites) {
-  var c = g('sites-cards'); if (!c) return;
-  c.innerHTML = sites.map(function(s) {
-    var tp = pct(s.texte, s.t);
-    var col = tp === 100 ? 'var(--green)' : tp > 50 ? 'var(--blue)' : tp > 0 ? 'var(--yellow)' : 'var(--hint)';
-    var cls = tp === 100 ? 'bg' : tp > 50 ? 'bb' : tp > 0 ? 'by' : 'br';
-    return '<div class="sc"><div class="sc-header"><div class="sc-name">' + s.nom + '</div><span class="bdg ' + cls + '">' + tp + '%</span></div>'
-      + '<div class="sc-stats">'
-      + '<div class="sc-stat"><div class="v" style="color:var(--green)">' + N(s.texte) + '</div><div class="l">Publiés</div></div>'
-      + '<div class="sc-stat"><div class="v" style="color:var(--blue)">' + N(s.imgCount || 0) + '</div><div class="l">Images</div></div>'
-      + '<div class="sc-stat"><div class="v" style="color:var(--purple)">' + N(s.pins || 0) + '</div><div class="l">Pins</div></div>'
-      + '<div class="sc-stat"><div class="v">' + N(s.t) + '</div><div class="l">Total</div></div></div>'
-      + '<div class="pbar mt"><div class="pfill" style="background:' + col + ';width:' + tp + '%"></div></div>'
-      + ((s.failed_text || 0) + (s.failed_img || 0) > 0 ? '<div class="sr mt"><span class="bdg br">' + (s.failed_text || 0) + ' texte</span><span class="bdg by">' + (s.failed_img || 0) + ' img</span></div>' : '')
-      + '</div>';
-  }).join('');
-}
-
-function renderWeeks(weeks) {
-  var e = g('weeks-list'); if (!e) return;
-  e.innerHTML = weeks.map(function(w) {
-    var done = (w.published || 0) + (w.scheduled || 0) + (w.drafted || 0);
-    var p = pct(done, w.total);
-    var c = p === 100 ? 'var(--green)' : p > 50 ? 'var(--blue)' : p > 0 ? 'var(--yellow)' : 'var(--s3)';
-    return '<div class="week-row"><div style="font-weight:700;color:var(--blue)">S' + String(w.week).padStart(2, '0') + '</div>'
-      + '<div><div class="pbar" style="margin:0"><div class="pfill" style="background:' + c + ';width:' + p + '%"></div></div></div>'
-      + '<div style="font-size:11px;color:var(--muted);text-align:right">' + done + '/' + w.total + '</div>'
-      + '<div style="font-size:11px;color:var(--muted);text-align:right">' + p + '%</div></div>';
-  }).join('');
-}
-
-function updateSiteChks(d) {
-  if (!d || !d.sites) return;
-  d.sites.forEach(function(s) { var e = g('scp-' + s.nom); if (e) e.textContent = pct(s.texte, s.t) + '%'; });
-}
-function updateWeekChks(weeks) {
-  if (!weeks) return;
-  weeks.forEach(function(w) {
-    var lbl = document.querySelector('label[for="wk-' + w.week + '"]'); if (!lbl) return;
-    var done = (w.published || 0) + (w.scheduled || 0) + (w.drafted || 0);
-    var p = pct(done, w.total);
-    lbl.style.color = p === 100 ? 'var(--green)' : p > 50 ? 'var(--blue)' : p > 0 ? 'var(--yellow)' : '';
-  });
-}
-
-function renderFailed(list) {
-  var kw = (g('f-kw') || {}).value ? g('f-kw').value.toLowerCase() : '';
-  var site = (g('f-site') || {}).value || '';
-  var stat = (g('f-st') || {}).value || '';
-  var sites = [];
-  (list || []).forEach(function(f) { if (sites.indexOf(f.site) === -1) sites.push(f.site); });
-  sites.sort();
-  var sel = g('f-site'); if (!sel) return;
-  var cur = sel.value;
-  sel.innerHTML = '<option value="">Tous sites</option>' + sites.map(function(s) { return '<option value="' + s + '">' + s + '</option>'; }).join('');
-  sel.value = cur;
-  var f = (list || []).filter(function(i) {
-    return (!kw || i.keyword.toLowerCase().indexOf(kw) >= 0 || i.id.toLowerCase().indexOf(kw) >= 0)
-      && (!site || i.site === site) && (!stat || i.status === stat);
-  });
-  var empty = g('failed-empty'), cnt = g('failed-count'), tbody = g('failed-tbody');
-  if (!f.length) { if (tbody) tbody.innerHTML = ''; if (empty) empty.style.display = 'block'; if (cnt) cnt.textContent = ''; return; }
-  if (empty) empty.style.display = 'none'; if (cnt) cnt.textContent = f.length + ' affiché(s)';
-  if (tbody) tbody.innerHTML = f.map(function(i) {
-    return '<tr><td><input type="checkbox" class="chk" value="' + i.id + '"></td>'
-      + '<td style="font-family:monospace;color:var(--muted);font-size:10px">' + i.id + '</td>'
-      + '<td><span class="bdg by">' + i.site + '</span></td>'
-      + '<td style="max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + i.keyword + '</td>'
-      + '<td><span style="color:' + (SCOL[i.status] || 'var(--red)') + '">' + i.status + '</span></td>'
-      + '<td style="font-size:11px;color:' + (SCOL[i.img_status] || 'var(--muted)') + '">' + (i.img_status || '—') + '</td>'
-      + '<td class="ec" title="' + (i.error || '') + '">' + (i.error || '—') + '</td>'
-      + '<td><button class="btn btn-r" style="padding:2px 7px;font-size:11px" onclick="retrySingle(\'' + i.id + '\')">↩</button></td></tr>';
-  }).join('');
-}
-function filterFailed() { renderFailed(FAILED_ALL); }
-
-function renderPins(d) {
-  setText('pin-tot', N(d.total)); setText('pin-p', N(d.byStatus.posted || 0));
-  setText('pin-s', N(d.byStatus.scheduled || 0)); setText('pin-d', N(d.byStatus.done || 0));
-  stList('pin-list', d.byStatus || {}, d.total);
-}
-
-function renderNoPins(list) {
-  var sites = [];
-  list.forEach(function(a) { if (sites.indexOf(a.site) === -1) sites.push(a.site); });
-  sites.sort();
-  var sel = g('np-site'); if (!sel) return;
-  var cur = sel.value;
-  sel.innerHTML = '<option value="">Tous les sites</option>' + sites.map(function(s) { return '<option value="' + s + '">' + s + '</option>'; }).join('');
-  sel.value = cur;
-  filterNoPins();
-}
-function filterNoPins() {
-  var site = (g('np-site') || {}).value || '';
-  var kw = ((g('np-kw') || {}).value || '').toLowerCase();
-  NO_PINS_FILTERED = NO_PINS.filter(function(a) {
-    return (!site || a.site === site) && (!kw || a.keyword.toLowerCase().indexOf(kw) >= 0);
-  });
-  var tbody = g('np-tbody'), empty = g('np-empty'), cnt = g('np-count');
-  if (!NO_PINS_FILTERED.length) { if (tbody) tbody.innerHTML = ''; if (empty) empty.style.display = 'block'; if (cnt) cnt.textContent = ''; return; }
-  if (empty) empty.style.display = 'none'; if (cnt) cnt.textContent = NO_PINS_FILTERED.length + ' article(s)';
-  if (tbody) tbody.innerHTML = NO_PINS_FILTERED.map(function(a) {
-    return '<tr><td><input type="checkbox" class="chk np-chk" value="' + a.id + '"></td>'
-      + '<td style="font-family:monospace;font-size:10px;color:var(--muted)">' + a.id + '</td>'
-      + '<td><span class="bdg by">' + a.site + '</span></td>'
-      + '<td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + a.keyword + '</td>'
-      + '<td style="font-size:11px;color:var(--muted)">' + (a.wp_post_id || '—') + '</td>'
-      + '<td style="font-size:11px;color:' + (SCOL[a.img_status] || 'var(--muted)') + '">' + (a.img_status || '—') + '</td>'
-      + '<td style="font-size:11px;color:var(--muted)">S' + String(a.week || '?').padStart(2, '0') + '</td></tr>';
-  }).join('');
-}
-function selNoPins(mode) {
-  document.querySelectorAll('.np-chk').forEach(function(c) { c.checked = (mode === 'all'); });
-  var all = g('np-chk-all'); if (all) all.checked = (mode === 'all');
-}
-function genPinsSelection() {
-  var ids = [];
-  document.querySelectorAll('.np-chk:checked').forEach(function(c) { ids.push(c.value); });
-  if (!ids.length) { showToast('Sélectionne au moins un article', 'info'); return; }
-  if (!confirm('Générer les pins pour ' + ids.length + ' article(s) ?')) return;
-  addLog('run', 'Génération pins: ' + ids.length + ' article(s)');
-  showToast('Génération pins: ' + ids.length + ' article(s)...', 'info');
-  callAPI({ action: 'wf3_run_selection', ids: JSON.stringify(ids) })
-    .then(function(d) {
-      if (d.ok) { showToast('WF3a lancé pour ' + ids.length + ' article(s)', 'ok'); addLog('ok', 'WF3a lancé'); setTimeout(function() { loadPins(); loadNoPins(); }, 5000); }
-      else { showToast('Erreur: ' + (d.error || ''), 'err'); addLog('err', d.error || 'Erreur'); }
-    }).catch(function(e) { showToast('Erreur: ' + e.message, 'err'); });
-}
-
-// ─── CHARTS ───────────────────────────────────────────────────────────────────
-function renderCharts() {
-  if (!CHART_DATA && DATA) CHART_DATA = { siteProg: DATA.sites };
-  if (!CHART_DATA || typeof Chart === 'undefined') return;
-  var gc = 'rgba(255,255,255,.05)', tc = '#8b949e';
-  var tt = { backgroundColor: '#1c2128', titleColor: '#e6edf3', bodyColor: tc };
-  Chart.defaults.color = tc; Chart.defaults.borderColor = gc;
-  var sp = CHART_DATA.siteProg || (DATA && DATA.sites) || [];
-  var sn = sp.map(function(s) { return s.nom; });
-  if (chD) chD.destroy();
-  var c1 = g('ch-d'), daily = CHART_DATA.daily || [];
-  if (c1) {
-    chD = new Chart(c1, {
-      type: 'bar',
-      data: {
-        labels: daily.map(function(d) { var dt = new Date(d.date); return (dt.getMonth() + 1) + '/' + dt.getDate(); }),
-        datasets: [{ label: 'Publiés', data: daily.map(function(d) { return d.count; }), backgroundColor: 'rgba(88,166,255,.7)', borderColor: '#58a6ff', borderWidth: 1, borderRadius: 3 }]
-      },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: tt }, scales: { x: { grid: { color: gc }, ticks: { maxTicksLimit: 10, color: tc } }, y: { grid: { color: gc }, ticks: { color: tc }, beginAtZero: true } } }
-    });
-  }
-  if (chS) chS.destroy();
-  var c2 = g('ch-s');
-  if (c2) {
-    chS = new Chart(c2, {
-      type: 'bar',
-      data: {
-        labels: sn,
-        datasets: [
-          { label: 'Publiés', data: sp.map(function(s) { return s.texte || s.published || 0; }), backgroundColor: 'rgba(63,185,80,.8)', borderRadius: 3 },
-          { label: 'Pending', data: sp.map(function(s) { return Math.max(0, (s.t || s.total || 0) - (s.texte || s.published || 0)); }), backgroundColor: 'rgba(48,54,61,.9)', borderRadius: 3 }
-        ]
-      },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, boxWidth: 10 } }, tooltip: tt }, scales: { x: { stacked: true, grid: { color: gc }, ticks: { color: tc } }, y: { stacked: true, grid: { color: gc }, ticks: { color: tc } } } }
-    });
-  }
-  if (chI) chI.destroy();
-  var c3 = g('ch-i');
-  if (c3) {
-    chI = new Chart(c3, {
-      type: 'bar',
-      data: {
-        labels: sn,
-        datasets: [
-          { label: 'Images (col AA)', data: sp.map(function(s) { return s.imgCount || 0; }), backgroundColor: 'rgba(88,166,255,.75)', borderRadius: 3 },
-          { label: 'Articles done', data: sp.map(function(s) { return s.imgDone || 0; }), backgroundColor: 'rgba(188,140,255,.6)', borderRadius: 3 }
-        ]
-      },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, boxWidth: 10 } }, tooltip: tt }, scales: { x: { grid: { color: gc }, ticks: { color: tc } }, y: { grid: { color: gc }, ticks: { color: tc }, beginAtZero: true } } }
-    });
-  }
-}
-
-// ─── SELECTORS ────────────────────────────────────────────────────────────────
-function selS(m) {
-  Object.keys(SITES_META).forEach(function(s) {
-    var e = g('sc-' + s); if (!e) return;
-    e.checked = m === 'all' ? true : m === 'none' ? false : m === 'hub' ? SITES_META[s] === 'hub' : SITES_META[s] === 'nano';
-  });
-}
-function selW(m) { [1,2,3,4,5,6,7,8,9,10,11].forEach(function(w) { var e = g('wk-' + w); if (e) e.checked = m !== 'none'; }); }
-function getSites() { var r = []; document.querySelectorAll('#site-chk-grid input:checked').forEach(function(e) { r.push(e.value); }); return r; }
-function getWeeks() { var r = []; document.querySelectorAll('#week-chk-grid input:checked').forEach(function(e) { r.push(parseInt(e.value)); }); return r; }
-
-// ─── WF ACTIONS ───────────────────────────────────────────────────────────────
-function runWF(action, allSites) {
-  var sites = allSites ? Object.keys(SITES_META) : getSites();
-  var weeks = getWeeks();
-  if (!sites.length) { showToast('Sélectionne au moins un site', 'info'); return; }
-  var lbl = action.replace(/_/g, ' ');
-  showToast('Lancement ' + lbl + '...', 'info'); addLog('run', lbl + ' → ' + sites.length + ' site(s)');
-  callAPI({ action: action, sites: JSON.stringify(sites), weeks: JSON.stringify(weeks) })
-    .then(function(d) {
-      if (d.ok) { showToast(lbl + ' lancé', 'ok'); addLog('ok', lbl + ' accepté'); setTimeout(loadData, 4000); }
-      else { showToast('Erreur: ' + (d.error || ''), 'err'); addLog('err', lbl + ': ' + (d.error || 'Erreur')); }
-    }).catch(function(e) { showToast('Erreur: ' + e.message, 'err'); addLog('err', e.message); });
-}
-function confirmRun(action, msg) {
-  if (!confirm(msg)) return;
-  callAPI({ action: action }).then(function(d) { if (d.ok) { showToast('Fait', 'ok'); setTimeout(loadData, 3000); } else showToast('Erreur: ' + (d.error || ''), 'err'); }).catch(function(e) { showToast('Erreur: ' + e.message, 'err'); });
-}
-function retrySelected() {
-  var ids = []; document.querySelectorAll('#failed-tbody .chk:checked').forEach(function(c) { ids.push(c.value); });
-  if (!ids.length) { showToast('Sélectionne des lignes', 'info'); return; }
-  callAPI({ action: 'wf1_selection', ids: JSON.stringify(ids) }).then(function(d) {
-    if (d.ok) showToast(ids.length + ' relancé(s)', 'ok'); else showToast('Erreur: ' + (d.error || ''), 'err');
-  }).catch(function(e) { showToast('Erreur: ' + e.message, 'err'); });
-}
-function retrySingle(id) {
-  callAPI({ action: 'wf1_selection', ids: JSON.stringify([id]) }).then(function(d) {
-    if (d.ok) showToast(id + ' relancé', 'ok'); else showToast('Erreur: ' + (d.error || ''), 'err');
-  }).catch(function(e) { showToast('Erreur: ' + e.message, 'err'); });
-}
-function pubPins(mode) {
-  if (!confirm((mode === 'direct' ? 'Publier MAINTENANT' : 'Programmer Blotato') + ' ?')) return;
-  callAPI({ action: 'wf3_publish_pins', ids: '[]', mode: mode }).then(function(d) {
-    if (d.ok) showToast('Lancé', 'ok'); else showToast('Erreur: ' + (d.error || ''), 'err');
-  }).catch(function(e) { showToast('Erreur: ' + e.message, 'err'); });
-}
-function toggleAll(el) { document.querySelectorAll('#failed-tbody .chk').forEach(function(c) { c.checked = el.checked; }); }
-function runDiag() {
-  var box = g('diag-result'); if (!box) return;
-  box.style.display = 'block'; box.innerHTML = '<span class="spin"></span> Analyse...';
-  callAPI({ action: 'wf1_diagnostic' }).then(function(d) {
-    if (!d.ok) { box.innerHTML = '<span style="color:var(--red)">Erreur: ' + (d.error || '') + '</span>'; return; }
-    var groups = d.error_groups || [];
-    var h = '<div style="margin-bottom:8px"><span style="color:var(--red);font-weight:600">' + d.failed + ' failed</span> · <span style="color:var(--yellow)">' + d.processing + ' processing</span></div>';
-    if (d.recommendation && d.recommendation !== 'Aucun failed') {
-      h += '<div style="background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.25);border-radius:6px;padding:10px;margin-bottom:8px;color:var(--yellow);line-height:1.5"><strong>Recommandation:</strong><br>' + d.recommendation + '</div>';
-    }
-    h += groups.slice(0, 5).map(function(grp) {
-      return '<div style="border:1px solid var(--border);border-radius:6px;padding:8px;margin-bottom:6px">'
-        + '<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-family:monospace;font-size:11px;color:var(--red);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + grp.error + '</span><span class="bdg br" style="margin-left:8px">' + grp.count + '</span></div>'
-        + '<div style="font-size:10px;color:var(--muted)">' + grp.examples.map(function(ex) { return '<span class="bdg by">' + ex.site + '</span> ' + ex.keyword; }).join(' · ') + '</div></div>';
-    }).join('');
-    box.innerHTML = h; addLog('ok', 'Diag: ' + d.failed + ' failed');
-  }).catch(function(e) { box.innerHTML = '<span style="color:var(--red)">Erreur: ' + e.message + '</span>'; });
-}
-
-// ─── WIZARD ───────────────────────────────────────────────────────────────────
 function goStep(n) {
   if (n > curStep && !validateStep(curStep)) return;
   curStep = n;
@@ -1503,7 +1074,6 @@ function addKwsToSite() {
     }).catch(function(e) { showToast('Erreur: ' + e.message, 'err'); });
 }
 
-// ─── LOG ──────────────────────────────────────────────────────────────────────
 function addLog(type, msg) {
   LOGS.unshift({ type: type, msg: msg, time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) });
   if (LOGS.length > 100) LOGS.pop();
@@ -1515,25 +1085,6 @@ function renderLog() {
   container.innerHTML = LOGS.map(function(e) { return '<div class="li ' + e.type + '"><span class="lt">' + e.time + '</span><span class="lmsg">' + e.msg + '</span></div>'; }).join('');
 }
 
-// ─── NAV ──────────────────────────────────────────────────────────────────────
-var PANELS = ['overview','control','failed','charts','weeks','pins','pinterest-kpi','sites-list','add-site','add-kw','networks','log'];
-function SN(name) {
-  PANELS.forEach(function(p) {
-    var t = g('tab-' + p), ni = g('ni-' + p);
-    if (t) t.className = 'panel' + (p === name ? ' on' : '');
-    if (ni) ni.className = 'ni' + (p === name ? ' on' : '');
-  });
-  if (name === 'failed') loadFailed();
-  if (name === 'pins') { loadPins(); loadNoPins(); }
-  if (name === 'pinterest-kpi') loadPinterestKPI();
-  if (name === 'charts') renderCharts();
-  if (name === 'log') renderLog();
-  if (name === 'networks') renderNetworksList();
-  if (name === 'add-site') { KWS = []; curStep = 1; goStep(1); }
-  closeSidebar();
-}
-
-// ─── SIDEBAR MOBILE ───────────────────────────────────────────────────────────
 function toggleSidebar() {
   var sb = g('sidebar'), ov = g('sidebar-overlay');
   if (sb) sb.classList.toggle('open');
@@ -1556,210 +1107,549 @@ function showToast(msg, type) {
   setTimeout(function() { if (e.parentNode) e.parentNode.removeChild(e); }, 4500);
 }
 
-// ─── PINTEREST KPI ────────────────────────────────────────────────────────────
-var PINTEREST_KPI_DATA = null;
-var SLOTS_DATA = null;
-var COUT_PAR_PIN = 1.2;
-// POD_URL_CACHE removed (no GPU)
-var SITES_ACCOUNTS = {
-  foodzauber:'7144',kochliebe:'7122',rezeptflow:'7142',schnelllecker:'7149',
-  rezeptnest:'7118',yumrezept:'7143',airfryer:'7643',plaetzchen:'7117',
-  zimtschnecken:'7324',waffeln:'9599',kaesekuchen:'7228',gulasch:'7325',pfannkuchen:'7841'
-};
+// ═════════════════════════════════════════════════════════════════════════════
+//  DASHBOARD v3 — production (action « dash » de Dashboard.gs)
+// ═════════════════════════════════════════════════════════════════════════════
+var D = null;                 // dernière réponse « dash »
+var CH = {};                  // instances Chart.js
+var PA_LIMIT = 50, PA_SEL = {}, FX = 'art', PLAN_SEED = null, PLAN_LAST = null;
+// Palette validée (fond #161b22) : attente / planifié / programmé / publié
+var COL = { s1: '#3987e5', s2: '#d95926', s3: '#199e70', s4: '#c98500',
+  grid: 'rgba(139,148,158,.12)', tick: '#8b949e', red: '#f85149' };
+var HEAT = ['#21262d', '#104281', '#1c5cab', '#2a78d6', '#5598e7', '#86b6ef'];
 
-function loadPinterestKPI() {
-  setText('pkpi-ts', 'Chargement...');
-  // Load PinBulk stats
-  callAPI({ action: 'pinbulk_stats' }).then(function(d) {
-    if (!d.ok) return;
-    PINTEREST_KPI_DATA = d;
-    renderPinterestKPI(d);
-  }).catch(function() {});
-  // Load Blotato slots
-  callAPI({ action: 'blotato_slots' }).then(function(d) {
-    if (!d.ok) return;
-    SLOTS_DATA = d.slots;
-    renderSlotsGrid(d.slots);
-    renderSiteTable(PINTEREST_KPI_DATA, d.slots);
-    setText('pk-slots-ts', 'Actualisé ' + new Date().toLocaleTimeString('fr-FR'));
-  }).catch(function() {});
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function fmt(n, d) { n = Number(n) || 0; return n.toLocaleString('fr-FR', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }); }
+function mad(n) { return fmt(n, n >= 1000 ? 0 : 2) + ' MAD'; }
+function pc(a, b) { return b ? Math.round(a / b * 100) : 0; }
+function perDay() { try { return parseInt(localStorage.getItem('rde_perday'), 10) || 3; } catch (e) { return 3; } }
+function sitesList() { return Object.keys(SITES_META); }
+
+function tile(label, value, sub, opts) {
+  opts = opts || {};
+  return '<div class="card tile' + (opts.cls ? ' ' + opts.cls : '') + '">'
+    + '<div class="ct">' + label + '</div>'
+    + '<div class="bignum"' + (opts.color ? ' style="color:' + opts.color + '"' : '') + '>' + value + '</div>'
+    + (sub ? '<div class="sub">' + sub + '</div>' : '')
+    + (opts.bar !== undefined ? '<div class="pbar"><div class="pfill" style="width:' + Math.min(100, opts.bar) + '%;background:' + (opts.barColor || 'var(--blue)') + '"></div></div>' : '')
+    + '</div>';
 }
 
-function renderPinterestKPI(d) {
-  var total = d.total || 0;
-  var sched = d.scheduled || 0;
-  var pub   = d.published || 0;
-  var pend  = d.pending || 0;
-  var cout  = d.cout_total || 0;
-  // Count slots used
-  var slotsUsed = 0;
-  var slotsFree = 0;
-  if (SLOTS_DATA) {
-    Object.values(SLOTS_DATA).forEach(function(s) { slotsUsed += s.scheduled||0; slotsFree += s.disponibles||0; });
-  }
-  // Articles covered = scheduled + published in PinBulk
-  var covered = 0;
-  var parSite = d.par_site || {};
-  Object.values(parSite).forEach(function(s) { if ((s.scheduled||0)+(s.published||0) > 0) covered++; });
-
-  setText('pk-slots-used', N(slotsUsed));
-  setText('pk-today', N(pub));
-  setText('pk-covered', N(covered));
-  setText('pk-scheduled', N(sched));
-  setText('pk-published', N(pub));
-  setText('pk-cost', N(Math.round(cout)) + ' MAD');
-  setText('pk-cost-per', '@ ' + COUT_PAR_PIN + ' MAD/pin');
-  setText('pk-free', N(slotsFree));
-  // Projection
-  var today = new Date().getDate();
-  var daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth()+1, 0).getDate();
-  var proj = today > 0 ? Math.round(pub / today * daysInMonth) : 0;
-  setText('pk-proj', N(proj));
-  // Queue bar
-  var qPct = Math.round(slotsUsed / 200 * 100);
-  setText('pk-queue-used', slotsUsed + ' / 200 slots utilisés');
-  setText('pk-queue-pct', qPct + '%');
-  setBar('pk-queue-bar', Math.min(100, qPct));
-  g('pk-queue-bar').style.background = qPct > 90 ? 'var(--red)' : qPct > 70 ? 'var(--yellow)' : 'var(--green)';
-  setText('pkpi-ts', 'Actualisé ' + new Date().toLocaleTimeString('fr-FR'));
-  renderSiteTable(d, SLOTS_DATA);
-  renderHeatmap();
-}
-
-function renderSlotsGrid(slots) {
-  var grid = g('pk-slots-grid'); if (!grid) return;
-  grid.innerHTML = Object.entries(slots || {}).map(function(kv) {
-    var site = kv[0], s = kv[1];
-    var sched = s.scheduled || 0;
-    var dispo = s.disponibles || 0;
-    var pct   = Math.round(sched / 10 * 100);
-    var col   = pct >= 100 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
-    return '<div class="slot-card">'
-      + '<div class="slot-site">' + site + '</div>'
-      + '<div class="slot-nums"><span style="color:var(--blue)">' + sched + ' schedulés</span><span style="color:var(--green)">' + dispo + ' libres</span></div>'
-      + '<div class="slot-bar"><div class="slot-fill" style="width:' + pct + '%;background:' + col + '"></div></div>'
-      + '</div>';
+// ─── Sélecteurs de sites / semaines ─────────────────────────────────────────
+function buildSiteChecks(id, checked) {
+  var c = g(id); if (!c) return;
+  c.innerHTML = sitesList().map(function (s) {
+    return '<div class="sch"><input type="checkbox" id="' + id + '-' + s + '" value="' + s + '"' + (checked ? ' checked' : '') + '>'
+      + '<label for="' + id + '-' + s + '"><span class="sn">' + s + '</span><span class="sp" id="' + id + '-p-' + s + '">—</span></label></div>';
   }).join('');
 }
-
-function renderSiteTable(d, slots) {
-  var tbody = g('pk-site-tbody'); if (!tbody) return;
-  var parSite = (d && d.par_site) || {};
-  var allSites = Object.keys(SITES_ACCOUNTS);
-  tbody.innerHTML = allSites.map(function(site) {
-    var s = parSite[site] || { pending:0, scheduled:0, published:0, total:0 };
-    var sl = (slots && slots[site]) || { scheduled:0, disponibles:10 };
-    var slotPct = Math.round(sl.scheduled / 10 * 100);
-    var coverPct = Math.round(((s.scheduled||0)+(s.published||0)) / 100 * 100);
-    var statut = slotPct >= 100 ? '<span class="bdg bg">🟢 Plein</span>'
-               : slotPct >= 50  ? '<span class="bdg by">🟡 Partiel</span>'
-               : '<span class="bdg br">🔴 Vide</span>';
-    return '<tr>'
-      + '<td style="font-weight:600">' + site + '</td>'
-      + '<td style="color:var(--blue)">' + N(s.scheduled||0) + '</td>'
-      + '<td style="color:var(--green)">' + N(s.published||0) + '</td>'
-      + '<td style="color:var(--muted)">' + N(s.pending||0) + '</td>'
-      + '<td>' + sl.disponibles + '/10'
-      + '<span class="slot-pct"><span class="slot-pct-fill" style="width:' + slotPct + '%;background:' + (slotPct>=100?'var(--green)':slotPct>=50?'var(--yellow)':'var(--red)') + '"></span></span></td>'
-      + '<td>' + coverPct + '%</td>'
-      + '<td>' + statut + '</td>'
-      + '</tr>';
+function buildWeekChecks(id) {
+  var c = g(id); if (!c) return;
+  var w = []; for (var i = 1; i <= 12; i++) w.push(i);
+  c.innerHTML = w.map(function (n) {
+    return '<div class="wch"><input type="checkbox" id="' + id + '-' + n + '" value="' + n + '" checked><label for="' + id + '-' + n + '">S' + ('0' + n).slice(-2) + '</label></div>';
   }).join('');
 }
+function selAll(id, on) { var c = g(id); if (!c) return; c.querySelectorAll('input[type=checkbox]').forEach(function (x) { x.checked = on; }); }
+function getSel(id) { var c = g(id); if (!c) return []; return [].slice.call(c.querySelectorAll('input:checked')).map(function (x) { return x.value; }); }
 
-function renderHeatmap() {
-  var hm = g('pk-heatmap'); if (!hm) return;
-  var cells = [];
-  var today = new Date();
-  for (var i = 29; i >= 0; i--) {
-    var d = new Date(today.getTime() - i * 86400000);
-    var label = (d.getMonth()+1) + '/' + d.getDate();
-    // Without real daily data, show empty cells
-    var pct = 0;
-    var col = pct >= 100 ? '#3fb950' : pct >= 50 ? '#d29922' : pct > 0 ? '#1f6feb' : '#21262d';
-    cells.push('<div class="hm-cell" style="background:' + col + '" title="' + label + ' — ' + pct + ' pins">' + d.getDate() + '</div>');
-  }
-  hm.innerHTML = cells.join('');
-}
-
-// ─── POPUP WF5 ─────────────────────────────────────────────────────────────
-function showPopupWF5() {
-  // Populate sites checkboxes
-  var grid = g('pop-sites-grid'); if (!grid) return;
-  grid.innerHTML = Object.keys(SITES_ACCOUNTS).map(function(s) {
-    return '<div style="display:flex;align-items:center;gap:5px">'
-      + '<input type="checkbox" class="chk pop-site-chk" id="psc-'+s+'" value="'+s+'" checked>'
-      + '<label for="psc-'+s+'" style="font-size:11px;cursor:pointer">'+s+'</label></div>';
-  }).join('');
-  // Pre-fill pod URL
-  g('popup-wf5').style.display = 'flex';
-}
-function closePopupWF5() { g('popup-wf5').style.display = 'none'; }
-function selPopSites(mode) {
-  document.querySelectorAll('.pop-site-chk').forEach(function(c) { c.checked = mode === 'all'; });
-}
-function runWF5FromDashboard() {
-  var sites = [];
-  document.querySelectorAll('.pop-site-chk:checked').forEach(function(c) { sites.push(c.value); });
-  var nbPins = (g('pop-nb-pins') || {}).value || '2';
-  if (!sites.length) { showToast('Sélectionne au moins un site', 'err'); return; }
-  var btn = g('pop-run-btn');
-  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Lancement...';
-  callAPI({ action: 'run_wf5', sites: JSON.stringify(sites), nb_pins: parseInt(nbPins) || 2 })
-    .then(function(d) {
-      if (d.ok) {
-        showToast('✅ WF5 lancé pour ' + sites.length + ' site(s)', 'ok');
-        addLog('ok', 'WF5 lancé — ' + sites.length + ' sites, ' + nbPins + ' pins/article');
-        closePopupWF5();
-      } else {
-        showToast('❌ ' + (d.error || 'Erreur WF5'), 'err');
-        addLog('err', 'WF5 erreur: ' + (d.error || 'Erreur'));
-      }
-      btn.disabled = false; btn.textContent = '▶ Lancer WF5';
-    })
-    .catch(function(e) {
-      showToast('❌ ' + e.message, 'err');
-      addLog('err', 'WF5 erreur: ' + e.message);
-      btn.disabled = false; btn.textContent = '▶ Lancer WF5';
-    });
-}
-  
-  // ─── POPUP COÛT ────────────────────────────────────────────────────────────
-function showPopupCout() { var inp = g('pop-cout-val'); if (inp) inp.value = COUT_PAR_PIN; g('popup-cout').style.display = 'flex'; }
-function closePopupCout() { g('popup-cout').style.display = 'none'; }
-function saveCoutGPU() {
-  var val = parseFloat((g('pop-cout-val') || {}).value || '1.2');
-  if (isNaN(val) || val <= 0) { showToast('Valeur invalide', 'err'); return; }
-  COUT_PAR_PIN = val;
-  localStorage.setItem('cout_par_pin', val);
-  showToast('Coût GPU mis à jour : ' + val + ' MAD/pin', 'ok');
-  closePopupCout();
-  if (PINTEREST_KPI_DATA) renderPinterestKPI(PINTEREST_KPI_DATA);
+function initUI() {
+  buildSiteChecks('art-sites', true); buildWeekChecks('art-weeks');
+  buildSiteChecks('img-sites', true);
+  buildSiteChecks('pl-sites', true);
+  var ek = g('ek-site');
+  if (ek) ek.innerHTML = '<option value="">Sélectionne un site...</option>' + sitesList().map(function (s) { return '<option value="' + s + '">' + s + '</option>'; }).join('');
+  var ps = g('pa-site');
+  if (ps) ps.innerHTML = '<option value="">Tous les sites</option>' + sitesList().map(function (s) { return '<option value="' + s + '">' + s + '</option>'; }).join('');
+  var t = new Date(Date.now() + 864e5);
+  if (g('pl-start')) g('pl-start').value = t.toISOString().slice(0, 10);
+  if (g('pl-perday')) g('pl-perday').value = perDay();
+  setText('perday-lbl', perDay());
 }
 
-// ─── BOOT (runs last, after all functions defined) ────────────────────────────
-window.addEventListener('load', function() {
-  // Restore session if exists
-  var saved = sessionStorage.getItem('rde');
-  if (saved) {
-    try {
-      var parsed = JSON.parse(saved);
-      AUTH = parsed;
-      var uInput = g('u'); if (uInput) uInput.value = AUTH.u;
-    } catch(e) { sessionStorage.removeItem('rde'); }
+// ─── Chargement ─────────────────────────────────────────────────────────────
+function loadData() {
+  var dot = g('sdot'); if (dot) dot.className = 'sdot y';
+  return callAPI({ action: 'dash' }).then(function (d) {
+    if (!d.ok) throw new Error(d.error || 'Réponse invalide');
+    D = d; renderAll();
+    if (dot) dot.className = 'sdot';
+    setText('rtime', new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }));
+  }).catch(function (e) {
+    if (dot) dot.className = 'sdot r';
+    showToast('Chargement : ' + e.message, 'err'); addLog('err', 'dash : ' + e.message);
+  });
+}
+
+function renderAll() {
+  if (!D) return;
+  setText('kpi-ts', 'Mis à jour ' + new Date(D.updatedAt).toLocaleString('fr-FR') + ' · ' + (D.ms ? (D.ms / 1000).toFixed(1) + ' s' : ''));
+  renderKPI(); renderArticlesTab(); renderImagesTab(); renderPinterestTab(); renderCalendar(); renderFailed();
+  var nf = D.articles.failedList.length + D.images.failedList.length + D.pins.errors.length;
+  var b = g('nb-failed'); if (b) { b.textContent = nf; b.style.display = nf ? '' : 'none'; }
+  // progression sur les sélecteurs
+  (D.articles.bySite || []).forEach(function (s) { setText('art-sites-p-' + s.site, s.published + '/' + s.total); });
+  (D.images.bySite || []).forEach(function (s) { setText('img-sites-p-' + s.site, s.done + ' faits · ' + s.generated + ' à téléverser'); });
+  (D.pins.bySite || []).forEach(function (s) { setText('pl-sites-p-' + s.site, s.done + ' en attente'); });
+  if (D.costs) { g('c-article').value = D.costs.article; g('c-image').value = D.costs.image; g('c-pin').value = D.costs.pin; }
+  renderPod();
+}
+
+// ─── Charts ─────────────────────────────────────────────────────────────────
+function chartBase(stacked, horizontal) {
+  var ax = { grid: { color: COL.grid }, ticks: { color: COL.tick, font: { size: 10 } }, border: { display: false } };
+  var x = JSON.parse(JSON.stringify(ax)), y = JSON.parse(JSON.stringify(ax));
+  if (stacked) { x.stacked = true; y.stacked = true; }
+  if (horizontal) { y.grid.display = false; } else { x.grid.display = false; }
+  x.ticks.maxRotation = 0; x.ticks.autoSkip = true; x.ticks.maxTicksLimit = horizontal ? 6 : 10;
+  return { responsive: true, maintainAspectRatio: false, indexAxis: horizontal ? 'y' : 'x', animation: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0d1117', borderColor: '#30363d', borderWidth: 1,
+      titleColor: '#e6edf3', bodyColor: '#e6edf3', padding: 10, boxPadding: 4 } },
+    scales: { x: x, y: y } };
+}
+function mkChart(id, cfg) {
+  var el = g(id); if (!el || typeof Chart === 'undefined') return;
+  if (CH[id]) CH[id].destroy();
+  CH[id] = new Chart(el.getContext('2d'), cfg);
+}
+function legend(id, items) {
+  var e = g(id); if (!e) return;
+  e.innerHTML = items.map(function (it) { return '<span class="li2"><i style="background:' + it[1] + '"></i>' + it[0] + '</span>'; }).join('');
+}
+function barDs(label, data, color) {
+  return { label: label, data: data, backgroundColor: color, borderColor: '#161b22', borderWidth: { top: 2, right: 0, bottom: 0, left: 0 },
+    borderRadius: 4, borderSkipped: 'start', maxBarThickness: 22 };
+}
+function dayLbl(d) { return d.slice(8, 10) + '/' + d.slice(5, 7); }
+
+// ─── KPI & coûts ────────────────────────────────────────────────────────────
+function renderKPI() {
+  var c = D.cost, a = D.articles, im = D.images, p = D.pins;
+  var sent = (p.byStatus.scheduled || 0) + (p.byStatus.posted || 0);
+  g('kpi-tiles').innerHTML =
+      tile('Coût total', mad(c.total), 'depuis le début')
+    + tile('Coût ce mois', mad(c.month), D.today.slice(0, 7))
+    + tile('Coût / article publié', mad(c.perPublished), fmt(a.published) + ' articles publiés')
+    + tile('Articles publiés', fmt(a.published), pc(a.published, a.total) + ' % des ' + fmt(a.total) + ' prévus', { bar: pc(a.published, a.total), barColor: COL.s1 })
+    + tile('Images', fmt(im.images), 'moy. ' + fmt(im.avg, 1) + ' / article · ' + fmt(im.articlesDone) + ' articles en ligne')
+    + tile('Pins envoyés', fmt(sent), fmt(p.byStatus.done || 0) + ' en attente · ' + fmt(p.byStatus.planned || 0) + ' planifiés')
+    + tile('Couverture Pinterest', pc(p.covered, p.published) + ' %', fmt(p.covered) + ' / ' + fmt(p.published) + ' articles publiés ont un pin envoyé', { bar: pc(p.covered, p.published), barColor: COL.s3 });
+
+  var labels = D.days.map(dayLbl);
+  mkChart('ch-cost', { type: 'bar', data: { labels: labels, datasets: [
+      barDs('Articles', c.daily.map(function (x) { return x.a; }), COL.s1),
+      barDs('Images', c.daily.map(function (x) { return x.i; }), COL.s2),
+      barDs('Pins', c.daily.map(function (x) { return x.p; }), COL.s3)] },
+    options: (function () { var o = chartBase(true); o.plugins.tooltip.callbacks = { label: function (ctx) { return ' ' + ctx.dataset.label + ' : ' + mad(ctx.parsed.y); },
+      footer: function (items) { var t = 0; items.forEach(function (i) { t += i.parsed.y; }); return 'Total : ' + mad(t); } };
+      o.scales.y.ticks.callback = function (v) { return fmt(v) + ' MAD'; }; return o; })() });
+  legend('lg-cost', [['Articles', COL.s1], ['Images', COL.s2], ['Pins', COL.s3]]);
+
+  var parts = [['Articles', c.articles, COL.s1, fmt(a.generated) + ' générations × ' + D.costs.article + ' MAD'],
+    ['Images', c.images, COL.s2, fmt(im.images) + ' images × ' + D.costs.image + ' MAD'],
+    ['Pins', c.pins, COL.s3, fmt(p.total) + ' pins × ' + D.costs.pin + ' MAD']];
+  g('cost-split').innerHTML = '<div class="splitbar">' + parts.map(function (x) {
+      return '<span style="width:' + (c.total ? x[1] / c.total * 100 : 0) + '%;background:' + x[2] + '" title="' + x[0] + ' : ' + mad(x[1]) + '"></span>'; }).join('') + '</div>'
+    + parts.map(function (x) {
+      return '<div class="srow"><span class="sdotb" style="background:' + x[2] + '"></span><span>' + x[0] + '</span><span class="sub" style="margin:0 0 0 8px">' + x[3] + '</span>'
+        + '<span class="scount">' + mad(x[1]) + '</span><span class="spct">' + pc(x[1], c.total) + '%</span></div>'; }).join('')
+    + '<div class="ct mt">Coût par site</div><div class="tw"><table class="tbl"><thead><tr><th>Site</th><th class="r">Articles</th><th class="r">Images</th><th class="r">Pins</th><th class="r">Total</th><th class="r">/ publié</th></tr></thead><tbody>'
+    + c.bySite.map(function (s) { return '<tr><td>' + esc(s.site) + '</td><td class="r">' + fmt(s.a) + '</td><td class="r">' + fmt(s.i) + '</td><td class="r">' + fmt(s.p) + '</td><td class="r b">' + fmt(s.t) + '</td><td class="r">' + (s.published ? fmt(s.t / s.published, 1) : '—') + '</td></tr>'; }).join('')
+    + '</tbody></table></div>';
+
+  // Pipeline par site
+  var im2 = {}, p2 = {};
+  im.bySite.forEach(function (s) { im2[s.site] = s; });
+  p.bySite.forEach(function (s) { p2[s.site] = s; });
+  var rows = a.bySite.slice().sort(function (x, y) { return y.total - x.total; }).map(function (s) {
+    var i = im2[s.site] || {}, q = p2[s.site] || {};
+    var sentS = (q.scheduled || 0) + (q.posted || 0);
+    return '<tr><td><b>' + esc(s.site) + '</b></td>'
+      + '<td class="r">' + fmt(s.total) + '</td>'
+      + '<td class="r">' + fmt(s.published) + ' <span class="sub">' + pc(s.published, s.total) + '%</span>' + miniBar(pc(s.published, s.total), COL.s1) + '</td>'
+      + '<td class="r">' + fmt(i.done || 0) + ' <span class="sub">' + pc(i.done || 0, s.published + s.scheduled + s.drafted) + '%</span>' + miniBar(pc(i.done || 0, s.published + s.scheduled + s.drafted), COL.s2) + '</td>'
+      + '<td class="r">' + fmt(i.images || 0) + '</td>'
+      + '<td class="r">' + fmt(q.covered || 0) + ' <span class="sub">' + pc(q.covered || 0, s.published) + '%</span>' + miniBar(pc(q.covered || 0, s.published), COL.s3) + '</td>'
+      + '<td class="r">' + fmt(q.done || 0) + '</td><td class="r">' + fmt(sentS) + '</td>'
+      + '<td class="r">' + ((s.failed || 0) + (i.failed || 0) + (q.error || 0) ? '<span class="bdg br">⚠ ' + ((s.failed || 0) + (i.failed || 0) + (q.error || 0)) + '</span>' : '<span class="sub">0</span>') + '</td></tr>';
+  });
+  g('tbl-pipeline').innerHTML = '<thead><tr><th>Site</th><th class="r">Articles prévus</th><th class="r">Publiés</th><th class="r">Images en ligne <span class="hint">/ écrits</span></th><th class="r">Nb images</th><th class="r">Articles pinés</th><th class="r">Pins en attente</th><th class="r">Pins envoyés</th><th class="r">Échecs</th></tr></thead><tbody>' + rows.join('') + '</tbody>';
+}
+function miniBar(p, color) { return '<div class="mbar"><i style="width:' + Math.min(100, p) + '%;background:' + color + '"></i></div>'; }
+
+function saveCosts() {
+  callAPI({ action: 'set_costs', article: g('c-article').value, image: g('c-image').value, pin: g('c-pin').value }).then(function (d) {
+    if (!d.ok) throw new Error(d.error || 'Erreur');
+    showToast('Coûts enregistrés', 'ok'); addLog('ok', 'Coûts : article ' + d.costs.article + ' · image ' + d.costs.image + ' · pin ' + d.costs.pin);
+    loadData();
+  }).catch(function (e) { showToast(e.message, 'err'); });
+}
+
+// ─── Articles ───────────────────────────────────────────────────────────────
+function renderArticlesTab() {
+  var a = D.articles, st = a.byStatus;
+  var last7 = a.daily.slice(-7).reduce(function (x, y) { return x + y; }, 0);
+  g('art-tiles').innerHTML =
+      tile('Prévus', fmt(a.total), 'lignes du Master')
+    + tile('Publiés', fmt(st.published || 0), pc(st.published || 0, a.total) + ' %', { bar: pc(st.published || 0, a.total), barColor: COL.s1 })
+    + tile('Programmés WP', fmt(st.scheduled || 0), 'publication future')
+    + tile('Brouillons', fmt(st.drafted || 0), '')
+    + tile('En attente', fmt(st.pending || 0), 'à générer')
+    + tile('Générés (7 j)', fmt(last7), fmt(last7 / 7, 1) + ' / jour')
+    + tile('Échecs', fmt((st.failed || 0) + (st.quarantine || 0) + (st.processing || 0)), (st.quarantine || 0) + ' en quarantaine · ' + (st.processing || 0) + ' bloqués en processing', { color: (st.failed || st.quarantine) ? 'var(--red)' : '' })
+    + tile('Coût articles', mad(D.cost.articles), fmt(a.generated) + ' générations');
+
+  mkChart('ch-art', { type: 'bar', data: { labels: D.days.map(dayLbl), datasets: [barDs('Articles générés', a.daily, COL.s1)] }, options: chartBase(false) });
+
+  g('tbl-art-site').innerHTML = '<thead><tr><th>Site</th><th class="r">Total</th><th class="r">Publiés</th><th class="r">Programmés</th><th class="r">Brouillons</th><th class="r">Pending</th><th class="r">Échecs</th><th>Progression</th><th class="r">Coût</th></tr></thead><tbody>'
+    + a.bySite.slice().sort(function (x, y) { return y.total - x.total; }).map(function (s) {
+      return '<tr><td><b>' + esc(s.site) + '</b></td><td class="r">' + fmt(s.total) + '</td><td class="r">' + fmt(s.published) + '</td><td class="r">' + fmt(s.scheduled) + '</td><td class="r">' + fmt(s.drafted) + '</td><td class="r">' + fmt(s.pending) + '</td>'
+        + '<td class="r">' + (s.failed ? '<span class="bdg br">⚠ ' + s.failed + '</span>' : '0') + '</td>'
+        + '<td style="min-width:120px">' + miniBar(pc(s.published, s.total), COL.s1) + '<span class="sub">' + pc(s.published, s.total) + ' %</span></td>'
+        + '<td class="r">' + mad(s.cost) + '</td></tr>';
+    }).join('') + '</tbody>';
+
+  g('tbl-art-week').innerHTML = '<thead><tr><th>Semaine</th><th class="r">Total</th><th class="r">Générés</th><th class="r">Publiés</th><th class="r">Échecs</th><th>Progression</th></tr></thead><tbody>'
+    + a.byWeek.map(function (w) {
+      return '<tr><td>S' + ('0' + w.week).slice(-2) + '</td><td class="r">' + fmt(w.total) + '</td><td class="r">' + fmt(w.generated) + '</td><td class="r">' + fmt(w.published) + '</td><td class="r">' + (w.failed ? '<span class="bdg br">⚠ ' + w.failed + '</span>' : '0') + '</td>'
+        + '<td style="min-width:140px">' + miniBar(pc(w.published, w.total), COL.s1) + '<span class="sub">' + pc(w.published, w.total) + ' %</span></td></tr>';
+    }).join('') + '</tbody>';
+}
+
+function runWF(action, siteBox, weekBox) {
+  var sites = getSel(siteBox);
+  var weeks = weekBox ? getSel(weekBox).map(Number) : [];
+  if (!sites.length) { showToast('Sélectionne au moins un site', 'info'); return; }
+  var lbl = { wf1_run: 'WF1 — générer', wf1_retry_failed: 'WF1 — relancer échecs', wf2_run: 'WF2a — générer images', wf2b_run: 'WF2b — téléverser', wf2_retry_failed: 'WF2 — relancer échecs', wf3_run: 'WF3a — pins' }[action] || action;
+  if (!confirm(lbl + ' sur ' + sites.length + ' site(s) ?')) return;
+  showToast(lbl + '…', 'info'); addLog('run', lbl + ' → ' + sites.join(', '));
+  callAPI({ action: action, sites: JSON.stringify(sites), weeks: JSON.stringify(weeks) }).then(function (d) {
+    if (d.ok) { showToast(lbl + ' lancé', 'ok'); addLog('ok', lbl + ' accepté' + (d.message ? ' — ' + d.message : '')); setTimeout(loadData, 5000); }
+    else { showToast('Erreur : ' + (d.error || ('HTTP ' + d.code)), 'err'); addLog('err', lbl + ' : ' + (d.error || JSON.stringify(d.body || '').slice(0, 160))); }
+  }).catch(function (e) { showToast(e.message, 'err'); addLog('err', e.message); });
+}
+
+function runDiag() {
+  var o = g('diag-out'); o.innerHTML = '<span class="spin"></span>';
+  callAPI({ action: 'wf1_diagnostic' }).then(function (d) {
+    o.innerHTML = '<div class="diag"><b>' + d.failed + ' failed · ' + d.processing + ' processing</b><div class="sub">' + esc(d.recommendation) + '</div>'
+      + (d.error_groups || []).slice(0, 6).map(function (x) { return '<div class="srow"><span class="bdg br">' + x.count + '</span><span class="ec" style="max-width:none">' + esc(x.error) + '</span></div>'; }).join('') + '</div>';
+  }).catch(function (e) { o.textContent = e.message; });
+}
+
+// ─── Images ─────────────────────────────────────────────────────────────────
+function renderImagesTab() {
+  var im = D.images, st = im.byStatus;
+  var failed = 0; Object.keys(st).forEach(function (k) { if (k.indexOf('failed') === 0) failed += st[k]; });
+  var textsOut = (D.articles.byStatus.published || 0) + (D.articles.byStatus.scheduled || 0) + (D.articles.byStatus.drafted || 0);
+  var last7 = im.dailyImgs.slice(-7).reduce(function (x, y) { return x + y; }, 0);
+  g('img-tiles').innerHTML =
+      tile('Images générées', fmt(im.images), 'moyenne ' + fmt(im.avg, 1) + ' / article (' + fmt(im.withImages) + ' articles)')
+    + tile('Articles images en ligne', fmt(im.articlesDone), pc(im.articlesDone, textsOut) + ' % des ' + fmt(textsOut) + ' articles écrits', { bar: pc(im.articlesDone, textsOut), barColor: COL.s2 })
+    + tile('Sur le GPU (WF2a)', fmt((st.generating || 0) + (st.processing || 0)), 'generating / processing')
+    + tile('À téléverser (WF2b)', fmt(st.generated || 0), 'générées, pas encore dans WP')
+    + tile('En upload', fmt(st.uploading || 0), '')
+    + tile('Images (7 j)', fmt(last7), fmt(last7 / 7, 0) + ' / jour')
+    + tile('Échecs', fmt(failed), 'failed / failed_gpu / failed_upload', { color: failed ? 'var(--red)' : '' })
+    + tile('Coût images', mad(D.cost.images), fmt(im.images) + ' × ' + D.costs.image + ' MAD');
+
+  mkChart('ch-img', { type: 'bar', data: { labels: D.days.map(dayLbl), datasets: [barDs('Images', im.dailyImgs, COL.s2)] },
+    options: (function () { var o = chartBase(false); o.plugins.tooltip.callbacks = { afterLabel: function (ctx) { return im.daily[ctx.dataIndex] + ' article(s)'; } }; return o; })() });
+
+  g('tbl-img-site').innerHTML = '<thead><tr><th>Site</th><th class="r">Textes prêts</th><th class="r">En attente</th><th class="r">GPU</th><th class="r">À téléverser</th><th class="r">Upload</th><th class="r">En ligne</th><th class="r">Échecs</th><th class="r">Images</th><th class="r">Moy.</th><th class="r">Coût</th></tr></thead><tbody>'
+    + im.bySite.slice().sort(function (x, y) { return y.images - x.images; }).map(function (s) {
+      return '<tr><td><b>' + esc(s.site) + '</b></td><td class="r">' + fmt(s.textDone) + '</td><td class="r">' + fmt(s.pending) + '</td><td class="r">' + fmt(s.generating) + '</td><td class="r">' + fmt(s.generated) + '</td><td class="r">' + fmt(s.uploading) + '</td>'
+        + '<td class="r">' + fmt(s.done) + '</td><td class="r">' + (s.failed ? '<span class="bdg br">⚠ ' + s.failed + '</span>' : '0') + '</td><td class="r">' + fmt(s.images) + '</td>'
+        + '<td class="r">' + (s.done ? fmt(s.images / Math.max(1, s.done), 1) : '—') + '</td><td class="r">' + mad(s.cost) + '</td></tr>';
+    }).join('') + '</tbody>';
+}
+
+function renderPod() {
+  if (!D || !D.pod) return;
+  var inp = g('pod-url');
+  if (inp && document.activeElement !== inp) inp.value = D.pod.url || '';
+  setText('pod-info', D.pod.url ? 'Enregistrée' + (D.pod.updated_at ? ' le ' + new Date(D.pod.updated_at).toLocaleString('fr-FR') : '') : 'Aucune URL enregistrée');
+}
+function savePod() {
+  var url = g('pod-url').value.trim();
+  if (!/^https?:\/\//.test(url)) { showToast('URL invalide', 'err'); return; }
+  callAPI({ action: 'save_pod', pod_url: url }).then(function (d) {
+    if (!d.ok) throw new Error(d.error || 'Erreur');
+    showToast('URL du pod enregistrée', 'ok'); addLog('ok', 'Pod : ' + d.pod_url);
+    if (D) { D.pod = { url: d.pod_url, updated_at: new Date().toISOString() }; renderPod(); }
+    testPod();
+  }).catch(function (e) { showToast(e.message, 'err'); });
+}
+function testPod() {
+  var st = g('pod-state'), o = g('pod-test');
+  st.className = 'bdg by'; st.textContent = 'test…'; o.innerHTML = '';
+  callAPI({ action: 'test_pod' }).then(function (d) {
+    st.className = 'bdg ' + (d.ok ? 'bg' : 'br'); st.textContent = d.ok ? '● en ligne' : '⚠ injoignable';
+    o.innerHTML = (d.tests || []).map(function (t) { return '<div class="sub">GET ' + esc(t.path) + ' → <b>' + (t.code || 'erreur') + '</b> en ' + t.ms + ' ms · ' + esc(t.body).slice(0, 90) + '</div>'; }).join('') || esc(d.error || '');
+    addLog(d.ok ? 'ok' : 'err', 'Test pod : ' + (d.ok ? 'OK' : 'KO'));
+  }).catch(function (e) { st.className = 'bdg br'; st.textContent = 'erreur'; o.textContent = e.message; });
+}
+
+// ─── Pinterest ──────────────────────────────────────────────────────────────
+function renderPinterestTab() {
+  var p = D.pins, b = p.byStatus, N = perDay();
+  var accounts = p.bySite.filter(function (s) { return s.account; }).length || 1;
+  var next7 = p.bySite.reduce(function (n, s) { return n + (s.next7 || 0); }, 0);
+  var last7 = p.daily.slice(-7).reduce(function (x, y) { return x + y; }, 0);
+  var need7 = accounts * N * 7;
+  g('pin-tiles').innerHTML =
+      tile('Couverture', pc(p.covered, p.published) + ' %', fmt(p.covered) + ' / ' + fmt(p.published) + ' articles publiés ont un pin envoyé', { bar: pc(p.covered, p.published), barColor: COL.s3 })
+    + tile('En attente (sheet)', fmt(b.done || 0), 'Status done, pas planifiés')
+    + tile('Planifiés', fmt(b.planned || 0), 'date posée, pas encore envoyés')
+    + tile('Programmés Blotato', fmt(b.scheduled || 0), 'scheduled, date à venir')
+    + tile('Publiés', fmt(b.posted || 0), 'scheduled date passée + posted')
+    + tile('Prochains 7 jours', fmt(next7) + ' / ' + fmt(need7), 'objectif ' + N + '/jour × ' + accounts + ' comptes', { bar: pc(next7, need7), barColor: COL.s1 })
+    + tile('Stock', fmt((b.done || 0) / (accounts * N), 1) + ' j', 'avant rupture au rythme actuel')
+    + tile('Publiés sans pins', fmt(p.noPins), 'à passer dans WF3a', { color: p.noPins ? 'var(--yellow)' : '' })
+    + tile('Pins produits (7 j)', fmt(last7), 'coût ' + mad(last7 * D.costs.pin))
+    + tile('Doublons même jour', fmt(p.dupCount || 0), p.dupCount ? '⚠ même article 2× le même jour sur un compte' : '✓ aucun', { color: p.dupCount ? 'var(--red)' : 'var(--green)' })
+    + tile('Erreurs', fmt(b.error || 0), 'voir Échecs → Pins', { color: b.error ? 'var(--red)' : '' })
+    + tile('Coût pins', mad(D.cost.pins), fmt(p.total) + ' × ' + D.costs.pin + ' MAD');
+
+  var sites = p.bySite.slice().sort(function (x, y) { return (y.done + y.planned + y.scheduled + y.posted) - (x.done + x.planned + x.scheduled + x.posted); });
+  mkChart('ch-pins', { type: 'bar', data: { labels: sites.map(function (s) { return s.site; }), datasets: [
+      barDs('En attente', sites.map(function (s) { return s.done; }), COL.s1),
+      barDs('Planifiés', sites.map(function (s) { return s.planned; }), COL.s2),
+      barDs('Programmés', sites.map(function (s) { return s.scheduled; }), COL.s3),
+      barDs('Publiés', sites.map(function (s) { return s.posted; }), COL.s4)].map(function (ds) { ds.borderWidth = { top: 0, right: 2, bottom: 0, left: 0 }; return ds; }) },
+    options: chartBase(true, true) });
+  legend('lg-pins', [['En attente', COL.s1], ['Planifiés', COL.s2], ['Programmés', COL.s3], ['Publiés', COL.s4]]);
+  setText('perday-lbl', N);
+
+  g('tbl-pin-site').innerHTML = '<thead><tr><th>Site</th><th>Compte</th><th class="r">Art. publiés</th><th class="r">Art. avec pins</th><th class="r">Sans pins</th><th class="r">En attente</th><th class="r">Planifiés</th><th class="r">Programmés</th><th class="r">Publiés</th><th class="r">Erreurs</th><th class="r">7 j</th><th class="r">Stock</th><th></th></tr></thead><tbody>'
+    + sites.map(function (s) {
+      var stock = s.done / N;
+      return '<tr><td><b>' + esc(s.site) + '</b></td><td class="mono">' + esc(s.account || '—') + '</td><td class="r">' + fmt(s.pubArticles) + '</td><td class="r">' + fmt(s.nArticles || 0) + '</td>'
+        + '<td class="r">' + (s.noPins ? '<a href="#" onclick="filterNoPins(\'' + s.site + '\');return false">' + fmt(s.noPins) + '</a>' : '0') + '</td>'
+        + '<td class="r">' + fmt(s.done) + '</td><td class="r">' + fmt(s.planned) + '</td><td class="r">' + fmt(s.scheduled) + '</td><td class="r">' + fmt(s.posted) + '</td>'
+        + '<td class="r">' + (s.error ? '<span class="bdg br">⚠ ' + s.error + '</span>' : '0') + '</td>'
+        + '<td class="r">' + fmt(s.next7) + ' / ' + (N * 7) + '</td>'
+        + '<td class="r"><span class="bdg ' + (stock < 3 ? 'br' : stock < 7 ? 'by' : 'bg') + '">' + fmt(stock, 1) + ' j</span></td>'
+        + '<td><button class="btn btn-ghost bxs" onclick="runWF3Site(\'' + s.site + '\')">WF3a</button></td></tr>';
+    }).join('') + '</tbody>';
+  renderArticles();
+}
+
+function filterNoPins(site) { g('pa-site').value = site; g('pa-filter').value = 'nopins'; PA_LIMIT = 50; renderArticles(); g('tbl-art-pins').scrollIntoView({ behavior: 'smooth' }); }
+
+function articleRows() {
+  var site = g('pa-site').value, f = g('pa-filter').value, q = g('pa-q').value.trim().toLowerCase();
+  return (D.articleList || []).filter(function (a) {
+    if (site && a.site !== site) return false;
+    var n = a.d + a.pl + a.sc + a.po + a.er;
+    if (f === 'nopins' && !(a.st === 'published' && n === 0)) return false;
+    if (f === 'waiting' && !a.d) return false;
+    if (f === 'sent' && !(a.sc + a.po)) return false;
+    if (f === 'error' && !a.er) return false;
+    if (q && (a.kw + ' ' + a.id).toLowerCase().indexOf(q) === -1) return false;
+    return true;
+  });
+}
+function renderArticles() {
+  if (!D) return;
+  var rows = articleRows();
+  var shown = rows.slice(0, PA_LIMIT);
+  setText('pa-count', fmt(rows.length) + ' article(s) · ' + Object.keys(PA_SEL).length + ' sélectionné(s)');
+  g('pa-more').style.display = rows.length > PA_LIMIT ? '' : 'none';
+  var z = function (n, cls) { return n ? '<span class="' + (cls || '') + '">' + n + '</span>' : '<span class="hint">·</span>'; };
+  g('tbl-art-pins').innerHTML = '<thead><tr><th><input type="checkbox" onclick="selArticles(this.checked)"></th><th>ID</th><th>Site</th><th>Keyword</th><th>Statut</th><th class="r">Images</th><th class="r">Attente</th><th class="r">Planifiés</th><th class="r">Programmés</th><th class="r">Publiés</th><th class="r">Erreurs</th><th>Prochain</th></tr></thead><tbody>'
+    + shown.map(function (a) {
+      return '<tr><td><input type="checkbox" ' + (PA_SEL[a.id] ? 'checked' : '') + ' onchange="togSel(\'' + a.id + '\',this.checked)"></td>'
+        + '<td class="mono">' + esc(a.id) + '</td><td>' + esc(a.site) + '</td>'
+        + '<td class="ec" style="max-width:260px">' + (a.url ? '<a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.kw) + '</a>' : esc(a.kw)) + '</td>'
+        + '<td><span class="bdg ' + (a.st === 'published' ? 'bg' : a.st === 'failed' ? 'br' : 'bb') + '">' + esc(a.st) + '</span></td>'
+        + '<td class="r">' + z(a.imgs) + '</td><td class="r">' + z(a.d) + '</td><td class="r">' + z(a.pl) + '</td><td class="r">' + z(a.sc) + '</td><td class="r">' + z(a.po) + '</td>'
+        + '<td class="r">' + (a.er ? '<span class="bdg br">⚠ ' + a.er + '</span>' : '<span class="hint">·</span>') + '</td>'
+        + '<td class="mono">' + (a.next ? dayLbl(a.next) : '') + '</td></tr>';
+    }).join('') + '</tbody>';
+}
+function togSel(id, on) { if (on) PA_SEL[id] = 1; else delete PA_SEL[id]; setText('pa-count', fmt(articleRows().length) + ' article(s) · ' + Object.keys(PA_SEL).length + ' sélectionné(s)'); }
+function selArticles(on) { articleRows().slice(0, PA_LIMIT).forEach(function (a) { if (on) PA_SEL[a.id] = 1; else delete PA_SEL[a.id]; }); renderArticles(); }
+function genPinsSelection() {
+  var ids = Object.keys(PA_SEL);
+  if (!ids.length) { showToast('Coche des articles', 'info'); return; }
+  if (!confirm('Générer les pins (WF3a) pour ' + ids.length + ' article(s) ?')) return;
+  callAPI({ action: 'wf3_run_selection', ids: JSON.stringify(ids) }).then(function (d) {
+    var ok = d.ok !== false;
+    showToast(ok ? 'WF3a lancé sur ' + ids.length + ' article(s)' : 'Erreur : ' + (d.error || ''), ok ? 'ok' : 'err');
+    addLog(ok ? 'ok' : 'err', 'WF3a sélection : ' + ids.length + ' article(s)');
+    if (ok) { PA_SEL = {}; renderArticles(); setTimeout(loadData, 8000); }
+  }).catch(function (e) { showToast(e.message, 'err'); });
+}
+function runWF3Site(site) {
+  if (!confirm('WF3a : générer les pins des articles publiés de ' + site + ' ?')) return;
+  callAPI({ action: 'wf3_run', sites: JSON.stringify([site]) }).then(function (d) {
+    showToast(d.ok ? 'WF3a lancé pour ' + site : 'Erreur : ' + (d.error || ''), d.ok ? 'ok' : 'err');
+    addLog(d.ok ? 'ok' : 'err', 'WF3a ' + site);
+  }).catch(function (e) { showToast(e.message, 'err'); });
+}
+
+// ─── Planning ───────────────────────────────────────────────────────────────
+function planParams(dry) {
+  var n = parseInt(g('pl-perday').value, 10) || 3;
+  try { localStorage.setItem('rde_perday', n); } catch (e) {}
+  return { action: 'plan_pins', sites: JSON.stringify(getSel('pl-sites')), start: g('pl-start').value, days: g('pl-days').value,
+    per_day: n, h_start: g('pl-hs').value, h_end: g('pl-he').value, min_gap: g('pl-gap').value,
+    avoid_days: g('pl-avoid').value, tz: g('pl-tz').value, dry: dry ? 1 : 0, seed: PLAN_SEED };
+}
+function planPins(dry) {
+  if (!getSel('pl-sites').length) { showToast('Sélectionne au moins un site', 'info'); return; }
+  if (dry) PLAN_SEED = Math.floor(Math.random() * 1e9);
+  else if (!PLAN_LAST) { showToast('Fais d’abord un aperçu', 'info'); return; }
+  else if (!confirm('Écrire ' + PLAN_LAST.total + ' dates dans l’onglet Pins ?')) return;
+  var out = g('pl-out'); out.innerHTML = '<div class="empty"><span class="spin"></span> Calcul…</div>';
+  callAPI(planParams(dry)).then(function (d) {
+    if (!d.ok) throw new Error(d.error || 'Erreur');
+    PLAN_LAST = d; renderPlan(d);
+    g('pl-apply').disabled = !dry || !d.total;
+    if (!dry) { showToast(d.written + ' pins planifiés', 'ok'); addLog('ok', 'Planning écrit : ' + d.written + ' pins'); PLAN_LAST = null; loadData(); }
+  }).catch(function (e) { out.innerHTML = '<div class="empty err">' + esc(e.message) + '</div>'; });
+}
+function renderPlan(d) {
+  setText('pl-sum', (d.dry ? 'Aperçu — rien n’est écrit' : 'Écrit') + ' · ' + d.total + ' pins ajoutés · case = total du jour (+ nouveaux)');
+  var days = d.days;
+  var html = '<div class="tw"><table class="tbl heat"><thead><tr><th>Site</th>' + days.map(function (x) { return '<th class="c">' + dayLbl(x) + '</th>'; }).join('') + '<th class="r">Ajoutés</th><th class="r">Reste</th></tr></thead><tbody>'
+    + d.perSite.sort(function (a, b) { return a.site < b.site ? -1 : 1; }).map(function (s) {
+      return '<tr><td><b>' + esc(s.site) + '</b></td>' + days.map(function (x) { var n = s.days[x] || 0, e = (s.exist || {})[x] || 0; return heatCell(n + e, d.options.perDay, n ? '+' + n + ' nouveau(x), ' + e + ' déjà prévu(s)' : e + ' déjà prévu(s)', n); }).join('')
+        + '<td class="r b">' + s.planned + '</td><td class="r">' + s.waiting + '</td></tr>';
+    }).join('') + '</tbody></table></div>';
+  var sk = d.skipped || {};
+  if (sk.noAccount || sk.noBoard || sk.noImage) html += '<div class="sub warn">Ignorés : ' + sk.noAccount + ' sans compte · ' + sk.noBoard + ' sans board · ' + sk.noImage + ' sans image</div>';
+  if (d.shortage.length) html += '<div class="sub warn">⚠ Pas assez d’articles différents : ' + d.shortage.slice(0, 8).map(function (x) { return x.site + ' ' + dayLbl(x.day) + ' (−' + x.missing + ')'; }).join(', ') + (d.shortage.length > 8 ? '…' : '') + '</div>';
+  html += '<div class="ct mt">Détail (' + Math.min(200, d.plan.length) + ' premiers)</div><div class="tw" style="max-height:280px;overflow:auto"><table class="tbl"><thead><tr><th>Heure</th><th>Site</th><th>Article</th><th>Pin</th></tr></thead><tbody>'
+    + d.plan.slice(0, 200).map(function (x) { return '<tr><td class="mono">' + esc(x.at_local) + '</td><td>' + esc(x.site) + '</td><td class="mono">' + esc(x.article) + '</td><td class="mono">' + esc(x.pin_id) + '</td></tr>'; }).join('')
+    + '</tbody></table></div>';
+  if (!d.total) html = '<div class="empty">Aucun pin à planifier : les jours sont déjà pleins, ou il n’y a plus de pins en attente pour ces sites.</div>';
+  g('pl-out').innerHTML = html;
+}
+function heatCell(v, max, tip, added) {
+  var i = v <= 0 ? 0 : Math.min(HEAT.length - 1, Math.ceil(v / Math.max(1, max) * (HEAT.length - 2)) + 0);
+  if (v > 0 && i === 0) i = 1;
+  return '<td class="c hc" style="background:' + HEAT[i] + ';color:' + (i >= 4 ? '#0d1117' : '#e6edf3') + '" title="' + (tip || (v + ' pin(s)')) + '">' + (v || '') + (added ? '<sup>+' + added + '</sup>' : '') + '</td>';
+}
+function renderCalendar() {
+  var cal = D.pins.cal || {}, days = D.nextDays, N = perDay();
+  var sites = Object.keys(cal).sort();
+  if (!sites.length) { g('tbl-cal').innerHTML = '<tbody><tr><td class="empty">Aucun pin daté dans les 14 prochains jours.</td></tr></tbody>'; }
+  else g('tbl-cal').innerHTML = '<thead><tr><th>Site</th>' + days.map(function (x) { return '<th class="c">' + dayLbl(x) + '</th>'; }).join('') + '</tr></thead><tbody>'
+    + sites.map(function (s) { return '<tr><td><b>' + esc(s) + '</b></td>' + days.map(function (x) { return heatCell(cal[s][x] || 0, N); }).join('') + '</tr>'; }).join('') + '</tbody>';
+  var dp = D.pins.dupes || [];
+  g('dupes-box').innerHTML = dp.length
+    ? '<div class="sub warn">⚠ ' + (D.pins.dupCount || dp.length) + ' doublon(s) : même article 2× le même jour sur le même compte — ' + dp.slice(0, 10).map(function (x) { return x.site + ' ' + dayLbl(x.day) + ' ' + x.article; }).join(', ') + '</div>'
+    : '<div class="sub ok">✓ Aucun article publié deux fois le même jour sur un compte.</div>';
+}
+function sendPlanned() {
+  showToast('Envoi des pins dus à WF3b…', 'info');
+  callAPI({ action: 'send_planned' }).then(function (d) {
+    var msg = (d.message || d.error || '') + (d.expired ? ' · ' + d.expired + ' expiré(s) à replanifier' : '');
+    showToast(msg, d.ok ? 'ok' : 'err'); addLog(d.ok ? 'ok' : 'err', 'Planning → WF3b : ' + msg);
+    loadAuto(); if (d.sent) setTimeout(loadData, 20000);
+  }).catch(function (e) { showToast(e.message, 'err'); });
+}
+function renderAuto(d) {
+  var st = g('auto-state'); if (!st) return;
+  st.className = 'bdg ' + (d.on ? 'bg' : 'by'); st.textContent = d.on ? '● actif' : '⏸ inactif';
+  var l = d.last || {};
+  setText('auto-last', l.at ? 'Dernier passage ' + new Date(l.at).toLocaleString('fr-FR') + ' · ' + (l.sent || 0) + ' envoyé(s)' + (l.expired ? ' · ' + l.expired + ' expiré(s)' : '') + (l.ok === false ? ' · ⚠ erreur WF3b' : '') : 'Aucun passage pour l’instant');
+  g('auto-on').disabled = !!d.on; g('auto-off').disabled = !d.on;
+}
+function loadAuto() { callAPI({ action: 'auto_status' }).then(function (d) { if (d.ok) renderAuto(d); }).catch(function () {}); }
+function autoSet(on) {
+  if (on && !confirm('Activer l’envoi automatique ? Toutes les 10 min, les pins dont l’heure est arrivée partent via WF3b.')) return;
+  callAPI({ action: on ? 'auto_on' : 'auto_off' }).then(function (d) {
+    if (d.ok === false || d.error) throw new Error((d.error || '') + ' — lance une fois dbInstallTrigger() depuis l’éditeur Apps Script');
+    showToast(on ? 'Envoi automatique activé' : 'Envoi automatique désactivé', 'ok'); addLog('ok', 'Envoi auto : ' + (on ? 'ON' : 'OFF'));
+    loadAuto();
+  }).catch(function (e) { showToast(e.message, 'err'); addLog('err', e.message); });
+}
+function unplan() {
+  var sites = getSel('pl-sites');
+  if (!confirm('Effacer les dates « Planifié pour » non envoyées de ' + sites.length + ' site(s) ?')) return;
+  callAPI({ action: 'unplan_pins', sites: JSON.stringify(sites) }).then(function (d) {
+    showToast(d.cleared + ' planification(s) effacée(s)', 'ok'); addLog('ok', 'Planning annulé : ' + d.cleared); loadData();
+  }).catch(function (e) { showToast(e.message, 'err'); });
+}
+
+// ─── Échecs ─────────────────────────────────────────────────────────────────
+function renderFailed() {
+  if (!D) return;
+  ['art', 'img', 'pin'].forEach(function (k) { var b = g('fx-' + k); if (b) b.className = 'btn btn-ghost' + (FX === k ? ' on' : ''); });
+  var t = g('tbl-failed');
+  if (FX === 'pin') {
+    var e = D.pins.errors;
+    t.innerHTML = '<thead><tr><th>Pin</th><th>Article</th><th>Site</th><th>Statut</th><th>Erreur</th></tr></thead><tbody>'
+      + (e.length ? e.map(function (x) { return '<tr><td class="mono">' + esc(x.pin) + '</td><td class="mono">' + esc(x.id) + '</td><td>' + esc(x.site) + '</td><td><span class="bdg br">' + esc(x.status) + '</span></td><td class="ec" style="max-width:520px" title="' + esc(x.error) + '">' + esc(x.error) + '</td></tr>'; }).join('')
+        : '<tr><td colspan="5" class="empty">✓ Aucun pin en erreur</td></tr>') + '</tbody>';
+    return;
   }
-  // Enter key on login
-  COUT_PAR_PIN = parseFloat(localStorage.getItem('cout_par_pin') || '1.2') || 1.2;
-  var pw = g('pw'); if (pw) pw.addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
-  var uu = g('u');  if (uu) uu.addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
-  // Auto-login if session exists
-  if (AUTH) {
-    g('login').style.display = 'none';
-    var app = g('app'); app.style.display = 'flex'; app.style.flexDirection = 'column';
-    loadNetworks(); initUI(); loadData(); loadFailed(); loadPins();
-    timer = setInterval(loadData, REFRESH);
-  }
+  var list = FX === 'img' ? D.images.failedList : D.articles.failedList;
+  t.innerHTML = '<thead><tr><th>ID</th><th>Site</th><th>Keyword</th><th>Statut</th><th>Erreur</th><th></th></tr></thead><tbody>'
+    + (list.length ? list.map(function (x) {
+      return '<tr><td class="mono">' + esc(x.id) + '</td><td>' + esc(x.site) + '</td><td class="ec">' + esc(x.kw) + '</td><td><span class="bdg br">' + esc(x.status) + '</span></td>'
+        + '<td class="ec" style="max-width:420px" title="' + esc(x.error) + '">' + esc(x.error) + '</td>'
+        + '<td>' + (FX === 'art' ? '<button class="btn btn-ghost bxs" onclick="retryOne(\'' + x.id + '\')">↻</button>' : '') + '</td></tr>';
+    }).join('') : '<tr><td colspan="6" class="empty">✓ Aucun échec</td></tr>') + '</tbody>';
+}
+function retryOne(id) {
+  callAPI({ action: 'wf1_selection', ids: JSON.stringify([id]) }).then(function (d) {
+    showToast(d.ok ? id + ' relancé' : 'Erreur', d.ok ? 'ok' : 'err'); addLog(d.ok ? 'ok' : 'err', 'WF1 ' + id);
+  });
+}
+function resetFailed() {
+  if (!confirm('Remettre tous les articles/images en échec en pending ?')) return;
+  callAPI({ action: 'reset_failed' }).then(function (d) {
+    showToast('Reset : ' + (d.reset ? d.reset.text + ' textes, ' + d.reset.img + ' images' : ''), 'ok'); addLog('ok', 'Reset échecs'); loadData();
+  });
+}
+
+// ─── Connexion / navigation (remplacent les versions v2) ────────────────────
+function doLogin() {
+  var u = g('u').value.trim(), p = g('pw').value, btn = g('btnl'), err = g('lerr');
+  if (!u || !p) { err.textContent = 'Remplis les deux champs.'; return; }
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Connexion...'; err.textContent = '';
+  callAPI({ action: 'get_pod_url', u: u, p: p }).then(function (d) {
+    if (!d.ok) throw new Error(d.error || 'Identifiants incorrects');
+    AUTH = { u: u, p: p };
+    try { sessionStorage.setItem('rde', JSON.stringify(AUTH)); } catch (e) {}
+    startApp();
+  }).catch(function (e) { err.textContent = e.message; btn.disabled = false; btn.textContent = 'Se connecter'; });
+}
+function startApp() {
+  g('login').style.display = 'none';
+  var app = g('app'); app.style.display = 'flex'; app.style.flexDirection = 'column';
+  loadNetworks(); initUI(); loadData();
+  clearInterval(timer); timer = setInterval(loadData, REFRESH);
+}
+var PANELS = ['kpi', 'costs-cfg', 'articles', 'images', 'pinterest', 'planning', 'failed', 'add-site', 'add-kw', 'networks', 'log'];
+function SN(name) {
+  PANELS.forEach(function (p) {
+    var t = g('tab-' + p), ni = g('ni-' + p);
+    if (t) t.className = 'panel' + (p === name ? ' on' : '');
+    if (ni) ni.className = 'ni' + (p === name ? ' on' : '');
+  });
+  if (name === 'log') renderLog();
+  if (name === 'networks') renderNetworksList();
+  if (name === 'add-site') { KWS = []; curStep = 1; goStep(1); }
+  if (name === 'failed') renderFailed();
+  if (name === 'planning') loadAuto();
+  // Chart.js ne mesure pas un canvas caché : on redimensionne à l'affichage
+  setTimeout(function () { Object.keys(CH).forEach(function (k) { if (CH[k]) CH[k].resize(); }); }, 30);
+  closeSidebar();
+  try { history.replaceState(null, '', '#' + name); } catch (e) {}
+}
+window.addEventListener('DOMContentLoaded', function () {
+  var saved = null;
+  try { saved = JSON.parse(sessionStorage.getItem('rde') || 'null'); } catch (e) {}
+  if (saved && saved.u) { AUTH = saved; startApp(); var h = (location.hash || '').slice(1); if (PANELS.indexOf(h) !== -1) SN(h); }
+  var pw = g('pw'); if (pw) pw.addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
 });
+
 </script>
 </body>
 </html>
